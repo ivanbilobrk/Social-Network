@@ -16,26 +16,19 @@ enum UserType {
   deleted
 }
 
-model User {
+model UserProfile {
   id            Int       @id @default(autoincrement())
   email         String    @unique
   password_hash String
   last_login    DateTime?
   user_type     UserType  @default(user)
-  
-  profile       Profile?
-}
 
-model Profile {
-  id                Int           @id @default(autoincrement())
   username          String
   first_name        String
   last_name         String
   date_of_birth     DateTime?
   joined_at         DateTime      @default(now())
 
-  user              User          @relation(fields: [userId], references: [id])
-  userId            Int           @unique
   posts             Post[]
   postLikes         PostLike[]
   comments          Comment[]
@@ -44,6 +37,12 @@ model Profile {
   following         Follower[]    @relation("follower")
   sentMessages      Message[]     @relation("sender")
   receivedMessages  Message[]     @relation("receiver")
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
 }
 
 
@@ -51,8 +50,9 @@ model Post {
   id        Int     @id @default(autoincrement())
   title     String
   content   String?
+  photo     String?
 
-  author    Profile @relation(fields: [authorId], references: [id])
+  author    UserProfile @relation(fields: [authorId], references: [id])
   authorId  Int
   postLikes PostLike[]
   comments  Comment[]
@@ -68,7 +68,7 @@ model PostLike {
   id        Int     @id @default(autoincrement())
   post      Post    @relation(fields: [postId], references: [id])
   postId    Int
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   UserProfile @relation(fields: [profileId], references: [id])
   profileId Int
 
   //Audit fields
@@ -83,7 +83,7 @@ model Comment {
   content       String
   post          Post    @relation(fields: [postId], references: [id])
   postId        Int
-  profile       Profile @relation(fields: [profileId], references: [id])
+  profile       UserProfile @relation(fields: [profileId], references: [id])
   profileId     Int
   commentLikes  CommentLike[]
 
@@ -98,7 +98,7 @@ model CommentLike {
   id        Int     @id @default(autoincrement())
   comment   Comment @relation(fields: [commentId], references: [id])
   commentId Int
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   UserProfile @relation(fields: [profileId], references: [id])
   profileId Int
 
   //Audit fields
@@ -119,9 +119,9 @@ model Follower {
   id          Int             @id @default(autoincrement())
   status      FollowerStatus  @default(pending)
 
-  follower    Profile         @relation("follower", fields: [followerId], references: [id])
+  follower    UserProfile         @relation("follower", fields: [followerId], references: [id])
   followerId  Int
-  followed    Profile         @relation("followed", fields: [followedId], references: [id])
+  followed    UserProfile         @relation("followed", fields: [followedId], references: [id])
   followedId  Int
 
   //Audit fields
@@ -137,9 +137,9 @@ model Message {
   sent      DateTime @default(now())
   received  DateTime?
 
-  sender    Profile @relation("sender", fields: [senderId], references: [id])
+  sender    UserProfile @relation("sender", fields: [senderId], references: [id])
   senderId  Int
-  receiver  Profile @relation("receiver", fields: [receiverId], references: [id])
+  receiver  UserProfile @relation("receiver", fields: [receiverId], references: [id])
   receiverId Int
 
   //Audit fields

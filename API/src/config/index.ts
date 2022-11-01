@@ -7,6 +7,7 @@ const env = process.env;
 type configType = {
   environment: string;
   jwTokenKey: string;
+  token_expiration: number;
   database: {
     name?: string;
     user?: string;
@@ -22,7 +23,8 @@ type configType = {
 
 const config: configType = {
   environment: env.ENVIRONMENT || 'development',
-  jwtTokenKey: env.SECRET_KEY || 'secret',
+  jwTokenKey: env.SECRET_KEY || 'secret',
+  token_expiration: parseInt(env.TOKEN_EXPIRATION || '3600'),
   database: {
     name: env.DB_NAME,
     user: env.DB_USER,
@@ -32,6 +34,7 @@ const config: configType = {
     url: `postgres://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
   },
   port: Number(env.PORT) || 3000,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
   logLevel: env.LOG_LEVEL || 'debug',
   env: env.NODE_ENV || 'development',
