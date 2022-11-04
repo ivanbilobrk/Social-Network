@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+enum UserType {
+  user
+  admin
+  deleted
+}
+
+model UserProfile {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password_hash String
+  last_login    DateTime?
+  user_type     UserType  @default(user)
+
+  username          String
+  first_name        String
+  last_name         String
+  date_of_birth     DateTime?
+  joined_at         DateTime      @default(now())
+
+  posts             Post[]
+  postLikes         PostLike[]
+  comments          Comment[]
+  commentLikes      CommentLike[]
+  followers         Follower[]    @relation("followed")
+  following         Follower[]    @relation("follower")
+  sentMessages      Message[]     @relation("sender")
+  receivedMessages  Message[]     @relation("receiver")
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
+
+
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String?
+  photo     String?
+
+  author    UserProfile @relation(fields: [authorId], references: [id])
+  authorId  Int
+  postLikes PostLike[]
+  comments  Comment[]
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
+
+model PostLike {
+  id        Int     @id @default(autoincrement())
+  post      Post    @relation(fields: [postId], references: [id])
+  postId    Int
+  profile   UserProfile @relation(fields: [profileId], references: [id])
+  profileId Int
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
+
+model Comment {
+  id            Int     @id @default(autoincrement())
+  content       String
+  post          Post    @relation(fields: [postId], references: [id])
+  postId        Int
+  profile       UserProfile @relation(fields: [profileId], references: [id])
+  profileId     Int
+  commentLikes  CommentLike[]
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
+
+model CommentLike {
+  id        Int     @id @default(autoincrement())
+  comment   Comment @relation(fields: [commentId], references: [id])
+  commentId Int
+  profile   UserProfile @relation(fields: [profileId], references: [id])
+  profileId Int
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
+
+enum FollowerStatus {
+  pending
+  accepted
+  rejected
+  blocked
+}
+
+model Follower {
+  id          Int             @id @default(autoincrement())
+  status      FollowerStatus  @default(pending)
+
+  follower    UserProfile         @relation("follower", fields: [followerId], references: [id])
+  followerId  Int
+  followed    UserProfile         @relation("followed", fields: [followedId], references: [id])
+  followedId  Int
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
+
+model Message {
+  id        Int     @id @default(autoincrement())
+  content   String
+  sent      DateTime @default(now())
+  received  DateTime?
+
+  sender    UserProfile @relation("sender", fields: [senderId], references: [id])
+  senderId  Int
+  receiver  UserProfile @relation("receiver", fields: [receiverId], references: [id])
+  receiverId Int
+
+  //Audit fields
+  created_at DateTime @default(now())
+  created_by Int? @default(0)
+  updated_at DateTime? @updatedAt
+  updated_by Int? @default(0)
+}
