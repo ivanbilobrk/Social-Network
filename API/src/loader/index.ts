@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Server } from 'http';
-import logger from '../config/logger.js';
-import { APIError } from '../errors/APIError.js';
-import config from '../config/index.js';
+import logger from '../config/logger';
+import { APIError } from '../errors/APIError';
+import config from '../config/index';
 import httpStatus from 'http-status';
-import router from '../api/index.js';
+import router from '../api/index';
 
 export default ({ app }: { app: express.Application }): Server | undefined => {
   // setup logger

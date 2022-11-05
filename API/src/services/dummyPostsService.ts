@@ -1,6 +1,6 @@
-import { DummyPost, getPostById, updatePost, createPost } from '../repositories/dummyPostsRepository.js';
-import { APIError } from '../errors/APIError.js';
-import logger from '../config/logger.js';
+import { DummyPost, getPostById, updatePost, createPost } from '../repositories/dummyPostsRepository';
+import { APIError } from '../errors/APIError';
+import logger from '../config/logger';
 
 export const getDummyPostById = async (id: number): Promise<DummyPost> => {
   let post = getPostById(id);

@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { forwardError } from '../forwardError.js';
-import LoginRequest from '../../requests/loginRequest.js';
-import AuthService from '../../services/authService.js';
-import RegistrationRequest from '../../requests/registrationRequest.js';
+import { forwardError } from '../forwardError';
+import LoginRequest from '../../requests/loginRequest';
+import AuthService from '../../services/authService';
+import RegistrationRequest from '../../requests/registrationRequest';
 import { check, validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 

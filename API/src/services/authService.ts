@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import UserRepository from '../repositories/userRepository.js';
-import config from '../config/index.js';
-import { APIError } from '../errors/APIError.js';
+import UserRepository from '../repositories/userRepository';
+import config from '../config/index';
+import { APIError } from '../errors/APIError';
 import { StatusCodes } from 'http-status-codes';
-import LoginRequest from '../requests/loginRequest.js';
-import RegistrationRequest from '../requests/registrationRequest.js';
-import logger from '../config/logger.js';
+import LoginRequest from '../requests/loginRequest';
+import RegistrationRequest from '../requests/registrationRequest';
+import logger from '../config/logger';
 
 export type UserClaims = {
   id: number;
