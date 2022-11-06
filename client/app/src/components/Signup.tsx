@@ -18,7 +18,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from '@mui/material/Backdrop';
-import axios from '../api/axios';
+import axiosPrivate from '../api/axios';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import dayjs, { Dayjs } from 'dayjs';
@@ -26,12 +26,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
+import {Navigate, useNavigate,useLocation} from 'react-router-dom';
 
 
 const USER_REGEX: RegExp = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const EMAIL_REGEX: RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-const REGISTER_URL:string = "/register";
+const REGISTER_URL:string = "/auth/register";
 
 function Copyright(props: any) {
   return (
@@ -60,6 +61,10 @@ const theme = createTheme({
 
 
 export default function Signup() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
   const [name, setName] = useState("");
   const [validName, setValidName] = useState(false);
   const [nameFocus, setNameFocus] = useState(false);
@@ -77,7 +82,7 @@ export default function Signup() {
   const [emailFocus, setEmailFocus] = useState(false);
 
   const [birth, setBirth] = React.useState<Dayjs | null>(
-    dayjs('2014-08-18T21:11:54'),
+    dayjs('2014-08-18'),
   );
   const handleBirthChange = (newValue: Dayjs | null) => {
     setBirthCount(true);
@@ -141,21 +146,20 @@ export default function Signup() {
     }, 500);
     
     try{
-      const response = await axios.post(REGISTER_URL, 
-                JSON.stringify({name: name, 
-                        surName: surname, 
-                        userName: user, 
+      const response = await axiosPrivate.post(REGISTER_URL, 
+                JSON.stringify({first_name: name, 
+                        last_name: surname, 
+                        username: user, 
                         email: email, 
-                        pwd: pwd}), {
-                          headers: {'Content-Type':'application/json'},
-                        },
+                        password: pwd,
+                        date_of_birth: birth})
                );
-
+      localStorage.setItem("accessToken", response?.data?.token);
       setTimeout(() => {
         setSuccess(true);
         setErrMsg("");
       }, 500);
-
+      navigate(from, {replace: true})
     } catch(err:any){
       if(!err?.response){
         setErrMsg('Nema odgovora sa servera');
@@ -167,8 +171,6 @@ export default function Signup() {
 
   return (
     <>
-     
-      {success === true && loading === false && <Alert severity="success">Uspješna registracija <Link href="/login" variant="body2">Prijavite se!</Link></Alert>}
 
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

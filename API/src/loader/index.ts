@@ -5,6 +5,8 @@ import { APIError } from '../errors/APIError';
 import config from '../config/index';
 import httpStatus from 'http-status';
 import router from '../api/index';
+var cors = require('cors')
+
 
 export default ({ app }: { app: express.Application }): Server | undefined => {
   // setup logger
@@ -13,6 +15,7 @@ export default ({ app }: { app: express.Application }): Server | undefined => {
     next();
   });
 
+  app.use(cors({credentials: true, origin: true}));
   // parses body params and attaches them to req.body
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
