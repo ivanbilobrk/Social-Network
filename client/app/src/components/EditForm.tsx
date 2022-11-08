@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Container, Grid, TextField} from '@mui/material'
+import { Button, Container, Grid, TextField} from '@mui/material'
 import React from 'react'
 
 const EditForm = () => {
@@ -20,8 +20,8 @@ const EditForm = () => {
          <TextField type="email" label="Email" placeholder="Enter your email" variant="outlined" fullWidth />
       </Grid>
 
-      <Grid xs={12} item>
-         <Button size="large" variant="contained" color="primary">Save changes</Button>
+      <Grid item>
+         <Button size="large" variant="contained" color="primary">Save</Button>
       </Grid>
       
       
