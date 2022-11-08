@@ -1,10 +1,14 @@
 import React from 'react';
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
-    <>
-    Pozdrav iz Appa
-    </>
+    <BrowserRouter>
+    <Routes>  
+      <Route path="/edit" element={<EditProfile/>}></Route>
+    </Routes>
+    </BrowserRouter>
   );
 }
 
