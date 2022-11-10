@@ -1,5 +1,6 @@
 import React from 'react';
 import {Grid} from '@mui/material';
+import MyProfile from './pages/MyProfile';
 
 let info = 
   {
@@ -13,7 +14,9 @@ let info =
 function App() {
   return (
     <Grid container spacing = {0} direction = "column" alignItems = "center" justifyContent = "center">
-
+        <Grid item width = "40%">
+          <MyProfile info = {info} />
+        </Grid>
     </Grid>
   );
 }
