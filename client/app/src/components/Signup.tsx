@@ -26,7 +26,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
-import {Navigate, useNavigate,useLocation} from 'react-router-dom';
+import {useNavigate,useLocation} from 'react-router-dom';
 
 
 const USER_REGEX: RegExp = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -84,6 +84,7 @@ export default function Signup() {
   const [birth, setBirth] = React.useState<Dayjs | null>(
     dayjs('2014-08-18'),
   );
+  
   const handleBirthChange = (newValue: Dayjs | null) => {
     setBirthCount(true);
     setBirth(newValue);
@@ -106,7 +107,6 @@ export default function Signup() {
   const [emailCount, setemailCount] = useState(false);
   const [passwordCount, setpasswordCount] = useState(false);
   const [matchCount, setmatchCount] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [birthCount, setBirthCount] = useState(false);
 
   const [open, setOpen] = React.useState(false);

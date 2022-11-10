@@ -12,13 +12,11 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
+import MessageIcon from '@mui/icons-material/Message';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import getUser from '../util/getUser';
 import User from '../interface/User'
 import { Link } from "react-router-dom";
-import MessagesBar from './MessagesBar';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -67,13 +65,9 @@ export default function PrimarySearchAppBar() {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const[anchorMessages, setAnchorMessages] = React.useState<null | HTMLElement>(null);
-
   const[anchorNotifications, setAnchorNotifications] = React.useState<null | HTMLElement>(null);
 
   const isNotificationsOpen = Boolean(anchorNotifications);
-
-  const isMessagesOpen = Boolean(anchorMessages);
 
   const isAccountOpen = Boolean(anchorEl);
 
@@ -104,29 +98,10 @@ export default function PrimarySearchAppBar() {
       open={isAccountOpen}
       onClose={()=>{handleMenuClose(setAnchorEl)}}
     >
-      <MenuItem >Profile</MenuItem>
-      <MenuItem >Log Out</MenuItem>
-    </Menu>
-  );
-
-  const MessagesId = 'primary-messages-menu';
-  const renderMessages = (
-    <Menu
-      anchorEl={anchorMessages}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={MessagesId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMessagesOpen}
-      onClose={()=>{handleMenuClose(setAnchorMessages)}}
-    >
-      <MenuItem ><MessagesBar/></MenuItem>
+      <MenuItem >Uredi Profil</MenuItem>
+      <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
+      <MenuItem >Moj Profil</MenuItem>
+      <MenuItem >Logout</MenuItem>
     </Menu>
   );
 
@@ -147,8 +122,6 @@ export default function PrimarySearchAppBar() {
       open={isNotificationsOpen}
       onClose={()=>{handleMenuClose(setAnchorNotifications)}}
     >
-      <MenuItem >Profile</MenuItem>
-      <MenuItem >Log Out</MenuItem>
     </Menu>
   );
 
@@ -185,20 +158,6 @@ export default function PrimarySearchAppBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton
-              size="large"
-              edge="end"
-              sx={{mr:0.5}}
-              aria-label="show 17 new emails"
-              aria-controls={NotificationsId}
-              aria-haspopup="true"
-              onClick={(e)=>{handleMenuOpen(e, setAnchorMessages)}}
-              color="inherit"
-            >
-             <Badge badgeContent={17} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
 
             <IconButton
               size="large"
@@ -228,7 +187,6 @@ export default function PrimarySearchAppBar() {
           </Box>
         </Toolbar>
       </AppBar>
-      {renderMessages}
       {renderNotifications}
       {renderAccountMenu}
     </Box>

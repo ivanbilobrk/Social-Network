@@ -111,7 +111,8 @@ export default function Login() {
       if(!err?.response){
         setErrMsg('Nema odgovora sa servera');
       } else {
-        setErrMsg(err.response.data.error)
+
+        setErrMsg(err.response.data.message)
       }
     }
 
@@ -164,11 +165,17 @@ export default function Login() {
                       required
                       fullWidth
                       id="userNameEmail"
-                      label="Unesite svoj username ili email"
+                      label="Unesite svoj email"
                       name="userNameEmail"
                       onChange={(e) => {
                         setEmail(e.target.value);
                         setEmailCount(true);
+                      }}
+                      onFocus={() => {
+                        setEmailFocus(true);
+                      }}
+                      onBlur={() => {
+                        setEmailFocus(false);
                       }}
                       error={ErrorInput(emailCount, validEmail, emailFocus)}
                     />

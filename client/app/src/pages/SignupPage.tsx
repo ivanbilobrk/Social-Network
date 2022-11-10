@@ -1,11 +1,14 @@
-import { useRef, useState, useEffect } from "react";
 import {Signup} from '../components/Signup'
+import NavBar from '../components/NavBarLoginSignup' 
 
 export default function SignupPage(){
 
 
     return(
-        <Signup/>
+        <>
+            <NavBar/>
+            <Signup/>
+        </>
     );
 
 }
