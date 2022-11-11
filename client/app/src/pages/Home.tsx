@@ -1,5 +1,5 @@
 import { Button, Grid } from '@mui/material';
-import ScrollableFeed from '../components/ScrollableFeed';
+import ScrollableFeed from '../components/home/ScrollableFeed';
 import AddIcon from '@mui/icons-material/Add';
 
 function Home(props: any) {

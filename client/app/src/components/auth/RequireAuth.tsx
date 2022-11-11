@@ -1,7 +1,7 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import User from '../interface/User'
-import getUser from '../util/getUser'
+import User from '../../interface/User'
+import getUser from '../../util/getUser'
 
 const RequireAuth = ({allowedRoles}:{allowedRoles:string[]}) => {
     const location = useLocation();

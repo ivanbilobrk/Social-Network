@@ -1,5 +1,5 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import getUser from "../util/getUser";
+import getUser from "../../util/getUser";
 
 const BlockAuth = ()=>{
     const location = useLocation();

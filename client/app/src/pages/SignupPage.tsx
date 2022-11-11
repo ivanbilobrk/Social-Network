@@ -1,5 +1,6 @@
-import {Signup} from '../components/Signup'
-import NavBar from '../components/NavBarLoginSignup' 
+import Signup from "../components/auth/Signup";
+import NavBar from "../components/NavBar";
+
 
 export default function SignupPage(){
 

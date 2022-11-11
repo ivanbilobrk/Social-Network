@@ -3,7 +3,7 @@ import {
   faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {ErrorInput} from '../util/ErrorInput'
+import {ErrorInput} from '../../util/ErrorInput'
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -18,7 +18,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from '@mui/material/Backdrop';
-import axios from '../api/axios';
+import axios from '../../api/axios';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import {Navigate, useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';

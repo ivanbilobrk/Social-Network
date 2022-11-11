@@ -1,5 +1,5 @@
-import {Login} from '../components/Login'
-import NavBar from '../components/NavBarLoginSignup' 
+import {Login} from '../components/auth/Login'
+import NavBar from '../components/auth/NavBarLoginSignup' 
 
 export default function LoginPage(){
 
