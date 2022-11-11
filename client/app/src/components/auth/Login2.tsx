@@ -19,6 +19,7 @@ import axios from '../../api/axios';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';
+import {Formik} from "formik";
 
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const LOGIN_URL = "/auth/login";
@@ -179,9 +180,7 @@ export default function Login2() {
                   </Grid>
 
                   <Grid item xs={12} sm={1}>
-                    <CheckIcon
-                      className={validEmail ? "validLogin" : "hide"}
-                    />
+                    {validEmail && <CheckIcon style={{ color: "green"}}/>}
                   </Grid>
 
                   <Grid item xs={12} sm={11}>
@@ -208,9 +207,7 @@ export default function Login2() {
                   </Grid>
 
                   <Grid item xs={12} sm={1}>
-                    <CheckIcon
-                      className={validPwd ? "validLogin" : "hide"}
-                    />
+                   {validPwd && <CheckIcon style={{ color: "green"}}/>}
                   </Grid>
                 </Grid>
                 <Button

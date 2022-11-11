@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  faCheck,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CheckIcon from '@mui/icons-material/Check';
 import {ErrorInput} from '../../util/ErrorInput'
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
@@ -207,7 +204,7 @@ export default function Signup() {
                 onSubmit={handleSubmit}
                 sx={{ mt: 3 }}
               >
-                <Grid container spacing={2}>
+                <Grid container spacing={2} alignItems="center">
                   <Grid item xs={12} sm={5}>
                     <TextField
                       name="name"
@@ -236,11 +233,7 @@ export default function Signup() {
                   </Grid>
 
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={validName ? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                    {validName && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
 
                   <Grid item xs={12} sm={5}>
@@ -273,11 +266,9 @@ export default function Signup() {
                     />
                   </Grid>
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={validsurname ? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                      
+                      {validsurname && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
+                      
                   </Grid>
 
                   <Grid item xs={12} sm={11}>
@@ -309,11 +300,7 @@ export default function Signup() {
                   </Grid>
 
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={validUser ? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                    {validUser && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
 
                   <Grid item xs={12} sm={11}>
@@ -343,11 +330,7 @@ export default function Signup() {
                   </Grid>
 
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={validEmail ? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                    {validEmail && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
 
                   <Grid item xs={12} sm={11}>
@@ -364,11 +347,7 @@ export default function Signup() {
 
                   </Grid>
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={birth && birthCount? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                    {birth && birthCount && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
 
                   <Grid item xs={12} sm={11}>
@@ -401,11 +380,7 @@ export default function Signup() {
                   </Grid>
 
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={validPwd ? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                  {validPwd && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
 
                   <Grid item xs={12} sm={11}>
@@ -436,11 +411,7 @@ export default function Signup() {
                     />
                   </Grid>
                   <Grid item xs={12} sm={1}>
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      className={validMatch ? "validRegister" : "hide"}
-                      size="xl"
-                    />
+                  {validMatch && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
                 </Grid>
                 <Button
