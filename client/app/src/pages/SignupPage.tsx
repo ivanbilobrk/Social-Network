@@ -1,5 +1,5 @@
+import NavBarLoginSignup from "../components/auth/NavBarLoginSignup";
 import Signup from "../components/auth/Signup";
-import NavBar from "../components/NavBar";
 
 
 export default function SignupPage(){
@@ -7,7 +7,7 @@ export default function SignupPage(){
 
     return(
         <>
-            <NavBar/>
+            <NavBarLoginSignup/>
             <Signup/>
         </>
     );

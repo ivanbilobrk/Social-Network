@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { SignupPage } from "./pages/SignupPage";
 import { Route, Routes } from "react-router-dom";
@@ -11,45 +10,19 @@ import BlockAuth from "./components/auth/BlockAuth";
 import { Grid } from '@mui/material';
 import React from 'react';
 import Home from './pages/Home';
-
-let posts = [
-  {
-    username: 'John Doe',
-    date: '2021-10-10',
-    description: 'I am having the time of my life rn',
-    noOfLikes: 130,
-  },
-  {
-    username: 'Ela Kumer',
-    date: '2021-10-10',
-    description: 'bla bla bla',
-    noOfLikes: 140,
-  },
-  {
-    username: 'Lovro Kovacic',
-    date: '2021-10-10',
-    description: 'bla bla bla',
-    noOfLikes: 260,
-  },
-];
-
+import HomePage from "./pages/HomePage";
 
 
 function App() {
   return (
         <>
-        <Grid container direction="column" alignItems="center" justifyContent="center">
-          <Grid item width="40%">
-            <Home posts={posts} />
-          </Grid>
-        </Grid>
-        
-        <Routes>
+          <Routes>
 
           <Route path ="/" element={<Layout/>}>
 
             <Route element={<RequireAuth allowedRoles={["user"]}/>}>
                 <Route path="/test" element={<Test/>}/>
+                <Route path="/home" element={<HomePage/>}></Route>
             </Route>
             <Route path="unauthorized" element={<Unauthorized />} />
             
