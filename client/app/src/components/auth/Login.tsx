@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import CheckIcon from '@mui/icons-material/Check';
-import {ErrorInput} from '../../util/ErrorInput'
+import { useState } from "react";
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -17,10 +15,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from '@mui/material/Backdrop';
 import axios from '../../api/axios';
 import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import { useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';
+import {Formik, Field, Form, ErrorMessage} from 'formik';
+import * as Yup from 'yup'
 
-const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const LOGIN_URL = "/auth/login";
 
 function Copyright(props: any) {
@@ -43,45 +41,31 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-export default function Login2() {
+export default function Login() {
 
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const [email, setEmail] = useState("");
-  const [validEmail, setValidEmail] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
-
-  const [pwd, setPwd] = useState("");
-  const [validPwd, setValidPwd] = useState(false);
-  const [pwdFocus, setPwdFocus] = useState(false);
-
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [emailCount, setEmailCount] = useState(false);
-  const [passwordCount, setpasswordCount] = useState(false);
-
   const [open, setOpen] = React.useState(false);
 
+  const initialValues = {
+    email: '',
+    password: ''
+}
 
-  useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email));
-  }, [email]);
-
-  useEffect(() => {
-    setValidPwd(pwd.length !== 0);
-  }, [pwd]);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [email, pwd]);
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email("Enter valid email").required("Required"),
+  password: Yup.string().required("Required"),
+})
 
 
-  const handleSubmit = async (event:any) => {
-    event.preventDefault();
 
+  const handleSubmit = async (values:any, props:any) => {
+    
     setOpen(true);
     setTimeout(() => {
       setOpen(false);
@@ -90,8 +74,8 @@ export default function Login2() {
     try{
       const response = await axios.post(LOGIN_URL, 
                 JSON.stringify({
-                                email: email,  
-                                password: pwd}), 
+                                email: values.email,  
+                                password: values.password}), 
                                 {
                                     headers: {'Content-Type':'application/json'}
                                 });
@@ -112,9 +96,7 @@ export default function Login2() {
         setErrMsg(err.response.data.message)
       }
     }
-
   };
-
 
   return (
     <>
@@ -141,100 +123,39 @@ export default function Login2() {
                 <LockOutlinedIcon />
               </Avatar>
               {errMsg && <Alert severity="error">
-                            <AlertTitle>Pogreška</AlertTitle>
-                                <strong>{errMsg}</strong>
+                                <strong>Pogreška </strong> {errMsg}
                         </Alert>}
-              <Typography component="h1" variant="h5">
+              <Typography component="h1" variant="h5" sx={{mb:2}}>
                 Prijava
               </Typography>
-              <Box
-                component="form"
-                noValidate
-                onSubmit={handleSubmit}
-                sx={{ mt: 3 }}
-              >
-                <Grid container spacing={2}>
+              <Formik initialValues={initialValues} validationSchema={validationSchema}
+               onSubmit={handleSubmit}>
+            {(props) => (
+                        <Form>
+                            <Field as={TextField} label='email' name="email"
+                                placeholder='Enter email' fullWidth required
+                                error={props.errors.email && props.touched.email}
+                                helperText={<ErrorMessage name="email" />}
+                            />
+                            <Field as={TextField} label='password' sx={{ mt: 1, mb: 2 }} name="password"
+                                placeholder='Enter password' type='password' fullWidth required
+                                error={props.errors.password && props.touched.password}
+                                helperText={<ErrorMessage name="password" />} />
+                          
+                            <Button type='submit' color='primary' 
+                            variant="contained" disabled={!props.touched.password && !props.touched.email ? true: !props.isValid}
+                            sx={{ mt: 3, mb: 2 }} fullWidth>Prijavi se</Button>
 
-                  <Grid item xs={12} sm={11}>
-                    <TextField
-                      autoFocus
-                      inputProps={{ maxLength: 24 }}
-                      required
-                      fullWidth
-                      id="userNameEmail"
-                      label="Unesite svoj email"
-                      name="userNameEmail"
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailCount(true);
-                      }}
-                      onFocus={() => {
-                        setEmailFocus(true);
-                      }}
-                      onBlur={() => {
-                        setEmailFocus(false);
-                      }}
-                      error={ErrorInput(emailCount, validEmail, emailFocus)}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={1}>
-                    <CheckIcon
-                      className={validEmail ? "validLogin" : "hide"}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={11}>
-                    <TextField
-                      inputProps={{ maxLength: 24 }}
-                      required
-                      fullWidth
-                      name="pwd"
-                      label="Password"
-                      type="password"
-                      id="pwd"
-                      onChange={(e) => {
-                        setPwd(e.target.value);
-                        setpasswordCount(true);
-                      }}
-                      onFocus={() => {
-                        setPwdFocus(true);
-                      }}
-                      onBlur={() => {
-                        setPwdFocus(false);
-                      }}
-                      error={ErrorInput(passwordCount, validPwd, pwdFocus)}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={1}>
-                    <CheckIcon
-                      className={validPwd ? "validLogin" : "hide"}
-                    />
-                  </Grid>
-                </Grid>
-                <Button
-                  disabled={
-                    !validPwd ||
-                    !validEmail
-                      ? true
-                      : false
-                  }
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Prijavi se!
-                </Button>
-                <Grid container justifyContent="flex-end">
+                        </Form>
+                    )}
+              </Formik>
+              <Grid container justifyContent="flex-end">
                   <Grid item>
                     <Link href="/signup" variant="body2">
                       Nemaš profil? Registriraj se!
                     </Link>
                   </Grid>
                 </Grid>
-              </Box>
             </Box>
             <Copyright sx={{ mt: 5 }} />
           </Container>
@@ -244,4 +165,4 @@ export default function Login2() {
   );
 }
 
-export { Login2 };
+export { Login };

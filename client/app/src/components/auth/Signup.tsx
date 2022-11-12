@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-import CheckIcon from '@mui/icons-material/Check';
-import {ErrorInput} from '../../util/ErrorInput'
+import { useState} from "react";
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -24,11 +22,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 import {useNavigate,useLocation} from 'react-router-dom';
+import {Formik, Field, Form, ErrorMessage, useFormik} from 'formik';
+import * as Yup from 'yup'
 
-
-const USER_REGEX: RegExp = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const EMAIL_REGEX: RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const REGISTER_URL:string = "/auth/register";
 
 function Copyright(props: any) {
@@ -56,115 +52,76 @@ const theme = createTheme({
   },
 });
 
-
 export default function Signup() {
+
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().min(3, "Name too short.").required("Required"),
+        lastName: Yup.string().min(3, "Last name too short.").required("Required"),
+        userName: Yup.string().min(6, "Username too short").required("Required"),
+        email: Yup.string().email("Enter valid email").required("Required"),
+        password: Yup.string().min(8, "Password minimum length should be 8").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/, 
+            "Password must contain at least one uppercase letter, one lowercase letter, number and special character").required("Required"),
+        matchPassword: Yup.string().oneOf([Yup.ref('password')], "Password not matched").required("Required"),
+    })
+
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-
-  const [name, setName] = useState("");
-  const [validName, setValidName] = useState(false);
-  const [nameFocus, setNameFocus] = useState(false);
-
-  const [surname, setsurname] = useState("");
-  const [validsurname, setvalidsurname] = useState(false);
-  const [surnameFocus, setsurnameFocus] = useState(false);
-
-  const [user, setUser] = useState("");
-  const [validUser, setValidUser] = useState(false);
-  const [userFocus, setUserFocus] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [validEmail, setValidEmail] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
 
   const [birth, setBirth] = React.useState<Dayjs | null>(
     dayjs('2014-08-18'),
   );
   
   const handleBirthChange = (newValue: Dayjs | null) => {
-    setBirthCount(true);
     setBirth(newValue);
   };
-
-  const [pwd, setPwd] = useState("");
-  const [validPwd, setValidPwd] = useState(false);
-  const [pwdFocus, setPwdFocus] = useState(false);
-
-  const [matchPwd, setMatchPwd] = useState("");
-  const [validMatch, setValidMatch] = useState(false);
-  const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [nameCount, setNameCount] = useState(false);
-  const [surnameCount, setsurNameCount] = useState(false);
-  const [usernameCount, setuserNameCount] = useState(false);
-  const [emailCount, setemailCount] = useState(false);
-  const [passwordCount, setpasswordCount] = useState(false);
-  const [matchCount, setmatchCount] = useState(false);
-  const [birthCount, setBirthCount] = useState(false);
-
   const [open, setOpen] = React.useState(false);
 
-
-  useEffect(() => {
-    setValidUser(USER_REGEX.test(user));
-  }, [user]);
-
-  useEffect(() => {
-    setValidName(name?.length !== 0);
-  }, [name]);
-
-  useEffect(() => {
-    setvalidsurname(surname?.length !== 0);
-  }, [surname]);
-
-  useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email));
-  }, [email]);
-
-  useEffect(() => {
-    setValidPwd(PWD_REGEX.test(pwd));
-    setValidMatch(pwd === matchPwd && validPwd);
-  }, [pwd, matchPwd]);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [user, pwd, matchPwd]);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    setOpen(true);
-    setTimeout(() => {
-      setOpen(false);
-    }, 500);
+  const formik = useFormik({
+    initialValues: {
+        name: '',
+        lastName: '',
+        userName: '',
+        email: '',
+        password: '',
+        matchPassword: ''
+    },
     
-    try{
-      const response = await axiosPrivate.post(REGISTER_URL, 
-                JSON.stringify({first_name: name, 
-                        last_name: surname, 
-                        username: user, 
-                        email: email, 
-                        password: pwd,
-                        date_of_birth: birth})
-               );
-      localStorage.setItem("accessToken", response?.data?.token);
-      setTimeout(() => {
-        setSuccess(true);
-        setErrMsg("");
-      }, 500);
-      navigate(from, {replace: true})
-    } catch(err:any){
-      if(!err?.response){
-        setErrMsg('Nema odgovora sa servera');
-      } else {
-        setErrMsg(err.response.data.error)
-      }
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+        }, 500);
+
+        try{
+            const response = await axiosPrivate.post(REGISTER_URL, 
+                      JSON.stringify({first_name: values.name, 
+                              last_name: values.lastName, 
+                              username: values.userName, 
+                              email: values.email, 
+                              password: values.password,
+                              date_of_birth: birth})
+                     );
+            localStorage.setItem("accessToken", response?.data?.token);
+            setTimeout(() => {
+              setSuccess(true);
+              setErrMsg("");
+            }, 500);
+            navigate(from, {replace: true})
+          } catch(err:any){
+            if(!err?.response){
+              setErrMsg('Nema odgovora sa servera');
+            } else {
+              setErrMsg(err.response.data.message)
+            }
+          }
     }
-  };
+  });
 
   return (
     <>
@@ -192,148 +149,75 @@ export default function Signup() {
                 <LockOutlinedIcon />
               </Avatar>
               {errMsg && <Alert severity="error">
-                            <AlertTitle>Pogreška</AlertTitle>
-                                <strong>{errMsg}</strong>
+                        <strong>Pogreška </strong> {errMsg}
                         </Alert>}
-              <Typography component="h1" variant="h5">
+              <Typography component="h1" variant="h5" sx={{mb:2}}>
                 Registracija
               </Typography>
-              <Box
-                component="form"
-                noValidate
-                onSubmit={handleSubmit}
-                sx={{ mt: 3 }}
-              >
+             <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} sm={5}>
+                  <Grid item xs={12} sm={6}>
                     <TextField
+                     value={formik.values.name}
+                     onChange={formik.handleChange}
+                     onBlur={formik.handleBlur}
+                     error={Boolean(formik.errors.name) && formik.touched.name}
+                     helperText={formik.errors.name && formik.touched.name ? formik.errors.name: ''}
                       name="name"
                       required
-                      onChange={(e) => {
-                        setName(e.target.value);
-                        setNameCount(true);
-                      }}
-                      onFocus={() => {
-                        setNameFocus(true);
-                      }}
-                      onBlur={() => {
-                        setNameFocus(false);
-                      }}
                       fullWidth
                       id="name"
                       label="Ime"
                       autoFocus
-                      error={ErrorInput(nameCount, validName, nameFocus)}
-                      helperText={
-                        ErrorInput(nameCount, validName, nameFocus)
-                          ? "Ime ne smije biti prazno"
-                          : ""
-                      }
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={1}>
-                    {validName && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
-                  </Grid>
-
-                  <Grid item xs={12} sm={5}>
+                  <Grid item xs={12} sm={6}>
                     <TextField
+                     value={formik.values.lastName}
+                     onChange={formik.handleChange}
+                     onBlur={formik.handleBlur}
+                     error={Boolean(formik.errors.lastName) && formik.touched.lastName}
+                     helperText={formik.errors.lastName && formik.touched.lastName ? formik.errors.lastName: ''}
+                      name="lastName"
                       required
                       fullWidth
-                      id="surName"
+                      id="lastName"
                       label="Prezime"
-                      name="surName"
-                      onChange={(e) => {
-                        setsurname(e.target.value);
-                        setsurNameCount(true);
-                      }}
-                      onFocus={() => {
-                        setsurnameFocus(true);
-                      }}
-                      onBlur={() => {
-                        setsurnameFocus(false);
-                      }}
-                      error={ErrorInput(
-                        surnameCount,
-                        validsurname,
-                        surnameFocus
-                      )}
-                      helperText={
-                        ErrorInput(surnameCount, validsurname, surnameFocus)
-                          ? "Prezime ne smije biti prazno"
-                          : ""
-                      }
                     />
                   </Grid>
-                  <Grid item xs={12} sm={1}>
-                      
-                      {validsurname && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
-                      
-                  </Grid>
 
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
-                      inputProps={{ maxLength: 24 }}
+                     value={formik.values.userName}
+                     onChange={formik.handleChange}
+                     onBlur={formik.handleBlur}
+                     error={Boolean(formik.errors.userName) && formik.touched.userName}
+                     helperText={formik.errors.userName && formik.touched.userName ? formik.errors.userName: ''}
+                      name="userName"
                       required
                       fullWidth
                       id="userName"
                       label="Username"
-                      name="userName"
-                      onChange={(e) => {
-                        setUser(e.target.value);
-                        setuserNameCount(true);
-                      }}
-                      onFocus={() => {
-                        setUserFocus(true);
-                      }}
-                      onBlur={() => {
-                        setUserFocus(false);
-                      }}
-                      error={ErrorInput(usernameCount, validUser, userFocus)}
-                      helperText={
-                        ErrorInput(usernameCount, validUser, userFocus)
-                          ? "Username mora biti između 4-24 znaka te" +
-                            " započinje velikim ili malim slovom nakon čega slijedi:slova, -, _, brojke"
-                          : ""
-                      }
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={1}>
-                    {validUser && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
-                  </Grid>
-
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
-                      required
-                      fullWidth
-                      id="email"
-                      label="Email Address"
-                      name="email"
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setemailCount(true);
-                      }}
-                      onFocus={() => {
-                        setEmailFocus(true);
-                      }}
-                      onBlur={() => {
-                        setEmailFocus(false);
-                      }}
-                      error={ErrorInput(emailCount, validEmail, emailFocus)}
-                      helperText={
-                        ErrorInput(emailCount, validEmail, emailFocus)
-                          ? "Unesite ispravan e-mail."
-                          : ""
-                      }
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={Boolean(formik.errors.email) && formik.touched.email}
+                      helperText={formik.errors.email && formik.touched.email ? formik.errors.email: ''}
+                       name="email"
+                       required
+                       fullWidth
+                       id="email"
+                       label="Email"
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={1}>
-                    {validEmail && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
-                  </Grid>
-
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={12}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DesktopDatePicker
                       label="Odaberite datum rođenja"
@@ -346,84 +230,46 @@ export default function Signup() {
                   </LocalizationProvider>
 
                   </Grid>
-                  <Grid item xs={12} sm={1}>
-                    {birth && birthCount && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
-                  </Grid>
 
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
-                      inputProps={{ maxLength: 24 }}
+                    inputProps={{ maxLength: 24 }}
+                    type='password'
+                     value={formik.values.password}
+                     onChange={formik.handleChange}
+                     onBlur={formik.handleBlur}
+                     error={Boolean(formik.errors.password) && formik.touched.password}
+                     helperText={formik.errors.password && formik.touched.password ? formik.errors.password: ''}
+                      name="password"
                       required
                       fullWidth
-                      name="pwd"
+                      id="password"
                       label="Password"
-                      type="password"
-                      id="pwd"
-                      onChange={(e) => {
-                        setPwd(e.target.value);
-                        setpasswordCount(true);
-                      }}
-                      onFocus={() => {
-                        setPwdFocus(true);
-                      }}
-                      onBlur={() => {
-                        setPwdFocus(false);
-                      }}
-                      error={ErrorInput(passwordCount, validPwd, pwdFocus)}
-                      helperText={
-                        ErrorInput(passwordCount, validPwd, pwdFocus)
-                          ? "Lozinka mora biti između 8 i 24 znaka te se sastoji od: " +
-                            "barem jednom malog slova, barem jednog velikog slova, barem jedne znamenke te barem jednog specijalnog znaka."
-                          : ""
-                      }
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={1}>
-                  {validPwd && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
-                  </Grid>
-
-                  <Grid item xs={12} sm={11}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       inputProps={{ maxLength: 24 }}
-                      required
-                      fullWidth
-                      name="matchpassword"
-                      label="Confirm password"
-                      type="password"
-                      id="matchpassword"
-                      onChange={(e) => {
-                        setMatchPwd(e.target.value);
-                        setmatchCount(true);
-                      }}
-                      onFocus={() => {
-                        setMatchFocus(true);
-                      }}
-                      onBlur={() => {
-                        setMatchFocus(false);
-                      }}
-                      error={ErrorInput(matchCount, validMatch, matchFocus)}
-                      helperText={
-                        ErrorInput(matchCount, validMatch, matchFocus)
-                          ? "Lozinke se ne podudaraju"
-                          : ""
-                      }
+                      type='password'
+                      value={formik.values.matchPassword}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={Boolean(formik.errors.matchPassword) && formik.touched.matchPassword}
+                      helperText={formik.errors.matchPassword && formik.touched.matchPassword ? formik.errors.matchPassword: ''}
+                       name="matchPassword"
+                       required
+                       fullWidth
+                       id="matchPassword"
+                       label="Confirm Password"
                     />
-                  </Grid>
-                  <Grid item xs={12} sm={1}>
-                  {validMatch && <CheckIcon style={{ color: "green"}} fontSize="medium"/>}
                   </Grid>
                 </Grid>
                 <Button
                   disabled={
-                    !validName ||
-                    !validPwd ||
-                    !validMatch ||
-                    !validUser ||
-                    !validEmail ||
-                    !validsurname
-                      ? true
-                      : false
+                    !formik.touched.name && !formik.touched.lastName &&  !formik.touched.email && !formik.touched.userName 
+                    && !formik.touched.password && !formik.touched.matchPassword 
+                    ? true: !formik.isValid
                   }
                   type="submit"
                   fullWidth
@@ -439,7 +285,7 @@ export default function Signup() {
                     </Link>
                   </Grid>
                 </Grid>
-              </Box>
+             </form>
             </Box>
             <Copyright sx={{ mt: 5 }} />
           </Container>
