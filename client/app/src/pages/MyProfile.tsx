@@ -3,7 +3,7 @@ import Profile from '../components/Profile';
 
 function MyProfile(props : any) {
     return (
-        <Profile info = {props.info} />
+        <Profile username = {props.username} fullname = {props.fullname} followers = {props.followers} following = {props.following} />
     )
 }
 

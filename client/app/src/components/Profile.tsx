@@ -1,32 +1,49 @@
-import {Grid, Card, Paper, Box, CardHeader, CardMedia} from '@mui/material';
+import {Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent} from '@mui/material';
+
 
 const Profile = ({username, fullname, followers, following} : any) => (
-    <Box width = "500px" height="300px">
-        <Card sx={{ display: 'flex' }}>
-            <CardHeader title = "Moj profil"></CardHeader>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <CardMedia
-                    component = "img"
-                    sx={{ width: 100 }}
-                    image= "..."
-                    alt = 'Profilna slika'
-                />
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                     <Grid item xs={6}>
-                        <Paper>{username}</Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper>{fullname}</Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper>{followers}</Paper>
-                     </Grid>
-                    <Grid item xs={6}>
-                        <Paper>{following}</Paper>
-                    </Grid>
+    <Box width = "700px" height="400px">
+        <Card>
+        <Typography component = "div" variant = "h5" sx = {{p: 2}}>
+                My Profile
+        </Typography>
+        <Card sx = {{display: 'flex'}}>
+            <Box component = "img"
+                sx = {{
+                    width: 150,
+                    height: 150,
+                    minHeight:150,
+                    minWidth:150,
+                    maxHeight: 150,
+                    maxWidth: 150,
+                    m: "2rem"
+                 }}
+                 alt = "Profile picture"
+                 src = "https://source.unsplash.com/random"
+            />
+                
+    
+            <Grid container alignItems = "center" justifyContent = "space-evenly" textAlign = "center" sx = {{margin: 2}}>
+                <Grid item xs = {6}>
+                    <Typography>{username}</Typography>
                 </Grid>
-            </Box>
+                <Grid item xs = {6}>
+                    <Typography>{fullname}</Typography>
+                </Grid>
+                <Grid item xs = {6}>
+                    <Typography>{followers}</Typography>
+                    <Typography>Followers</Typography>
+                </Grid>
+                <Grid item xs = {6}>
+                    <Typography>{following}</Typography>
+                    <Typography>Following</Typography>
+                </Grid>
+                
+
+            </Grid>
+
             
+        </Card>
         </Card>
     </Box>
 )

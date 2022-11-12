@@ -2,20 +2,16 @@ import React from 'react';
 import {Grid} from '@mui/material';
 import MyProfile from './pages/MyProfile';
 
-let info = 
-  {
-    username: 'ben10',
-    fullname: 'Ben Ten',
-    followers: 454,
-    following: 343,
-  }
-
+const username = 'marijakompar'
+const fullname = 'Marija Kompar'
+const followers = 10
+const following = 10
 
 function App() {
   return (
     <Grid container spacing = {0} direction = "column" alignItems = "center" justifyContent = "center">
         <Grid item width = "40%">
-          <MyProfile info = {info} />
+          <MyProfile username = {username} fullname = {fullname} followers = {followers} following = {following} />
         </Grid>
     </Grid>
   );
