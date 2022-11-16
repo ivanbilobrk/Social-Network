@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import UserProfileModel from '../models/UserProfileModel';
-import { getNewEntityAuditData } from '../util/auditData';
+import UserProfileModel from '../models/UserProfileModel.js';
+import { getNewEntityAuditData } from '../util/auditData.js';
 
 export default class UserRepository {
   private prisma: PrismaClient;

@@ -10,6 +10,7 @@ import { Grid } from '@mui/material';
 import React from 'react';
 import Home from './pages/Home';
 import HomePage from './pages/HomePage';
+import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={['user']} />}>
             <Route path="/test" element={<Test />} />
             <Route path="/home" element={<HomePage />}></Route>
+            <Route path="/edit" element={<EditProfile/>}></Route>
           </Route>
           <Route path="unauthorized" element={<Unauthorized />} />
 

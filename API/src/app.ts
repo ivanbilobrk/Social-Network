@@ -1,5 +1,5 @@
 import express from 'express';
-import loader from './loader/index';
+import loader from './loader/index.js';
 
 async function startServer() {
   const app = express();
