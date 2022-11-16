@@ -1,9 +1,9 @@
-import { DummyPost, getPostById, updatePost, createPost } from '../repositories/dummyPostsRepository';
-import { APIError } from '../errors/APIError';
-import logger from '../config/logger';
+import { DummyPost, getPostById, updatePost, createPost } from '../repositories/dummyPostsRepository.js';
+import { APIError } from '../errors/APIError.js';
+import logger from '../config/logger.js';
 
 export const getDummyPostById = async (id: number): Promise<DummyPost> => {
-  const post = getPostById(id);
+  let post = getPostById(id);
   if (post === undefined) {
     throw new APIError(`Post with id ${id} not found`, 404, true);
   }

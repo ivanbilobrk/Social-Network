@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { createNewPost, getDummyPostById } from '../../services/dummyPostsService';
-import { forwardError } from '../forwardError';
+import { createNewPost, getDummyPostById } from '../../services/dummyPostsService.js';
+import { forwardError } from '../forwardError.js';
 
 const dummyPostsRouter = Router();
 

@@ -1,12 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { Server } from 'http';
-import logger from '../config/logger';
-import { APIError } from '../errors/APIError';
-import config from '../config/index';
+import logger from '../config/logger.js';
+import { APIError } from '../errors/APIError.js';
+import config from '../config/index.js';
 import httpStatus from 'http-status';
-import router from '../api/index';
-var cors = require('cors')
-
+import router from '../api/index.js';
+import cors from 'cors';
 
 export default ({ app }: { app: express.Application }): Server | undefined => {
   // setup logger
