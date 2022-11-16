@@ -8,7 +8,8 @@
     "start": "tsc && node dist/app.js",
     "build": "npx prisma generate --schema=./src/prisma/schema.prisma && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "npx prisma migrate dev --schema ./src/prisma/schema.prisma --name"
+    "migrate": "npx prisma migrate dev --schema ./src/prisma/schema.prisma --name",
+    "apply-migrations": "npx prisma migrate deploy --schema ./src/prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +34,7 @@
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
-    "prisma": "^4.5.0",
+    "prisma": "^4.6.1",
     "tslog": "^3.3.4",
     "typescript": "^4.8.4"
   },

@@ -31,7 +31,7 @@ export const getPostById = (id: number): DummyPost | undefined => {
 };
 
 export const createPost = (post: DummyPost): DummyPost => {
-  let nextId = Math.max(...dummyDb.posts.map((t) => t.id)) + 1;
+  const nextId = Math.max(...dummyDb.posts.map((t) => t.id)) + 1;
   const new_post: DummyPost = { ...post, id: nextId, views: 0 };
   dummyDb.posts.push(new_post);
   return new_post;

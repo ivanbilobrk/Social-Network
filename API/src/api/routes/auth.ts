@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { forwardError } from '../forwardError';
-import LoginRequest from '../../requests/loginRequest';
-import AuthService from '../../services/authService';
-import RegistrationRequest from '../../requests/registrationRequest';
+import { forwardError } from '../forwardError.js';
+import LoginRequest from '../../requests/auth/loginRequest.js';
+import AuthService from '../../services/authService.js';
+import RegistrationRequest from '../../requests/auth/registrationRequest.js';
 import { check, validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
+import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
 
 const authRouter = Router();
 
@@ -14,6 +15,16 @@ authRouter.post(
     const loginRequest: LoginRequest = req.body;
     const authService = new AuthService();
     res.json(await authService.login(loginRequest));
+  }),
+);
+
+authRouter.post(
+  '/change-password',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const authService = new AuthService(req.user);
+    await authService.changePassword(req.body);
+    res.sendStatus(StatusCodes.OK);
   }),
 );
 
