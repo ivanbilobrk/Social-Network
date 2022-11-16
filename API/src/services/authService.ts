@@ -4,9 +4,10 @@ import UserRepository from '../repositories/userRepository.js';
 import config from '../config/index.js';
 import { APIError } from '../errors/APIError.js';
 import { StatusCodes } from 'http-status-codes';
-import LoginRequest from '../requests/loginRequest.js';
-import RegistrationRequest from '../requests/registrationRequest.js';
+import LoginRequest from '../requests/auth/loginRequest.js';
+import RegistrationRequest from '../requests/auth/registrationRequest.js';
 import logger from '../config/logger.js';
+import ChangePasswordRequest from '../requests/auth/changePasswordRequest.js';
 
 export type UserClaims = {
   id: number;
@@ -81,5 +82,28 @@ export default class AuthService {
       logger.error(error);
       throw new APIError('Failed to create user', StatusCodes.INTERNAL_SERVER_ERROR, true);
     }
+  }
+
+  async changePassword(request: ChangePasswordRequest): Promise<void> {
+    const { oldPassword, newPassword } = request;
+
+    if (oldPassword === newPassword) {
+      throw new APIError('New password must be different from old password', StatusCodes.BAD_REQUEST, true);
+    }
+
+    const user = await this.userRepository.findByEmail(this.currentUser?.email ?? '');
+    if (!user) {
+      throw new APIError('User not found', StatusCodes.NOT_FOUND, true);
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password_hash);
+    if (!isPasswordValid) {
+      throw new APIError('Invalid password', StatusCodes.UNAUTHORIZED, true);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await this.userRepository.updatePassword(user.id, hashedPassword);
   }
 }

@@ -15,6 +15,17 @@ export default class UserRepository {
     });
   }
 
+  async updatePassword(id: number, password_hash: string) {
+    return await this.prisma.userProfile.update({
+      where: {
+        id,
+      },
+      data: {
+        password_hash,
+      },
+    });
+  }
+
   async findByEmail(email: string) {
     return await this.prisma.userProfile.findUnique({
       where: {
