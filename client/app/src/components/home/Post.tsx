@@ -24,7 +24,7 @@ function Post({ username, date, description, noOfLikes }: any) {
       />
       <Box
         component="img"
-        sx={{ width: '100%', height: '18rem', objectFit: 'cover' }}
+        sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
         alt="The house from the offer."
         src="https://source.unsplash.com/random"
       />
@@ -37,7 +37,7 @@ function Post({ username, date, description, noOfLikes }: any) {
           </Grid>
           <Grid item xs={1}>
             <Typography variant="overline" fontSize={15}>
-              {noOfLikes}
+              {liked ? noOfLikes + 1 : noOfLikes}
             </Typography>
           </Grid>
           <Grid item xs={3}>

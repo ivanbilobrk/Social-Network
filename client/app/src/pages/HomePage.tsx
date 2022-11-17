@@ -1,6 +1,6 @@
-import { Grid } from '@mui/material'
-import React from 'react'
-import Home from './Home'
+import { Grid } from '@mui/material';
+import Header from '../components/Header';
+import Home from './Home';
 
 let posts = [
   {
@@ -23,18 +23,17 @@ let posts = [
   },
 ];
 
-
-
-
 const HomePage = () => {
   return (
-    <Grid container direction="column" alignItems="center" justifyContent="center">
-          <Grid item width="40%">
-            <Home posts={posts} />
-          </Grid>
+    <>
+      <Header></Header>
+      <Grid container direction="column" alignItems="center" justifyContent="center">
+        <Grid item width="40%">
+          <Home posts={posts} />
         </Grid>
-        
-  )
-}
+      </Grid>
+    </>
+  );
+};
 
-export default HomePage
+export default HomePage;
