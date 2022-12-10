@@ -104,7 +104,7 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem >Edit Profile</MenuItem>
       <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
-      <MenuItem >My Profil</MenuItem>
+      <MenuItem >My Profile</MenuItem>
       <MenuItem ><Button variant="outlined" onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>Logout</Button></MenuItem>
     </Menu>
   );

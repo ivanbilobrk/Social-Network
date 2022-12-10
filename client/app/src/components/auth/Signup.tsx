@@ -167,7 +167,7 @@ export default function Signup() {
                       required
                       fullWidth
                       id="name"
-                      label="Name"
+                      label="First name"
                       autoFocus
                     />
                   </Grid>
@@ -220,7 +220,7 @@ export default function Signup() {
                   <Grid item xs={12} sm={12}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DesktopDatePicker
-                      label="Choose your birth date"
+                      label="Choose your birthdate"
                       maxDate={dayjs()}
                       inputFormat="MM/DD/YYYY"
                       value={birth}
