@@ -1,6 +1,7 @@
-import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import { Alert, Box, Button, Container, Fab, Grid, TextField } from '@mui/material';
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
+import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 
 type Props = {
   open: Boolean;
@@ -29,17 +30,8 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   }, []);
 
   function profilePictureChange(e: React.ChangeEvent<HTMLInputElement>): void {
-    setErrors((prev) => prev.filter((e) => e !== 'Image must be less than 10MB!'));
-
-    if (
-      e.target.files &&
-      e.target.files[0] &&
-      e.target.files[0].size < 10000000 &&
-      e.target.files[0].type === 'image/jpeg'
-    ) {
+    if (e.target.files) {
       setPostPhoto(e.target.files[0]);
-    } else {
-      setErrors((previousValue) => [...previousValue, 'Image must be less than 10MB!']);
     }
   }
 
@@ -70,9 +62,19 @@ const AddPostPopup = ({ open, onClose }: Props) => {
           <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
             <Grid item xs={6}>
               <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
-                <Grid xs={12} item>
-                  <label>Picture to post {'  '}</label>
-                  <input id="profile_file" type="file" accept="image/jpeg" onChange={(e) => profilePictureChange(e)} />
+                <Grid item>
+                  <input
+                    hidden
+                    id="contained-button-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => profilePictureChange(e)}
+                  />
+                  <label htmlFor="contained-button-file">
+                    <Fab component="span">
+                      <ImageSearchIcon />
+                    </Fab>
+                  </label>
                 </Grid>
                 <Grid xs={12} item>
                   {PostPhoto !== undefined && (
@@ -83,6 +85,7 @@ const AddPostPopup = ({ open, onClose }: Props) => {
                       sx={{ width: 0.8, aspectRatio: 0.5 }}
                     />
                   )}
+                  {/* //TODO add a placeholder */}
                 </Grid>
               </Grid>
             </Grid>
