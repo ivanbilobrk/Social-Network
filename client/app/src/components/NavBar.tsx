@@ -17,6 +17,9 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import getUser from '../util/getUser';
 import User from '../interface/User'
 import { Link } from "react-router-dom";
+import Button from '@mui/material/Button';
+import handleLogout from '../util/Logout';
+import { useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -61,6 +64,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   }));
 
 export default function PrimarySearchAppBar() {
+  const navigate = useNavigate();
   const user: User|null = getUser();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -98,10 +102,10 @@ export default function PrimarySearchAppBar() {
       open={isAccountOpen}
       onClose={()=>{handleMenuClose(setAnchorEl)}}
     >
-      <MenuItem >Uredi Profil</MenuItem>
+      <MenuItem >Edit Profile</MenuItem>
       <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
-      <MenuItem >Moj Profil</MenuItem>
-      <MenuItem >Logout</MenuItem>
+      <MenuItem >My Profil</MenuItem>
+      <MenuItem ><Button variant="outlined" onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>Logout</Button></MenuItem>
     </Menu>
   );
 
@@ -139,7 +143,7 @@ export default function PrimarySearchAppBar() {
             <MenuIcon />
           </IconButton>
         
-           <Link to="/aboutUs" style={{ textDecoration: 'none', color: 'white'}}>  
+           <Link to="/home" style={{ textDecoration: 'none', color: 'white'}}>  
            <Typography
             variant="h6"
             noWrap
@@ -158,21 +162,7 @@ export default function PrimarySearchAppBar() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
-            <IconButton
-              size="large"
-              edge="end"
-              sx={{mr:0.5}}
-              aria-label="show 17 new notifications"
-              aria-controls={NotificationsId}
-              aria-haspopup="true"
-              onClick={(e)=>{handleMenuOpen(e, setAnchorNotifications)}}
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+    
             <IconButton
               size="large"
               edge="end"
@@ -187,7 +177,6 @@ export default function PrimarySearchAppBar() {
           </Box>
         </Toolbar>
       </AppBar>
-      {renderNotifications}
       {renderAccountMenu}
     </Box>
   );

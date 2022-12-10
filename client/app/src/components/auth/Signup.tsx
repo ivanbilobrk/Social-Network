@@ -31,7 +31,7 @@ function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="http:/localhost:3000/aboutUs">
         Projekt
       </Link>{' '}
       {new Date().getFullYear()}
@@ -112,7 +112,7 @@ export default function Signup() {
               setSuccess(true);
               setErrMsg("");
             }, 500);
-            navigate(from, {replace: true})
+            navigate('/home', {replace: true})
           } catch(err:any){
             if(!err?.response){
               setErrMsg('Nema odgovora sa servera');
@@ -149,10 +149,10 @@ export default function Signup() {
                 <LockOutlinedIcon />
               </Avatar>
               {errMsg && <Alert severity="error">
-                        <strong>Pogreška </strong> {errMsg}
+                        <strong>Error </strong> {errMsg}
                         </Alert>}
               <Typography component="h1" variant="h5" sx={{mb:2}}>
-                Registracija
+                Sign up
               </Typography>
              <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2} alignItems="center">
@@ -167,7 +167,7 @@ export default function Signup() {
                       required
                       fullWidth
                       id="name"
-                      label="Ime"
+                      label="Name"
                       autoFocus
                     />
                   </Grid>
@@ -183,7 +183,7 @@ export default function Signup() {
                       required
                       fullWidth
                       id="lastName"
-                      label="Prezime"
+                      label="Last name"
                     />
                   </Grid>
 
@@ -220,7 +220,7 @@ export default function Signup() {
                   <Grid item xs={12} sm={12}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DesktopDatePicker
-                      label="Odaberite datum rođenja"
+                      label="Choose your birth date"
                       maxDate={dayjs()}
                       inputFormat="MM/DD/YYYY"
                       value={birth}
@@ -276,12 +276,12 @@ export default function Signup() {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Registriraj se!
+                  Sign up!
                 </Button>
                 <Grid container justifyContent="flex-end">
                   <Grid item>
                     <Link href="/login" variant="body2">
-                      Već imaš profil? Prijavi se!
+                      Already have a profile? Login here.
                     </Link>
                   </Grid>
                 </Grid>

@@ -30,7 +30,7 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="http:/localhost:3000/aboutUs">
         Projekt
       </Link>{" "}
       {new Date().getFullYear()}
@@ -87,7 +87,7 @@ const validationSchema = Yup.object().shape({
         setErrMsg("");
       }, 500);
 
-      navigate(from, {replace: true})
+      navigate('/home', {replace: true})
     } catch(err:any){
       if(!err?.response){
         setErrMsg('Nema odgovora sa servera');
@@ -123,10 +123,10 @@ const validationSchema = Yup.object().shape({
                 <LockOutlinedIcon />
               </Avatar>
               {errMsg && <Alert severity="error">
-                                <strong>Pogreška </strong> {errMsg}
+                                <strong>Error </strong> {errMsg}
                         </Alert>}
               <Typography component="h1" variant="h5" sx={{mb:2}}>
-                Prijava
+                Login
               </Typography>
               <Formik initialValues={initialValues} validationSchema={validationSchema}
                onSubmit={handleSubmit}>
@@ -144,7 +144,7 @@ const validationSchema = Yup.object().shape({
                           
                             <Button type='submit' color='primary' 
                             variant="contained" disabled={!props.touched.password && !props.touched.email ? true: !props.isValid}
-                            sx={{ mt: 3, mb: 2 }} fullWidth>Prijavi se</Button>
+                            sx={{ mt: 3, mb: 2 }} fullWidth>Login</Button>
 
                         </Form>
                     )}
@@ -152,7 +152,7 @@ const validationSchema = Yup.object().shape({
               <Grid container justifyContent="flex-end">
                   <Grid item>
                     <Link href="/signup" variant="body2">
-                      Nemaš profil? Registriraj se!
+                      Don't have a profile? Sign up here.
                     </Link>
                   </Grid>
                 </Grid>
