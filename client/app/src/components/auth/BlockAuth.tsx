@@ -7,7 +7,7 @@ const BlockAuth = ()=>{
         const user = getUser();
         if(user!== null){
             return(
-                <Navigate to="/" state={{from: location}} replace/>
+                <Navigate to="/home" state={{from: location}} replace/>
             )
         } else {
             return(

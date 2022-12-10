@@ -1,6 +1,7 @@
 import { Grid } from '@mui/material'
 import React from 'react'
 import Home from './Home'
+import NavBar from '../components/NavBar'
 
 let posts = [
   {
@@ -28,11 +29,14 @@ let posts = [
 
 const HomePage = () => {
   return (
+    <>
+    <NavBar/>
     <Grid container direction="column" alignItems="center" justifyContent="center">
           <Grid item width="40%">
             <Home posts={posts} />
           </Grid>
         </Grid>
+    </>
         
   )
 }
