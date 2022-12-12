@@ -6,20 +6,41 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MessageIcon from '@mui/icons-material/Message';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import getUser from '../util/getUser';
 import User from '../interface/User'
 import { Link } from "react-router-dom";
-import Button from '@mui/material/Button';
 import handleLogout from '../util/Logout';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Logout from '@mui/icons-material/Logout';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import { Divider, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+
+const users = [
+  { userName: 'TheShawshankRedemption', key: 1, firstName: 'Ime1', lastName:'Prezime1'},
+  { userName: 'TheGodfather', key: 2 ,firstName: 'Ime2', lastName:'Prezime2'},
+  { userName: 'TheGodfather:PartII', key: 3, firstName: 'Ime1', lastName:'Prezime3' },
+  { userName: 'TheDarkKnight', key: 4, firstName: 'Ime3', lastName:'Prezime4' },
+  { userName: '12AngryMen', key: 5, firstName: 'Ime4', lastName:'Prezime5' },
+  { userName: "Schindler'sList", key: 6, firstName: 'Ime5', lastName:'Prezime6' },
+  { userName: 'PulpFiction', key: 7, firstName: 'Ime6', lastName:'Prezime7' }
+];
+
+const getIdByUsername = (userName:string) =>{
+    return (users.filter(user=>user.userName == userName))[0];
+}
+
+const extractUserNameFromOption = (option:string) =>{
+    return option.split(" ")[0];
+}
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -63,7 +84,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props:any) {
   const navigate = useNavigate();
   const user: User|null = getUser();
 
@@ -105,7 +126,12 @@ export default function PrimarySearchAppBar() {
       <MenuItem >Edit Profile</MenuItem>
       <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
       <MenuItem >My Profile</MenuItem>
-      <MenuItem ><Button variant="outlined" onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>Logout</Button></MenuItem>
+      <MenuItem onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
     </Menu>
   );
 
@@ -143,23 +169,41 @@ export default function PrimarySearchAppBar() {
             <MenuIcon />
           </IconButton>
         
-           <Link to="/home" style={{ textDecoration: 'none', color: 'white'}}>  
+           <Link to="/home" style={{ textDecoration: 'none', color: 'white', width:70}}>  
            <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' }, mr:7}}
+            sx={{ display: { xs: 'none', sm: 'block' }}}
           >Projekt</Typography>
           </Link>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+          
+                 <Autocomplete sx={{ width: 400 }}
+                    id="free-solo-demo"
+                    freeSolo
+                    options={users.map((option) => {return option.userName+" "+option.firstName+" "+option.lastName})}
+                    
+                    renderOption ={(option:any)=>{ return (
+                                      <>
+                                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',}}>
+                                          <Link to = {`/profile?id=${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}}>
+                                            <ListItem key={`${option.key}`}>
+                                              <ListItemAvatar>
+                                                <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random"/>
+                                              </ListItemAvatar>
+                                            <ListItemText primary={extractUserNameFromOption(option.key)}/> </ListItem>
+                                          </Link>
+                                          <Divider variant="inset" component="li" />
+                                        </List>
+                                      </>
+                      )}}
+                    renderInput={(params) => 
+                    <>
+                      <SearchIconWrapper sx={{mr:5}}>
+                        <SearchIcon />
+                      </SearchIconWrapper>
+                      <TextField  {...params} label="Search users" sx={{ ml: 6, color:'red' }}/>
+                    </>}/>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
     
