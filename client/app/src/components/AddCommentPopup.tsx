@@ -1,11 +1,38 @@
-import { Alert, Box, Button, Container, Fab, Grid, TextField } from '@mui/material';
+import { Alert, Box, Button, Container, Fab, Grid, List, Paper, TextField } from '@mui/material';
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 
+let comments = {
+  comments: [
+    {
+      id: 1,
+      text: 'Wow, this image is stunning!',
+      author: 'Lovro Kovacic',
+      authorId: 1,
+      postId: 1,
+    },
+    {
+      id: 2,
+      text: 'The editing is kind of wonky',
+      author: 'Ela Kumer',
+      authorId: 2,
+      postId: 1,
+    },
+    {
+      id: 3,
+      text: 'These are so rare! It is so great to see them!',
+      author: 'Bobbly Blobily',
+      authorId: 3,
+      postId: 1,
+    },
+  ],
+};
+
 type Props = {
   open: Boolean;
   onClose: any;
+  postPhoto: string;
 };
 
 const OVERLAY: CSSProperties = {
@@ -19,21 +46,12 @@ const OVERLAY: CSSProperties = {
   zIndex: '1000',
 };
 
-const AddPostPopup = ({ open, onClose }: Props) => {
-  const [PostPhoto, setPostPhoto] = useState<Blob>();
-  const [PostText, setPostText] = useState<string>('');
+const AddCommentPopup = ({ open, onClose, postPhoto }: Props) => {
   const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
     setErrors([]);
-    setPostPhoto(undefined);
   }, []);
-
-  function profilePictureChange(e: React.ChangeEvent<HTMLInputElement>): void {
-    if (e.target.files) {
-      setPostPhoto(e.target.files[0]);
-    }
-  }
 
   if (!open) return null;
 
@@ -47,7 +65,7 @@ const AddPostPopup = ({ open, onClose }: Props) => {
           margin: '0 auto',
         }}
       >
-        <Button onClick={onClose} variant="contained" sx={{ marginBottom: '10px', justifySelf: 'flex-end' }}>
+        <Button onClick={onClose} variant="outlined" sx={{ marginBottom: '10px', justifySelf: 'flex-end' }}>
           <ClearIcon />
         </Button>
 
@@ -61,31 +79,15 @@ const AddPostPopup = ({ open, onClose }: Props) => {
           <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
             <Grid item xs={6}>
               <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
-                <Grid item>
-                  <input
-                    hidden
-                    id="contained-button-file"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => profilePictureChange(e)}
-                  />
-                  <label htmlFor="contained-button-file">
-                    <Fab component="span">
-                      <ImageSearchIcon />
-                    </Fab>
-                  </label>
-                </Grid>
                 <Grid xs={12} item style={{ textAlign: 'center' }}>
-                  {PostPhoto !== undefined && (
+                  {postPhoto !== undefined && (
                     <Box
                       component="img"
                       alt="profile pic"
-                      src={URL.createObjectURL(PostPhoto)}
-                      // the image has a round border
-                      sx={{ width: 0.5, aspectRatio: 0.5, border: 3, borderRadius: '2%' }}
+                      src={postPhoto}
+                      sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
                     />
                   )}
-                  {/* //TODO add a placeholder */}
                 </Grid>
               </Grid>
             </Grid>
@@ -93,14 +95,9 @@ const AddPostPopup = ({ open, onClose }: Props) => {
             <Grid xs={6} item>
               <Grid container justifyContent="center" alignContent="center" spacing={1} rowSpacing={2}>
                 <Grid xs={12} item>
-                  <TextField
-                    type="text"
-                    label="Description"
-                    placeholder="Enter your description"
-                    variant="outlined"
-                    fullWidth
-                    sx={{ width: '100%', height: '100%' }}
-                  />
+                  <Paper style={{ maxHeight: 200, overflow: 'auto' }}>
+                    <List>{/* TODO add mapping to comments */}</List>
+                  </Paper>
                 </Grid>
               </Grid>
             </Grid>
@@ -121,4 +118,4 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   );
 };
 
-export default AddPostPopup;
+export default AddCommentPopup;

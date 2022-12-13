@@ -5,7 +5,7 @@ import { useState } from 'react';
 import AddPostPopup from '../components/AddPostPopup';
 
 function Home(props: any) {
-  const [isOpen, setIsOpen] = useState<Boolean>(false);
+  const [isAddPostOpen, setisAddPostOpen] = useState<Boolean>(false);
 
   return (
     <>
@@ -16,7 +16,7 @@ function Home(props: any) {
             startIcon={<AddIcon />}
             sx={{ m: 3, alignSelf: 'start', borderColor: 'lightblue' }}
             onClick={() => {
-              setIsOpen(!isOpen);
+              setisAddPostOpen(!isAddPostOpen);
             }}
           >
             Add Post
@@ -27,7 +27,7 @@ function Home(props: any) {
         </Grid>
       </Grid>
 
-      <AddPostPopup open={isOpen} onClose={() => setIsOpen(false)} />
+      <AddPostPopup open={isAddPostOpen} onClose={() => setisAddPostOpen(false)} />
     </>
   );
 }
