@@ -18,7 +18,7 @@ export default class PostsService {
     return await this.postsRepository.getAllUserPosts(userId);
   }
 
-  async getPostById(postId: number): Promise<Post | null> {
+  async getPostById(postId: number): Promise<Post> {
     const post = await this.postsRepository.getPostById(postId);
     if (!post) {
       throw new APIError(`Post with id ${postId} not found`, StatusCodes.NOT_FOUND, true);
