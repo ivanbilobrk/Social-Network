@@ -41,4 +41,8 @@ export default class UserRepository {
       },
     });
   }
+
+  async findAll() {
+    return await this.prisma.userProfile.findAll();
+  }
 }

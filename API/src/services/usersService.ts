@@ -9,6 +9,10 @@ export default class UsersService {
     private readonly usersRepository: UserRepository = new UserRepository(currentUserId),
   ) {}
 
+  async getUsers(): Promise<UserProfileModel[] | null> {
+    return await this.usersRepository.findAll();
+  }
+
   async getUserById(userId: number): Promise<UserProfileModel> {
     const user = await this.usersRepository.findById(userId);
     if (!user) {
