@@ -2,6 +2,7 @@ import { Avatar, Box, Card, CardActions, CardContent, CardHeader, Grid, IconButt
 import { date } from 'yup';
 
 function Comment(props: any) {
+  // this is not doing anything smart, just a skeleton for now
   <Card
     variant="elevation"
     style={{ backgroundColor: 'silver', width: '100%', aspectRatio: 1.2, maxHeight: '30rem' }}
