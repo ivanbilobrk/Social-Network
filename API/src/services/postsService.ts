@@ -14,7 +14,7 @@ export default class PostsService {
     return await this.postsRepository.getAllPosts();
   }
 
-  async getAllUserPosts(userId: number): Promise<Post[] | null> {
+  async getAllUserPosts(userId: number): Promise<Post[]> {
     return await this.postsRepository.getAllUserPosts(userId);
   }
 

@@ -9,7 +9,7 @@ export default class UsersService {
     private readonly usersRepository: UserRepository = new UserRepository(currentUserId),
   ) {}
 
-  async getUsers(): Promise<UserProfileModel[] | null> {
+  async getUsers(): Promise<UserProfileModel[]> {
     return await this.usersRepository.findAll();
   }
 

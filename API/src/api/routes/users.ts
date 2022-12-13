@@ -6,7 +6,7 @@ import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
 const usersRouter = Router();
 
 usersRouter.get(
-  '',
+  '/',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
