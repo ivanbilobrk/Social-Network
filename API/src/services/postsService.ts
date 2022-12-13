@@ -10,7 +10,7 @@ export default class PostsService {
     private readonly postsRepository: PostsRepository = new PostsRepository(currentUserId),
   ) {}
 
-  async getAllPosts(): Promise<Post[] | null> {
+  async getAllPosts(): Promise<Post[]> {
     return await this.postsRepository.getAllPosts();
   }
 
