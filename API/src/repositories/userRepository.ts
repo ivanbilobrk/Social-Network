@@ -26,11 +26,23 @@ export default class UserRepository {
     });
   }
 
+  async findById(id: number) {
+    return await this.prisma.userProfile.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async findByEmail(email: string) {
     return await this.prisma.userProfile.findUnique({
       where: {
         email,
       },
     });
+  }
+
+  async findAll() {
+    return await this.prisma.userProfile.findAll();
   }
 }
