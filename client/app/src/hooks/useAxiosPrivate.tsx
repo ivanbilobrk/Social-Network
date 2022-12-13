@@ -12,6 +12,7 @@ const useAxiosPrivate = () => {
                 }
                 return config;
             }, async (error) => {
+                console.log(error+"eee")
                 localStorage.removeItem("accessToken")
                 return Promise.reject(error)
             }
@@ -20,6 +21,7 @@ const useAxiosPrivate = () => {
         const responseIntercept = axiosPrivate.interceptors.response.use(
             (response) => response,
             async (error) => {
+                console.log(error+"eee")
                 localStorage.removeItem("accessToken")
                 return Promise.reject(error);
             }

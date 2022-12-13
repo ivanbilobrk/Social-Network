@@ -23,16 +23,19 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Divider, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import axios from '../api/axios';
+import { useEffect, useState } from 'react';
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-const users = [
-  { userName: 'TheShawshankRedemption', key: 1, firstName: 'Ime1', lastName:'Prezime1'},
-  { userName: 'TheGodfather', key: 2 ,firstName: 'Ime2', lastName:'Prezime2'},
-  { userName: 'TheGodfather:PartII', key: 3, firstName: 'Ime1', lastName:'Prezime3' },
-  { userName: 'TheDarkKnight', key: 4, firstName: 'Ime3', lastName:'Prezime4' },
-  { userName: '12AngryMen', key: 5, firstName: 'Ime4', lastName:'Prezime5' },
-  { userName: "Schindler'sList", key: 6, firstName: 'Ime5', lastName:'Prezime6' },
-  { userName: 'PulpFiction', key: 7, firstName: 'Ime6', lastName:'Prezime7' }
-];
+type UserT = {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  key: number
+};
+
+const users: UserT[] = [];
+
 
 const getIdByUsername = (userName:string) =>{
     return (users.filter(user=>user.userName == userName))[0];
@@ -85,8 +88,37 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   }));
 
 export default function PrimarySearchAppBar(props:any) {
+  const [isLoading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const user: User|null = getUser();
+  const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();   
+
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+  
+    const getData = async () => {
+        try {
+            const user = getUser();
+            
+            if(user !== null){
+                const response = await axiosPrivate.get(`/users`, {
+                });
+                response.data.forEach((el:any, index:any)=>{users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name}})
+                setLoading(false);
+            }
+        } catch (err) {                                         
+            console.error(err);
+            navigate('/login', { state: { from: location }, replace: true });
+        }
+    }
+
+    getData();
+    return () => {
+        isMounted = false;
+        controller.abort();
+    }
+}, [])
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -135,6 +167,7 @@ export default function PrimarySearchAppBar(props:any) {
     </Menu>
   );
 
+
   const NotificationsId = 'primary-notifications-menu';
   const renderNotifications = (
     <Menu
@@ -155,8 +188,9 @@ export default function PrimarySearchAppBar(props:any) {
     </Menu>
   );
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
+    if(!isLoading){
+      return (
+        <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -186,7 +220,7 @@ export default function PrimarySearchAppBar(props:any) {
                     renderOption ={(option:any)=>{ return (
                                       <>
                                         <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',}}>
-                                          <Link to = {`/profile?id=${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}}>
+                                          <Link to = {`/users/:${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}}>
                                             <ListItem key={`${option.key}`}>
                                               <ListItemAvatar>
                                                 <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random"/>
@@ -223,5 +257,11 @@ export default function PrimarySearchAppBar(props:any) {
       </AppBar>
       {renderAccountMenu}
     </Box>
-  );
+    );
+    } else {
+      return(<div>
+        Loading...
+        </div>);
+    }
+      
 }
