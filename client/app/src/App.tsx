@@ -2,15 +2,14 @@ import { SignupPage } from './pages/SignupPage';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
+import  HomePage  from './pages/HomePage';
+import EditProfile from './pages/EditProfile'
 import Test from './pages/Test';
 import RequireAuth from './components/auth/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
 import BlockAuth from './components/auth/BlockAuth';
 import { Grid } from '@mui/material';
 import React from 'react';
-import Home from './pages/Home';
-import HomePage from './pages/HomePage';
-import EditProfile from './pages/EditProfile';
 
 function App() {
   return (
