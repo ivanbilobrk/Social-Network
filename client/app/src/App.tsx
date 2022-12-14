@@ -21,12 +21,14 @@ function App() {
             <Route path="/test" element={<Test />} />
             <Route path="/home" element={<HomePage />}></Route>
             <Route path="/edit" element={<EditProfile />}></Route>
-            <Route path = "/myprofile" element = {<MyProfile />}></Route>
+            
           </Route>
           <Route path="unauthorized" element={<Unauthorized />} />
           <Route element={<BlockAuth />}>
             <Route path="signup" element={<SignupPage />}></Route>
             <Route path="login" element={<LoginPage />}></Route>
+            <Route path = "/myprofile" element = {<MyProfile />}></Route>
+
 
             {/* TODO ovo dvoje, home i edit, vrati u require authorized */}
           </Route>

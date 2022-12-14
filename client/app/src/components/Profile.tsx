@@ -1,7 +1,7 @@
-import { Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent } from '@mui/material';
+import { Avatar, Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent } from '@mui/material';
 
 const Profile = ({ username, fullname, followers, following, noOfPosts }: any) => (
-  <Box width="700px" height="400px">
+  <Grid container direction = "column" marginTop={5}>
     <Card>
       <CardHeader style={{ backgroundColor: 'silver', height: 75 }}></CardHeader>
 
@@ -16,17 +16,10 @@ const Profile = ({ username, fullname, followers, following, noOfPosts }: any) =
           marginBottom: -1,
         }}
       >
-        <i
-          style={{
-            borderColor: 'silver',
-            borderRadius: '50%',
-            width: 150,
-            height: 150,
-            display: 'block',
-            background: `url('https://source.unsplash.com/random')`,
-            backgroundPosition: 'center',
-          }}
-        />
+        <Avatar alt="Remy Sharp" 
+                src="https://source.unsplash.com/random" 
+                sx = {{width:120, height:120}}/>
+
       </Box>
       <Grid container alignItems="center" justifyContent="center" direction="column">
         <Grid item xs={12}>
@@ -62,7 +55,7 @@ const Profile = ({ username, fullname, followers, following, noOfPosts }: any) =
         </Grid>
       </Grid>
     </Card>
-  </Box>
+  </Grid>
 );
 
 export default Profile;
