@@ -1,6 +1,6 @@
 import { Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent } from '@mui/material';
 
-const Profile = ({ username, fullname, followers, following, posts }: any) => (
+const Profile = ({ username, fullname, followers, following, noOfPosts }: any) => (
   <Box width="700px" height="400px">
     <Card>
       <CardHeader style={{ backgroundColor: 'silver', height: 75 }}></CardHeader>
@@ -49,7 +49,7 @@ const Profile = ({ username, fullname, followers, following, posts }: any) => (
         marginTop={2}
       >
         <Grid item xs={4} sx={{ borderRight: 1, borderColor: 'silver' }}>
-          <Typography variant="h6">{posts}</Typography>
+          <Typography variant="h6">{noOfPosts}</Typography>
           <Typography>Posts</Typography>
         </Grid>
         <Grid item xs={4} sx={{ borderRight: 1, borderColor: 'silver' }}>
