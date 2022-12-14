@@ -1,6 +1,17 @@
 import { PrismaClient } from '@prisma/client';
-import UserProfileModel from '../models/UserProfileModel.js';
+import User from '../models/User.js';
 import { getNewEntityAuditData } from '../util/auditData.js';
+
+const UserSelect = {
+  id: true,
+  email: true,
+  user_type: true,
+  username: true,
+  first_name: true,
+  last_name: true,
+  date_of_birth: true,
+  joined_at: true,
+};
 
 export default class UserRepository {
   private prisma: PrismaClient;
@@ -9,7 +20,7 @@ export default class UserRepository {
     this.prisma = new PrismaClient();
   }
 
-  async create(data: UserProfileModel) {
+  async create(data: User) {
     return await this.prisma.userProfile.create({
       data: { ...data, ...getNewEntityAuditData(this.currentUserId) },
     });
@@ -26,10 +37,29 @@ export default class UserRepository {
     });
   }
 
+  async findById(id: number) {
+    return await this.prisma.userProfile.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        ...UserSelect,
+      },
+    });
+  }
+
   async findByEmail(email: string) {
     return await this.prisma.userProfile.findUnique({
       where: {
         email,
+      },
+    });
+  }
+
+  async findAll() {
+    return await this.prisma.userProfile.findMany({
+      select: {
+        ...UserSelect,
       },
     });
   }
