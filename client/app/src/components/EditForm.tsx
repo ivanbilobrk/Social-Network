@@ -1,7 +1,7 @@
 import { Button, Container, Grid, TextField} from '@mui/material'
 import React from 'react'
 
-const EditForm = () => {
+const EditForm = ({submitFunction} : any) => {
   return (
       <Container sx={{backgroundColor: "white", padding: '20px 20px', borderRadius: '10px', margin: '0 auto', maxWidth: '450px'}}>
       <form>
@@ -14,10 +14,6 @@ const EditForm = () => {
 
       <Grid xs={12} item>
          <TextField type="text" label="Last Name" placeholder="Enter last name" variant="outlined" fullWidth />
-      </Grid>
-
-      <Grid xs={12} item>
-         <TextField type="email" label="Email" placeholder="Enter your email" variant="outlined" fullWidth />
       </Grid>
 
       <Grid item>
