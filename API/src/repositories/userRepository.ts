@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import User from '../models/User.js';
 import { getNewEntityAuditData } from '../util/auditData.js';
+import User from '../models/User.js';
+import UserProfile from '../models/UserProfile.js';
 
 const UserSelect = {
   id: true,
@@ -11,6 +12,15 @@ const UserSelect = {
   last_name: true,
   date_of_birth: true,
   joined_at: true,
+};
+
+const IncludedFollowers = {
+  _count: {
+    select: {
+      followers: true,
+      following: true,
+    },
+  },
 };
 
 export default class UserRepository {
@@ -37,15 +47,22 @@ export default class UserRepository {
     });
   }
 
-  async findById(id: number) {
-    return await this.prisma.userProfile.findUnique({
+  async findById(userId: number): Promise<UserProfile | null> {
+    const data = await this.prisma.userProfile.findFirstOrThrow({
       where: {
-        id,
+        id: userId,
       },
       select: {
         ...UserSelect,
+        ...IncludedFollowers,
       },
     });
+    const { _count, ...user } = data;
+    return {
+      ...user,
+      followers: _count.followers,
+      following: _count.following,
+    };
   }
 
   async findByEmail(email: string) {
@@ -56,11 +73,17 @@ export default class UserRepository {
     });
   }
 
-  async findAll() {
-    return await this.prisma.userProfile.findMany({
+  async findAll(): Promise<UserProfile[]> {
+    const data = await this.prisma.userProfile.findMany({
       select: {
         ...UserSelect,
+        ...IncludedFollowers,
       },
     });
+    return data.map(({ _count, ...user }) => ({
+      ...user,
+      followers: _count.followers,
+      following: _count.following,
+    }));
   }
 }
