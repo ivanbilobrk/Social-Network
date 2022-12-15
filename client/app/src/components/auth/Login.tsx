@@ -120,9 +120,7 @@ export default function Login() {
               {errMsg && <Alert severity="error">
                                 <strong>Error </strong> {errMsg}
                         </Alert>}
-              <Typography component="h1" variant="h5" sx={{mb:2}}>
-                Login
-              </Typography>
+              
               <Formik initialValues={initialValues} validationSchema={validationSchema}
                onSubmit={handleSubmit}>
             {(props) => (
@@ -137,9 +135,7 @@ export default function Login() {
                                 error={props.errors.password && props.touched.password}
                                 helperText={<ErrorMessage name="password" />} />
                           
-                            <Button type='submit' color='primary' 
-                            variant="contained" disabled={!props.touched.password && !props.touched.email ? true: !props.isValid}
-                            sx={{ mt: 3, mb: 2 }} fullWidth>Login</Button>
+                            
 
                     <Button
                       type="submit"

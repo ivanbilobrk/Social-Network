@@ -1,7 +1,7 @@
 import { Button, Container, Grid, TextField } from '@mui/material'
 import {CSSProperties, useState} from 'react'
 import ClearIcon from '@mui/icons-material/Clear';
-import axios from '../api/axios';
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 type Props = {
   open: Boolean,
@@ -25,6 +25,7 @@ const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
   const [newPassword, setNewPassword] = useState<String>()
   const [oldPassword, setOldPassword] = useState<String>()
   const [newPasswordConfirmed, setNewPasswordConfirmed] = useState<String>()
+  const axiosPrivate = useAxiosPrivate()
    if(!open) return null;
 
    const handleNewPassword = (event: any) => {
@@ -45,7 +46,7 @@ const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
       } else {
          //axios zahtjev za promjenom lozinke
          try{
-            axios.post(
+            axiosPrivate.post(
                '/auth/change-password',
                JSON.stringify({
                   oldPassword: oldPassword,

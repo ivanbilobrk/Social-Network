@@ -13,30 +13,34 @@ function ScrollableFeed(props: any) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  let isMounted = false;
-  const controller = new AbortController();
 
-  const getData = async () => {
-    try{
-      axios.get(
-        '/posts/',
-        {
-          headers: { 'Content-Type': 'application/json' }
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const getData = async () =>{
+      try{
+        const user = getUser();
+
+        if(user != null){
+          const response = await axiosPrivate.get('/posts', {})
+          setPosts(response.data)
         }
-      ).then(function (response){
-        setPosts(response.data)
-      }).catch(function (error){
-        window.alert("Neuspješno dohvćanje postova s backenda!")
-      })
-    }catch(err :any){
-      console.log(err.toJSON());
-    }
-  };
 
-  if(!isMounted){
-    isMounted = true;
-    getData()
-  }
+      } catch(err :any){
+        console.log(err.toJSON())
+      }
+    }
+
+    getData();
+    return () => {
+      isMounted = false;
+      controller.abort();
+    }
+
+  })
+
+  
 
   return (
     <List sx={{ width: '100%' }}>
