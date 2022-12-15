@@ -32,7 +32,12 @@ export default class UserRepository {
 
   async create(data: User) {
     return await this.prisma.userProfile.create({
-      data: { ...data, ...getNewEntityAuditData(this.currentUserId) },
+      data: {
+        ...data,
+        ...getNewEntityAuditData(this.currentUserId),
+        followers: {},
+        following: {},
+      },
     });
   }
 
@@ -85,5 +90,31 @@ export default class UserRepository {
       followers: _count.followers,
       following: _count.following,
     }));
+  }
+
+  async findAllFollowers(userId: number): Promise<UserProfile[]> {
+    const followers = await this.prisma.follower.findMany({
+      where: {
+        followedId: userId,
+      },
+      include: {
+        followed: true,
+        follower: true,
+      },
+    });
+    return followers.map(({ follower }) => ({ ...follower }));
+  }
+
+  async findAllFollowings(userId: number): Promise<UserProfile[]> {
+    const followings = await this.prisma.follower.findMany({
+      where: {
+        followerId: userId,
+      },
+      include: {
+        followed: true,
+        follower: true,
+      },
+    });
+    return followings.map(({ followed }) => ({ ...followed }));
   }
 }
