@@ -23,8 +23,13 @@ const LOGIN_URL = '/auth/login';
 
 function Copyright(props: any) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
       <Link color="inherit" href="http:/localhost:3000/aboutUs">
         Projekt
       </Link>{' '}
@@ -81,10 +86,10 @@ export default function Login() {
         setErrMsg('');
       }, 500);
 
-      navigate('/home', { replace: true });
-    } catch (err: any) {
-      if (!err?.response) {
-        setErrMsg('Nema odgovora sa servera');
+      navigate('/home', {replace: true})
+    } catch(err:any){
+      if(!err?.response){
+        setErrMsg('No response from server');
       } else {
         setErrMsg(err.response.data.message);
       }
@@ -112,60 +117,40 @@ export default function Login() {
               <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                 <LockOutlinedIcon />
               </Avatar>
-              {errMsg && (
-                <Alert severity="error">
-                  <strong>Error </strong> {errMsg}
-                </Alert>
-              )}
-              <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
+              {errMsg && <Alert severity="error">
+                                <strong>Error </strong> {errMsg}
+                        </Alert>}
+              <Typography component="h1" variant="h5" sx={{mb:2}}>
                 Login
               </Typography>
-              <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                {(props) => (
-                  <Form>
-                    <Field
-                      as={TextField}
-                      label="email"
-                      name="email"
-                      placeholder="Enter email"
-                      fullWidth
-                      required
-                      error={props.errors.email && props.touched.email}
-                      helperText={<ErrorMessage name="email" />}
-                    />
-                    <Field
-                      as={TextField}
-                      label="password"
-                      sx={{ mt: 1, mb: 2 }}
-                      name="password"
-                      placeholder="Enter password"
-                      type="password"
-                      fullWidth
-                      required
-                      error={props.errors.password && props.touched.password}
-                      helperText={<ErrorMessage name="password" />}
-                    />
+              <Formik initialValues={initialValues} validationSchema={validationSchema}
+               onSubmit={handleSubmit}>
+            {(props) => (
+                        <Form>
+                            <Field as={TextField} label='email' name="email"
+                                placeholder='Enter email' fullWidth required
+                                error={props.errors.email && props.touched.email}
+                                helperText={<ErrorMessage name="email" />}
+                            />
+                            <Field as={TextField} label='password' sx={{ mt: 1, mb: 2 }} name="password"
+                                placeholder='Enter password' type='password' fullWidth required
+                                error={props.errors.password && props.touched.password}
+                                helperText={<ErrorMessage name="password" />} />
+                          
+                            <Button type='submit' color='primary' 
+                            variant="contained" disabled={!props.touched.password && !props.touched.email ? true: !props.isValid}
+                            sx={{ mt: 3, mb: 2 }} fullWidth>Prijavi se</Button>
 
-                    <Button
-                      type="submit"
-                      color="primary"
-                      variant="contained"
-                      disabled={!props.touched.password && !props.touched.email ? true : !props.isValid}
-                      sx={{ mt: 3, mb: 2 }}
-                      fullWidth
-                    >
-                      Login
-                    </Button>
-                  </Form>
-                )}
+                        </Form>
+                    )}
               </Formik>
               <Grid container justifyContent="flex-end">
-                <Grid item>
-                  <Link href="/signup" variant="body2">
-                    Don't have a profile? Sign up here.
-                  </Link>
+                  <Grid item>
+                    <Link href="/signup" variant="body2">
+                      Don't have a profile? Sign up here.
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
             </Box>
             <Copyright sx={{ mt: 5 }} />
           </Container>
