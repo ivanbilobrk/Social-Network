@@ -28,7 +28,7 @@ usersRouter.get(
 );
 
 usersRouter.get(
-  '/:userId/following',
+  '/:userId/followings',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
