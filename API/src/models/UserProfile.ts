@@ -7,4 +7,6 @@ export default interface UserProfile {
   last_name: string;
   date_of_birth: Date | null;
   joined_at: Date;
+  followers?: number;
+  following?: number;
 }
