@@ -139,10 +139,20 @@ export default function Login() {
                           
                             <Button type='submit' color='primary' 
                             variant="contained" disabled={!props.touched.password && !props.touched.email ? true: !props.isValid}
-                            sx={{ mt: 3, mb: 2 }} fullWidth>Prijavi se</Button>
+                            sx={{ mt: 3, mb: 2 }} fullWidth>Login</Button>
 
-                        </Form>
-                    )}
+                    <Button
+                      type="submit"
+                      color="primary"
+                      variant="contained"
+                      disabled={!props.touched.password && !props.touched.email ? true : !props.isValid}
+                      sx={{ mt: 3, mb: 2 }}
+                      fullWidth
+                    >
+                      Login
+                    </Button>
+                  </Form>
+                )}
               </Formik>
               <Grid container justifyContent="flex-end">
                   <Grid item>

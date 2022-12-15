@@ -19,7 +19,10 @@ function ScrollableFeed(props: any) {
   const getData = async () => {
     try{
       axios.get(
-        '/posts/'
+        '/posts/',
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
       ).then(function (response){
         setPosts(response.data)
       }).catch(function (error){
