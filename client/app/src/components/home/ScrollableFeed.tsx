@@ -11,31 +11,25 @@ function ScrollableFeed(props: any) {
   const location = useLocation();
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-    const getData = async () => {
-      try {
-        const user = getUser();
+  let isMounted = true;
+  const controller = new AbortController();
 
-        if (user !== null) {
-          const posts = await axiosPrivate.get('/posts', {});
-          console.log(posts.data);
-          isMounted && setPosts(posts.data);
-        }
-      } catch (err) {
-        console.error(err);
-        navigate('/login', { state: { from: location }, replace: true });
+  const getData = async () => {
+    try {
+      const user = getUser();
+
+      if (user !== null) {
+        const posts = await axiosPrivate.get('/posts', {});
+        console.log(posts.data);
+        isMounted && setPosts(posts.data);
       }
-    };
+    } catch (err) {
+      console.error(err);
+      navigate('/login', { state: { from: location }, replace: true });
+    }
+  };
 
-    getData();
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
-  }, []);
+  getData();
 
   return (
     <List sx={{ width: '100%' }}>
