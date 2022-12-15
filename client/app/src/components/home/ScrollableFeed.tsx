@@ -25,7 +25,7 @@ function ScrollableFeed(props: any) {
       }
     } catch (err) {
       console.error(err);
-      navigate('/login', { state: { from: location }, replace: true });
+      navigate('/test', { state: { from: location }, replace: true });
     }
   };
 
