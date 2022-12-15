@@ -4,7 +4,7 @@ import Layout from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import EditProfile from './pages/EditProfile';
-import MyProfile from './pages/MyProfile'
+import MyProfile from './pages/MyProfile';
 import Test from './pages/Test';
 import RequireAuth from './components/auth/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
@@ -21,16 +21,12 @@ function App() {
             <Route path="/test" element={<Test />} />
             <Route path="/home" element={<HomePage />}></Route>
             <Route path="/edit" element={<EditProfile />}></Route>
-            
           </Route>
           <Route path="unauthorized" element={<Unauthorized />} />
           <Route element={<BlockAuth />}>
             <Route path="signup" element={<SignupPage />}></Route>
             <Route path="login" element={<LoginPage />}></Route>
-            <Route path = "/myprofile" element = {<MyProfile />}></Route>
-
-
-            {/* TODO ovo dvoje, home i edit, vrati u require authorized */}
+            <Route path="/myprofile" element={<MyProfile />}></Route>
           </Route>
         </Route>
       </Routes>

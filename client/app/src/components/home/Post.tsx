@@ -4,13 +4,22 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useState } from 'react';
 import AddCommentPopup from '../AddCommentPopup';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import { useLocation } from 'react-router-dom';
 
-function Post({ username, date, description, noOfLikes }: any) {
+function Post({ author, date, description, likes, postId }: any) {
   let [liked, setLiked] = useState(false);
   let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
+  const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();
 
-  function changeLikeState() {
-    setLiked((prevState) => !prevState);
+  async function changeLikeState() {
+    try {
+      await axiosPrivate.post(`/posts/${postId}/like`, {});
+      setLiked((prevState) => !prevState);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   function handleAddCommentOpen() {
@@ -26,7 +35,7 @@ function Post({ username, date, description, noOfLikes }: any) {
       >
         <CardHeader
           avatar={<Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" />}
-          title={username}
+          title={author}
           subheader={date}
         />
         <Box
@@ -44,7 +53,7 @@ function Post({ username, date, description, noOfLikes }: any) {
             </Grid>
             <Grid item xs={1}>
               <Typography variant="overline" fontSize={15}>
-                {liked ? noOfLikes + 1 : noOfLikes}
+                {liked ? likes + 1 : likes}
               </Typography>
             </Grid>
             <Grid item xs={3}>

@@ -26,6 +26,27 @@ let comments = {
       authorId: 3,
       postId: 1,
     },
+    {
+      id: 4,
+      text: 'Wow, this image is stunning!',
+      author: 'Lovro Kovacic',
+      authorId: 1,
+      postId: 1,
+    },
+    {
+      id: 5,
+      text: 'The editing is kind of wonky',
+      author: 'Ela Kumer',
+      authorId: 2,
+      postId: 1,
+    },
+    {
+      id: 6,
+      text: 'These are so rare! It is so great to see them!',
+      author: 'Bobbly Blobily',
+      authorId: 3,
+      postId: 1,
+    },
   ],
 };
 
