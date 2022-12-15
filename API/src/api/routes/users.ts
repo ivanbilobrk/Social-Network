@@ -1,4 +1,4 @@
-import e, { Router } from 'express';
+import { Router } from 'express';
 import UsersService from '../../services/usersService.js';
 import { forwardError } from '../forwardError.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
@@ -13,6 +13,28 @@ usersRouter.get(
     const usersService = new UsersService(userId);
     const users = await usersService.getUsers();
     res.json(users);
+  }),
+);
+
+usersRouter.get(
+  '/:userId/followers',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const usersService = new UsersService(userId);
+    const followers = usersService.getFollowers(userId);
+    res.json(followers);
+  }),
+);
+
+usersRouter.get(
+  '/:userId/following',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const usersService = new UsersService(userId);
+    const followings = usersService.getFollowings(userId);
+    return res.json(followings);
   }),
 );
 
