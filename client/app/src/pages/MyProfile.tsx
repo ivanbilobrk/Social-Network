@@ -1,7 +1,7 @@
 import {Grid} from '@mui/material';
 import Profile from '../components/Profile';
-import Header from '../components/Header';
 import Home from './Home'
+import NavBar from '../components/NavBar'
 
 const username = "sammy1";
 const fullname = "Samantha Jones";
@@ -35,7 +35,7 @@ let noOfPosts = posts.length;
 const MyProfile = () => {
     return (
         <>
-        <Header></Header>
+        <NavBar />
         <Grid container direction = "column" alignItems = "center" justifyContent = "center">
             <Grid item width = "40%">
                 <Profile username = {username} fullname = {fullname} followers = {followers} following = {following}  noOfPosts = {noOfPosts}/>

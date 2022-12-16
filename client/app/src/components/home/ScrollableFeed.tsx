@@ -1,7 +1,5 @@
 import { List } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import getUser from '../../util/getUser';
 import Post from './Post';
@@ -10,12 +8,7 @@ function ScrollableFeed(props: any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-
   useEffect(() => {
-    let isMounted = true;
     const controller = new AbortController();
 
     const getData = async () =>{
@@ -34,7 +27,6 @@ function ScrollableFeed(props: any) {
 
     getData();
     return () => {
-      isMounted = false;
       controller.abort();
     }
 
