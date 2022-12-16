@@ -90,7 +90,7 @@ const validationSchema = Yup.object().shape({
       navigate('/home', {replace: true})
     } catch(err:any){
       if(!err?.response){
-        setErrMsg('Nema odgovora sa servera');
+        setErrMsg('No response from server');
       } else {
 
         setErrMsg(err.response.data.message)
