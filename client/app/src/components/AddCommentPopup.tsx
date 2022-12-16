@@ -1,54 +1,9 @@
-import { Alert, Box, Button, Container, Fab, Grid, List, Paper, TextField } from '@mui/material';
+import { Alert, Box, Button, Container, Grid, List, Paper, TextField } from '@mui/material';
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
-import ImageSearchIcon from '@mui/icons-material/ImageSearch';
-
-let comments = {
-  comments: [
-    {
-      id: 1,
-      text: 'Wow, this image is stunning!',
-      author: 'Lovro Kovacic',
-      authorId: 1,
-      postId: 1,
-    },
-    {
-      id: 2,
-      text: 'The editing is kind of wonky',
-      author: 'Ela Kumer',
-      authorId: 2,
-      postId: 1,
-    },
-    {
-      id: 3,
-      text: 'These are so rare! It is so great to see them!',
-      author: 'Bobbly Blobily',
-      authorId: 3,
-      postId: 1,
-    },
-    {
-      id: 4,
-      text: 'Wow, this image is stunning!',
-      author: 'Lovro Kovacic',
-      authorId: 1,
-      postId: 1,
-    },
-    {
-      id: 5,
-      text: 'The editing is kind of wonky',
-      author: 'Ela Kumer',
-      authorId: 2,
-      postId: 1,
-    },
-    {
-      id: 6,
-      text: 'These are so rare! It is so great to see them!',
-      author: 'Bobbly Blobily',
-      authorId: 3,
-      postId: 1,
-    },
-  ],
-};
+import Comment from './Comment';
+import getUser from '../util/getUser';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 type Props = {
   open: Boolean;
@@ -69,10 +24,40 @@ const OVERLAY: CSSProperties = {
 
 const AddCommentPopup = ({ open, onClose, postPhoto }: Props) => {
   const [errors, setErrors] = useState<string[]>([]);
+  const [commentText, setCommentText] = useState<string>('');
+  const axiosPrivate = useAxiosPrivate();
+  const [comments, setComments] = useState<any>([]);
 
   useEffect(() => {
     setErrors([]);
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    // mapping posts to comments because there is no getComments endpoint
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user !== null) {
+          const comments = await axiosPrivate.get('/posts', {});
+          isMounted && setComments(comments.data);
+        }
+      } catch (err) {
+        console.error(err);
+        onClose();
+      }
+    };
+
+    getData();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
 
   if (!open) return null;
 
@@ -106,7 +91,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto }: Props) => {
                       component="img"
                       alt="profile pic"
                       src={postPhoto}
-                      sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
+                      sx={{ width: '100%', aspectRatio: '1.25', objectFit: 'cover' }}
                     />
                   )}
                 </Grid>
@@ -116,15 +101,27 @@ const AddCommentPopup = ({ open, onClose, postPhoto }: Props) => {
             <Grid xs={6} item>
               <Grid container justifyContent="center" alignContent="center" spacing={1} rowSpacing={2}>
                 <Grid xs={12} item>
-                  <Paper style={{ maxHeight: 200, overflow: 'auto' }}>
-                    <List>{/* TODO add mapping to comments */}</List>
+                  <Paper style={{ maxHeight: 400, overflow: 'auto' }} sx={{ border: 1 }}>
+                    <List>
+                      {comments.map((comment: { id: any; content: any }) => (
+                        <Comment key={comment.id} content={comment.content} />
+                      ))}
+                    </List>
                   </Paper>
                 </Grid>
+                <TextField
+                  type="text"
+                  label="Comment"
+                  variant="outlined"
+                  fullWidth
+                  sx={{ ml: 1, mt: 1 }}
+                  onChange={(e) => setCommentText(e.target.value)}
+                />
               </Grid>
             </Grid>
             <Grid item>
               <Button size="large" variant="outlined" color="primary">
-                Post
+                Comment
               </Button>
             </Grid>
             <Grid item>

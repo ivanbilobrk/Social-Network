@@ -15,8 +15,8 @@ function Post({ author, date, description, likes, postId }: any) {
 
   async function changeLikeState() {
     try {
-      await axiosPrivate.post(`/posts/${postId}/like`, {});
       setLiked((prevState) => !prevState);
+      await axiosPrivate.post(`/posts/${postId}/like`, {});
     } catch (err) {
       console.error(err);
     }

@@ -2,6 +2,8 @@ import { Alert, Box, Button, Container, Fab, Grid, TextField } from '@mui/materi
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import getUser from '../util/getUser';
 
 type Props = {
   open: Boolean;
@@ -23,10 +25,11 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   const [PostPhoto, setPostPhoto] = useState<Blob>();
   const [PostText, setPostText] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
+  const title = 'this is hardcoded, i do not know what to do with it';
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     setErrors([]);
-    setPostPhoto(undefined);
   }, []);
 
   function profilePictureChange(e: React.ChangeEvent<HTMLInputElement>): void {
@@ -36,6 +39,35 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   }
 
   if (!open) return null;
+
+  function handlePostUpdate() {
+    if (!PostText) {
+      setErrors(['Post text is required']);
+      return;
+    }
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user !== null) {
+          const formData = new FormData();
+          formData.append('title', title);
+          formData.append('content', PostText);
+          formData.append('image', PostPhoto as Blob);
+
+          const response = await axiosPrivate.post('/posts', formData);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getData();
+    onClose();
+  }
 
   return (
     <div style={OVERLAY}>
@@ -100,12 +132,13 @@ const AddPostPopup = ({ open, onClose }: Props) => {
                     variant="outlined"
                     fullWidth
                     sx={{ width: '100%', height: '100%' }}
+                    onChange={(e) => setPostText(e.target.value)}
                   />
                 </Grid>
               </Grid>
             </Grid>
             <Grid item>
-              <Button size="large" variant="outlined" color="primary">
+              <Button size="large" variant="outlined" color="primary" onClick={handlePostUpdate}>
                 Post
               </Button>
             </Grid>
