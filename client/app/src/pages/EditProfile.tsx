@@ -36,7 +36,7 @@ const EditProfile = () => {
   
   //treba poslati zahtjev za promjenom passworda na backend za starom i novom lozinkom
   const passwordChangeFunction = async (oldPass: string, newPass: string) =>{
-    const response = await axios.post(
+    const response = await axios.post( //promjeni u axios private dodaj then, catch
       '/auth/change-password',
       JSON.stringify({
         user: getUserInfo(user.id),

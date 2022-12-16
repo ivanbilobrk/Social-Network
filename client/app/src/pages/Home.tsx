@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import AddPostPopup from '../components/AddPostPopup';
 
-function Home({posts} : any) {
+function Home() {
   const [isAddPostOpen, setisAddPostOpen] = useState<Boolean>(false);
 
   return (

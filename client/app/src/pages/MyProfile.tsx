@@ -39,7 +39,7 @@ const MyProfile = () => {
         <Grid container direction = "column" alignItems = "center" justifyContent = "center">
             <Grid item width = "40%">
                 <Profile username = {username} fullname = {fullname} followers = {followers} following = {following}  noOfPosts = {noOfPosts}/>
-                <Home posts = {posts}></Home>
+                <Home></Home>
             </Grid>
         </Grid>
         </>

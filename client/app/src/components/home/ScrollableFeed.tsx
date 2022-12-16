@@ -9,7 +9,9 @@ function ScrollableFeed(props: any) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    let isMounted = true;
     const controller = new AbortController();
+    
 
     const getData = async () =>{
       try{
@@ -26,11 +28,13 @@ function ScrollableFeed(props: any) {
     }
 
     getData();
+    
     return () => {
+      isMounted = false
       controller.abort();
     }
 
-  })
+  }, [])
 
   
 
