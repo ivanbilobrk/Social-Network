@@ -10,15 +10,15 @@ export default class PostsService {
     private readonly postsRepository: PostsRepository = new PostsRepository(currentUserId),
   ) {}
 
-  async getAllPosts(): Promise<Post[] | null> {
+  async getAllPosts(): Promise<Post[]> {
     return await this.postsRepository.getAllPosts();
   }
 
-  async getAllUserPosts(userId: number): Promise<Post[] | null> {
+  async getAllUserPosts(userId: number): Promise<Post[]> {
     return await this.postsRepository.getAllUserPosts(userId);
   }
 
-  async getPostById(postId: number): Promise<Post | null> {
+  async getPostById(postId: number): Promise<Post> {
     const post = await this.postsRepository.getPostById(postId);
     if (!post) {
       throw new APIError(`Post with id ${postId} not found`, StatusCodes.NOT_FOUND, true);

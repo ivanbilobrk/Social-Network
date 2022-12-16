@@ -1,7 +1,7 @@
 import { Avatar, Button, Container, Grid, Typography } from '@mui/material'
 import {useState} from 'react'
 import EditForm from '../components/EditForm'
-import Header from '../components/Header'
+import NavBar from '../components/NavBar'
 import CreateIcon from '@mui/icons-material/Create';
 
 import profilePic from '../static/zuko.jpg'
@@ -13,7 +13,7 @@ const EditProfile = () => {
 
   return (
     <>
-    <Header/>
+    <NavBar/>
     <Container maxWidth="xl" fixed sx={{backgroundColor: '#cfebff', marginTop: '2%', padding: '20px 20px'}}>
       
          <Grid container justifyContent="center" padding="20px 20px" margin='20px'>

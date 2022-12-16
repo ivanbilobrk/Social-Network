@@ -3,7 +3,7 @@ import { APIError } from '../errors/APIError.js';
 import logger from '../config/logger.js';
 
 export const getDummyPostById = async (id: number): Promise<DummyPost> => {
-  let post = getPostById(id);
+  const post = getPostById(id);
   if (post === undefined) {
     throw new APIError(`Post with id ${id} not found`, 404, true);
   }
