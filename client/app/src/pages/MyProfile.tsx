@@ -44,7 +44,7 @@ const MyProfile = () => {
             following={following}
             noOfPosts={noOfPosts}
           />
-          <Home></Home>
+          <Home posts={posts}></Home>
         </Grid>
       </Grid>
     </>

@@ -5,9 +5,8 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       async (config: any) => {
-        if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
-        }
+        config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
+        
         return config;
       },
       async (error) => {
