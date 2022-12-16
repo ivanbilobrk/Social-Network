@@ -20,4 +20,12 @@ export default class UsersService {
     }
     return user;
   }
+
+  async getFollowers(userId: number): Promise<UserProfile[]> {
+    return await this.usersRepository.findAllFollowers(userId);
+  }
+
+  async getFollowings(userId: number): Promise<UserProfile[]> {
+    return await this.usersRepository.findAllFollowings(userId);
+  }
 }

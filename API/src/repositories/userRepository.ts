@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import User from '../models/User.js';
 import { getNewEntityAuditData } from '../util/auditData.js';
+import User from '../models/User.js';
+import UserProfile from '../models/UserProfile.js';
 
 const UserSelect = {
   id: true,
@@ -13,6 +14,15 @@ const UserSelect = {
   joined_at: true,
 };
 
+const IncludedFollowers = {
+  _count: {
+    select: {
+      followers: true,
+      following: true,
+    },
+  },
+};
+
 export default class UserRepository {
   private prisma: PrismaClient;
 
@@ -22,7 +32,12 @@ export default class UserRepository {
 
   async create(data: User) {
     return await this.prisma.userProfile.create({
-      data: { ...data, ...getNewEntityAuditData(this.currentUserId) },
+      data: {
+        ...data,
+        ...getNewEntityAuditData(this.currentUserId),
+        followers: {},
+        following: {},
+      },
     });
   }
 
@@ -37,15 +52,22 @@ export default class UserRepository {
     });
   }
 
-  async findById(id: number) {
-    return await this.prisma.userProfile.findUnique({
+  async findById(userId: number): Promise<UserProfile | null> {
+    const data = await this.prisma.userProfile.findFirstOrThrow({
       where: {
-        id,
+        id: userId,
       },
       select: {
         ...UserSelect,
+        ...IncludedFollowers,
       },
     });
+    const { _count, ...user } = data;
+    return {
+      ...user,
+      followers: _count.followers,
+      following: _count.following,
+    };
   }
 
   async findByEmail(email: string) {
@@ -56,11 +78,43 @@ export default class UserRepository {
     });
   }
 
-  async findAll() {
-    return await this.prisma.userProfile.findMany({
+  async findAll(): Promise<UserProfile[]> {
+    const data = await this.prisma.userProfile.findMany({
       select: {
         ...UserSelect,
+        ...IncludedFollowers,
       },
     });
+    return data.map(({ _count, ...user }) => ({
+      ...user,
+      followers: _count.followers,
+      following: _count.following,
+    }));
+  }
+
+  async findAllFollowers(userId: number): Promise<UserProfile[]> {
+    const followers = await this.prisma.follower.findMany({
+      where: {
+        followedId: userId,
+      },
+      include: {
+        followed: true,
+        follower: true,
+      },
+    });
+    return followers.map(({ follower }) => ({ ...follower }));
+  }
+
+  async findAllFollowings(userId: number): Promise<UserProfile[]> {
+    const followings = await this.prisma.follower.findMany({
+      where: {
+        followerId: userId,
+      },
+      include: {
+        followed: true,
+        follower: true,
+      },
+    });
+    return followings.map(({ followed }) => ({ ...followed }));
   }
 }
