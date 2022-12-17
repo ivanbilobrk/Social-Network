@@ -41,6 +41,17 @@ export default class UserRepository {
     });
   }
 
+  async addAvatar(userId: number, avatar: string) {
+    return await this.prisma.userProfile.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        avatar_url: avatar,
+      },
+    });
+  }
+
   async updatePassword(id: number, password_hash: string) {
     return await this.prisma.userProfile.update({
       where: {
