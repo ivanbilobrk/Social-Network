@@ -36,6 +36,10 @@ export default class PostsRepository {
     this.prisma = new PrismaClient();
   }
 
+  async postExists(id: number): Promise<boolean> {
+    return (await this.prisma.post.count({ where: { id } })) > 0;
+  }
+
   async getAllPosts(): Promise<Post[]> {
     const data = await this.prisma.post.findMany({
       select: {
@@ -91,7 +95,7 @@ export default class PostsRepository {
       data: {
         title: data.title,
         content: data.content,
-        photo: data.photo,
+        photo: data.photo ?? undefined,
         ...getUpdatedEntityAuditData(data.authorId),
       },
       where: {

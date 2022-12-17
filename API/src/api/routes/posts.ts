@@ -4,8 +4,10 @@ import PostRequest from '../../requests/post/PostRequest.js';
 import PostsService from '../../services/postsService.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
 import PostCommentRequest from '../../requests/post/postCommentRequest.js';
+import multer from 'multer';
 
 const postsRouter = Router();
+const upload = multer();
 
 postsRouter.get(
   '/:postId',
@@ -32,10 +34,22 @@ postsRouter.get(
 postsRouter.post(
   '/',
   authenticateJwt,
+  upload.single('photo'),
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
+    const fileReq = req as UserRequest & { file?: Express.Multer.File };
     const postsService = new PostsService(userId);
-    const postRequest: PostRequest = req.body;
+    console.log(fileReq.file);
+    const postRequest: PostRequest = {
+      ...fileReq.body,
+      photo: fileReq.file
+        ? {
+            data: fileReq.file.buffer,
+            name: fileReq.file.originalname,
+            type: fileReq.file.mimetype,
+          }
+        : undefined,
+    };
     const post = await postsService.createPost(postRequest);
     res.json(post);
   }),
@@ -44,11 +58,21 @@ postsRouter.post(
 postsRouter.put(
   '/:postId',
   authenticateJwt,
+  upload.single('photo'),
   forwardError(async (req: UserRequest, res) => {
+    const fileReq = req as UserRequest & { file: Express.Multer.File };
     const userId = req.user?.id ?? 0;
     const postsService = new PostsService(userId);
-    const postRequest: PostRequest = req.body;
-    postRequest.id = parseInt(req.params.postId);
+    const postRequest: PostRequest = {
+      ...fileReq.body,
+      photo: fileReq.file
+        ? {
+            data: fileReq.file.buffer,
+            filename: fileReq.file?.filename ?? '',
+          }
+        : undefined,
+      id: parseInt(req.params.postId),
+    };
     const post = await postsService.updatePost(postRequest);
     res.json(post);
   }),
