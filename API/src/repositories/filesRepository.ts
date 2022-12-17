@@ -10,7 +10,10 @@ export default class FilesRepository {
   }
 
   async upload(fileName: string, type: string, fileContent: Readable) {
-    const filePath = `${config.appName}/${encodeURIComponent(fileName)}`;
+    const path = fileName.split('/');
+    fileName = path[path.length - 1];
+    const folder = path.slice(0, path.length - 1).join('/');
+    const filePath = `${config.appName}/${folder}/${encodeURIComponent(fileName)}`;
     const blobClient = this.containerClient.getBlockBlobClient(filePath);
     await blobClient.uploadStream(fileContent, undefined, undefined, {
       blobHTTPHeaders: {

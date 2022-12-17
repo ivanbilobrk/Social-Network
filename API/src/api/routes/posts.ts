@@ -45,7 +45,7 @@ postsRouter.post(
       photo: fileReq.file
         ? {
             data: fileReq.file.buffer,
-            name: fileReq.file.originalname,
+            name: fileReq.file.originalname || 'unknown',
             type: fileReq.file.mimetype,
           }
         : undefined,
@@ -68,7 +68,8 @@ postsRouter.put(
       photo: fileReq.file
         ? {
             data: fileReq.file.buffer,
-            filename: fileReq.file?.filename ?? '',
+            name: fileReq.file?.originalname || 'unknown',
+            type: fileReq.file.mimetype,
           }
         : undefined,
       id: parseInt(req.params.postId),
