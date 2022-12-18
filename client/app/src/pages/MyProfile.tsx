@@ -1,12 +1,13 @@
 import { Grid } from '@mui/material';
 import Profile from '../components/Profile';
-import Header from '../components/Header';
+import NavBar from '../components/NavBar';
 import Home from './Home';
+import { useEffect, useState } from 'react';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import getUser from '../util/getUser';
+import { useNavigate, useLocation } from 'react-router-dom';
+import useLogout from '../hooks/useLogout';
 
-const username = 'sammy1';
-const fullname = 'Samantha Jones';
-const followers = 12345;
-const following = 10;
 
 let posts = [
   {
@@ -29,26 +30,65 @@ let posts = [
   },
 ];
 
+const followers = 1234;
+const following = 10;
+
 let noOfPosts = posts.length;
 
-const MyProfile = () => {
+function MyProfile(props: any) {
+  const [data, setData] = useState();
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const logout = useLogout();
+  const location = useLocation();
+
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    const getData = async () => {
+      try {
+        const user = getUser();
+        if (user !== null) {
+          const response = await axiosPrivate.get(`/user/${user.id}`, {});
+          console.log(response.data);
+          isMounted && setData(response.data);
+        }
+      } catch (err) {
+        console.error(err);
+        navigate('/login', { state: { from: location }, replace: true });
+      }
+    };
+
+    getData();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, []);
+  
+ 
   return (
     <>
-      <Header></Header>
+      <NavBar />
       <Grid container direction="column" alignItems="center" justifyContent="center">
         <Grid item width="40%">
+        {data && 
           <Profile
-            username={username}
-            fullname={fullname}
+            userId={data['id']}
+            username={data['username']}
+            firstname={data['first_name']}
+            lastname={data['last_name']}
             followers={followers}
             following={following}
             noOfPosts={noOfPosts}
-          />
+          ></Profile>
+        }
           <Home></Home>
         </Grid>
       </Grid>
     </>
   );
-};
+}
 
 export default MyProfile;

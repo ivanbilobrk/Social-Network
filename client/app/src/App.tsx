@@ -22,6 +22,7 @@ function App() {
             <Route path="/home" element={<HomePage />}></Route>
             <Route path="/edit" element={<EditProfile />}></Route>
             <Route path="/myprofile" element={<MyProfile />}></Route>
+            
           </Route>
           <Route path="unauthorized" element={<Unauthorized />} />
           <Route element={<BlockAuth />}>
