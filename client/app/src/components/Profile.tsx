@@ -1,6 +1,6 @@
 import { Avatar, Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent } from '@mui/material';
 
-const Profile = ({ username, firstname, lastname, followers, following, noOfPosts }: any) => (
+const Profile = ({ userId, username, firstname, lastname, followers, following, noOfPosts }: any) => (
   <Grid container direction = "column" marginTop={5}>
     <Card>
       <CardHeader style={{ backgroundColor: 'silver', height: 75 }}></CardHeader>

@@ -55,7 +55,7 @@ function MyProfile(props: any) {
         }
       } catch (err) {
         console.error(err);
-        navigate('/login', { state: { from: location }, replace: true });
+        
       }
     };
 
