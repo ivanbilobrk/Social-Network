@@ -212,7 +212,7 @@ export default function PrimarySearchAppBar(props:any) {
 
     if(!isLoading){
       return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1}}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
