@@ -16,7 +16,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NavBar from './NavBar';
 import Messages from './Messages';
 import { Avatar, ListItemAvatar, styled, TextField, Container } from '@mui/material';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, createRef } from 'react';
 import MessageOne from '../interface/MessageOne';
 import SendIcon from '@mui/icons-material/Send';
 import getUser from '../util/getUser';
@@ -28,6 +28,7 @@ const messagesTemp:MessageOne[] = [{from:"user2", to:"user1", allMesagesWithUser
 {from:"user5", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]}, 
 {from:"user6", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]},
  {from:"user7", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]}]
+
 
  const listMessage = ()=>{
   return (
@@ -95,6 +96,7 @@ export default function InboxDrawer({search}) {
     divRef.current.scrollIntoView({ behavior: 'smooth' });
   });
 
+
   useEffect(()=>{
       setUser(getUser());
       let getMessagesForUser = async ()=>{
@@ -112,7 +114,7 @@ export default function InboxDrawer({search}) {
       <Drawer
         variant="permanent"
         sx={{
-          width: drawerWidth,
+
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
@@ -148,19 +150,19 @@ export default function InboxDrawer({search}) {
         </Box>
       </Drawer>
       {selectedUser.length >  0 && 
-          <Container sx={{position:'fixed',right:'0em',height:'12%',bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
-            <Avatar src="https://source.unsplash.com/random" sx={{ width: '8%', height: '90%' }} />
+          <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'80%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
+            <Avatar src="https://source.unsplash.com/random" sx={{ width: '6%', height: '90%' }} />
             <div style={{marginLeft:50, display:'flex', alignItems:'center'}}>
               <Typography variant ='h5'>{selectedUser}</Typography>
             </div>  
           </Container>
         }
-      <Box component="main" sx={{ flexGrow: 1, p: 5, mr:1, ml:2, mb:5 }}>
-      <List sx={{mt:5}}>
+      <Box component="main" sx={{ flexGrow: 1, p: 5, mr:2, ml:5, mb:5, mt:3, display:'flex', justifyContent:'flex-end', flexDirection:'column'}}>
+      <List  sx={{mt:5, display:'flex',flexDirection:'column'}} >
         
         {currentMessages?.length > 0 && currentMessages.map((item, index) => 
           index % 2 == 0 ? 
-          <ListItem style={{display:'flex', justifyContent:'flex-end'}}>
+          <ListItem style={{display:'flex',justifyContent:'flex-end'}}>
             <div style={{marginRight:'2.5%'}}>
               <Typography flexWrap={'wrap-reverse'}>
                 {item}
@@ -170,21 +172,20 @@ export default function InboxDrawer({search}) {
     
             {listMessage()}
           </ListItem>:
-          <ListItem style={{display:'flex', justifyContent:'flex-start'}}>
+          <ListItem style={{display:'flex', width:'50%', transform: 'translateX(24em)',justifyContent:'flex-start'}}>
             {listMessage()}
 
-            <ListItemText primary={item}>
-                
+            <ListItemText>
+                {item}
               </ListItemText>
           </ListItem>
 
           )}
       </List>
-      <div ref={divRef} />
-
+      <div ref={divRef}></div>
       {flagInboxOpen && 
       <>
-        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'60%'}} onChange={(e)=>{setInput(e.target.value); console.log(input)}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
+        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'70%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value); console.log(input)}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
         <StyledSendIcon onClick={()=>{addToList("icon")}} sx={{position:'fixed', bottom:'0.6em', right:'1.9em', fontSize:'2.5em'}}/>
       </>
       }

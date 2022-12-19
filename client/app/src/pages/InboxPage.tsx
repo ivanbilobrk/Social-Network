@@ -63,7 +63,7 @@ const Search = (user, updateInbox, inputRef)=>{
     let [open, setOpen] = useState(false);
     return (
         <Autocomplete sx={{ width: '80%', mt:1, mb: 1, padding:0 }} 
-        id="free-solo-demo" freeSolo clearOnBlur clearOnEscape open = {open} onFocus={()=>{setOpen(true)}}
+        id="free-solo-demo" freeSolo clearOnBlur clearOnEscape open = {open} onFocus={()=>{setOpen(true)}} 
         options={users.map((option) => {return option.userName+" "+option.firstName+" "+option.lastName})}
         renderOption ={(option:any)=>{ return (
             <>
