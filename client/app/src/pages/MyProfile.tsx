@@ -7,40 +7,59 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import getUser from '../util/getUser';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useLogout from '../hooks/useLogout';
+import axios from '../api/axios';
+import Post from '../components/home/Post';
 
 
-let posts = [
-  {
-    username: 'sammy1',
-    date: '2021-10-10',
-    description: ' ',
-    noOfLikes: 20,
-  },
-  {
-    username: 'sammy1',
-    date: '2021-10-10',
-    description: ' ',
-    noOfLikes: 20,
-  },
-  {
-    username: 'sammy1',
-    date: '2021-10-10',
-    description: ' ',
-    noOfLikes: 20,
-  },
-];
+
 
 const followers = 1234;
 const following = 10;
 
-let noOfPosts = posts.length;
+
+
 
 function MyProfile(props: any) {
+
   const [data, setData] = useState();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const logout = useLogout();
   const location = useLocation();
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    let isAllowed = true;
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user != null) {
+          const response = await axios.get('/users/' + user.id + 'posts/');
+
+          if (isAllowed) {
+            setPosts(response.data);
+          }
+        }
+      } catch (err: any) {
+        console.log(err.toJSON());
+      }
+    };
+
+    getData();
+
+    return () => {
+      isAllowed = false;
+    };
+  }, []);
+
+  let noOfPosts;
+
+  if(posts.length !== undefined) {
+    noOfPosts = posts.length;
+  } else {
+    noOfPosts = 0;
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -48,8 +67,12 @@ function MyProfile(props: any) {
     const getData = async () => {
       try {
         const user = getUser();
-        if (user !== null) {
-          const response = await axiosPrivate.get(`/user/${user.id}`, {});
+
+        if (user != null) {
+          
+          const response = await axios.get(
+            '/users/' + user.id
+          );
           console.log(response.data);
           isMounted && setData(response.data);
         }
@@ -66,29 +89,28 @@ function MyProfile(props: any) {
       controller.abort();
     };
   }, []);
-  
- 
-  return (
-    <>
-      <NavBar />
-      <Grid container direction="column" alignItems="center" justifyContent="center">
-        <Grid item width="40%">
-        {data && 
-          <Profile
-            userId={data['id']}
-            username={data['username']}
-            firstname={data['first_name']}
-            lastname={data['last_name']}
-            followers={followers}
-            following={following}
-            noOfPosts={noOfPosts}
-          ></Profile>
-        }
-          <Home></Home>
+
+
+   return (
+      <>
+        <NavBar />
+        <Grid container direction="column" alignItems="center" justifyContent="center">
+          <Grid item width="40%">
+            {data && <Profile
+              userId={data['id']}
+              username={data['username']}
+              firstname={data['first_name']}
+              lastname={data['last_name']}
+              followers={followers}
+              following={following}
+              noOfPosts={noOfPosts}
+            ></Profile> }
+            <Home></Home>
+          </Grid>
         </Grid>
-      </Grid>
-    </>
-  );
+      </>
+      );
+    
 }
 
 export default MyProfile;
