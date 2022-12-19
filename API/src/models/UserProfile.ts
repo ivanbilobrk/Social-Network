@@ -9,6 +9,7 @@ export default interface UserProfile {
   joined_at: Date;
   followers?: number;
   following?: number;
+  avatar_url?: string | null;
 }
 
 export interface SimpleUser {

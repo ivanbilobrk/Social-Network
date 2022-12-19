@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { getNewEntityAuditData } from '../util/auditData.js';
+import { getNewEntityAuditData, getUpdatedEntityAuditData } from '../util/auditData.js';
 import User from '../models/User.js';
-import UserProfile from '../models/UserProfile.js';
+import UserProfile, { SimpleUser } from '../models/UserProfile.js';
 
 const UserSelect = {
   id: true,
@@ -37,6 +37,21 @@ export default class UserRepository {
         ...getNewEntityAuditData(this.currentUserId),
         followers: {},
         following: {},
+      },
+    });
+  }
+
+  async updateUser(data: SimpleUser & { date_of_birth: Date | null }) {
+    return await this.prisma.userProfile.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        date_of_birth: data.date_of_birth,
+        avatar_url: data.avatar_url,
+        ...getUpdatedEntityAuditData(this.currentUserId),
       },
     });
   }
