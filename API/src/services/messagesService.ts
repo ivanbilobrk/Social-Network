@@ -20,13 +20,21 @@ export default class PostsService {
 
   async checkIfUserIsOwnerOfMessage(messageId: number) {
     const message = await this.messagesRepository.getMessageById(messageId);
-    return message.senderId === this.currentUserId;
+    if (message?.senderId !== this.currentUserId) {
+      throw new APIError('User is not the owner of this message', StatusCodes.FORBIDDEN, true);
+    }
   }
 
   async checkSenderAndReceiver(senderId: number, receiverId: number) {
     if (senderId === receiverId) {
       throw new APIError('Sender and receiver cannot be the same', StatusCodes.BAD_REQUEST, true);
     }
+  }
+
+  async getMessageById(messageId: number): Promise<Message> {
+    this.checkIfmessageExists(messageId);
+    this.checkIfUserIsOwnerOfMessage(messageId);
+    return await this.messagesRepository.getMessageById(messageId);
   }
 
   async getAllMessagesWithUser(userId: number): Promise<Message[]> {
@@ -41,6 +49,7 @@ export default class PostsService {
 
   async updateMessage(updateMessageRequest: UpdateMessageRequest) {
     this.checkIfmessageExists(updateMessageRequest.id);
+    this.checkIfUserIsOwnerOfMessage(updateMessageRequest.id);
     return await this.messagesRepository.updateMessage(updateMessageRequest);
   }
 
