@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import UsersService from '../../services/usersService.js';
 import { forwardError } from '../forwardError.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
+import UsersService from '../../services/usersService.js';
+import MessagesService from '../../services/messagesService.js';
 import UpdateUserRequest from '../../requests/user/updateUserRequest.js';
 
 const usersRouter = Router();
@@ -69,6 +70,18 @@ usersRouter.put(
     const usersService = new UsersService(userId);
     const user = await usersService.updateUser(updateRequest);
     res.json(user);
+  }),
+);
+
+usersRouter.get(
+  '/messages/:receiverId',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const receiverId = parseInt(req.params.receiverId);
+    const messagesService = new MessagesService(userId);
+    const messages = await messagesService.getAllMessagesWithUser(receiverId);
+    res.json(messages);
   }),
 );
 
