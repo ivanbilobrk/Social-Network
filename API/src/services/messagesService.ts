@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { APIError } from '../errors/APIError.js';
-import Message from '../models/Message.js';
+import Message, { MessageOverview } from '../models/Message.js';
 import MessagesRepository from '../repositories/messagesRepository.js';
 import CreateMessageRequest from '../requests/messages/CreateMessageRequest.js';
 import UpdateMessageRequest from '../requests/messages/UpdateMessageRequest.js';
@@ -35,6 +35,10 @@ export default class PostsService {
     this.checkIfmessageExists(messageId);
     this.checkIfUserIsOwnerOfMessage(messageId);
     return await this.messagesRepository.getMessageById(messageId);
+  }
+
+  async getAllMessages(): Promise<MessageOverview[]> {
+    return await this.messagesRepository.getAllMessages();
   }
 
   async getAllMessagesWithUser(userId: number): Promise<Message[]> {

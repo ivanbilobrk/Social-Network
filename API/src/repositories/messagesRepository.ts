@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { getNewEntityAuditData, getUpdatedEntityAuditData } from '../util/auditData.js';
-import Message from '../models/Message.js';
+import Message, { MessageOverview } from '../models/Message.js';
 import MessageRequest from '../requests/messages/CreateMessageRequest.js';
 import CreateMessageRequest from '../requests/messages/CreateMessageRequest.js';
 import UpdateMessageRequest from '../requests/messages/UpdateMessageRequest.js';
@@ -42,6 +42,29 @@ export default class MessagesRepository {
       sentAt: sent,
       ...rest,
     };
+  }
+
+  async getAllMessages(): Promise<MessageOverview[]> {
+    const data = await this.prisma.message.findMany({
+      distinct: ['senderId', 'receiverId'],
+      select: { ...MessageSelect },
+      where: {
+        OR: [{ senderId: this.currentUserId }, { receiverId: this.currentUserId }],
+      },
+      orderBy: {
+        sent: 'desc',
+      },
+    });
+    return data.map((message) => ({
+      senderId: message.senderId,
+      sender: message.sender,
+      receiverId: message.receiverId,
+      receiver: message.receiver,
+      lastMessage: {
+        sentAt: message.sent,
+        ...message,
+      },
+    }));
   }
 
   async getMessagesWithUser(userId: number): Promise<Message[]> {

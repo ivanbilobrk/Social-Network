@@ -9,6 +9,17 @@ import UpdateMessageRequest from '../../requests/messages/UpdateMessageRequest.j
 const messagesRouter = Router();
 
 messagesRouter.get(
+  '',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const messagesService = new MessagesService(userId);
+    const messages = await messagesService.getAllMessages();
+    res.json(messages);
+  }),
+);
+
+messagesRouter.get(
   '/:messageId',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
