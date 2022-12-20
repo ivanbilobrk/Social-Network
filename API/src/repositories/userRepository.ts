@@ -26,7 +26,7 @@ const IncludedFollowers = {
 export default class UserRepository {
   private prisma: PrismaClient;
 
-  constructor(private readonly currentUserId?: number) {
+  constructor(private readonly currentUserId: number) {
     this.prisma = new PrismaClient();
   }
 
@@ -142,5 +142,33 @@ export default class UserRepository {
       },
     });
     return followings.map(({ followed }) => ({ ...followed }));
+  }
+
+  async follow(userId: number) {
+    return await this.prisma.follower.create({
+      data: {
+        followerId: this.currentUserId,
+        followedId: userId,
+        ...getNewEntityAuditData(this.currentUserId),
+      },
+    });
+  }
+
+  async unfollow(userId: number) {
+    return await this.prisma.follower.deleteMany({
+      where: {
+        followerId: this.currentUserId,
+        followedId: userId,
+      },
+    });
+  }
+
+  async alreadyFollows(userId: number) {
+    return await this.prisma.follower.findFirst({
+      where: {
+        followerId: this.currentUserId,
+        followedId: userId,
+      },
+    });
   }
 }

@@ -21,7 +21,7 @@ export type UserClaims = {
 export default class AuthService {
   constructor(
     private readonly currentUser?: UserClaims,
-    private readonly userRepository: UserRepository = new UserRepository(currentUser?.id),
+    private readonly userRepository: UserRepository = new UserRepository(currentUser?.id ?? 0),
     private readonly filesRepository: FilesRepository = new FilesRepository(),
   ) {}
 
