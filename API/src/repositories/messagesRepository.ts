@@ -30,6 +30,20 @@ export default class MessagesRepository {
     this.prisma = new PrismaClient();
   }
 
+  async getMessageById(messageId: number): Promise<Message> {
+    const data = await this.prisma.message.findUniqueOrThrow({
+      where: {
+        id: messageId,
+      },
+      select: { ...MessageSelect },
+    });
+    const { sent, ...rest } = data;
+    return {
+      sentAt: sent,
+      ...rest,
+    };
+  }
+
   async getMessagesWithUser(userId: number): Promise<Message[]> {
     const data = await this.prisma.message.findMany({
       where: {
