@@ -5,8 +5,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 type Props = {
   open: Boolean,
-  onClose: any,
-  onChange: any
+  onClose: any
 };
 
 const OVERLAY: CSSProperties = {
@@ -21,7 +20,7 @@ const OVERLAY: CSSProperties = {
    
 }
 
-const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
+const ChangePasswordPopUp = ({ open, onClose }: Props) => {
   const [newPassword, setNewPassword] = useState<String>()
   const [oldPassword, setOldPassword] = useState<String>()
   const [newPasswordConfirmed, setNewPasswordConfirmed] = useState<String>()
@@ -40,12 +39,19 @@ const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
       setNewPasswordConfirmed(event.target.value)
    }
 
-   const testFunction = () =>{
-      if(newPassword != newPasswordConfirmed){
+   const passwordChange = () =>{
+      if(newPassword != newPasswordConfirmed || newPassword === undefined){
          window.alert("New password and confirm new password do not match!")
       } else {
-         //axios zahtjev za promjenom lozinke
+         //provjera restrikcija na novi password
+         if(newPassword.length < 8){
+            window.alert("Password minimum length should be 8")
+         }else if(!newPassword.match(/^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/)){
+            window.alert("Password must contain at least one uppercase letter, one lowercase letter, number and special character")
+         }else{
+            //axios zahtjev za promjenom lozinke
          try{
+            
             axiosPrivate.post(
                '/auth/change-password',
                JSON.stringify({
@@ -61,7 +67,12 @@ const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
                   onClose()
                }, 500)
             }).catch(function (error) {
-               window.alert("The old password is incorrect!")
+               if(oldPassword != newPassword){
+                  window.alert("The old password is incorrect!")
+               } else {
+                  window.alert("Desired password is already in use.")
+               }
+               
                console.log(error.toJSON());
             });
 
@@ -70,8 +81,12 @@ const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
          }catch(err :any){
             window.alert("Error: The old password is not correct!")
          }
+         }
+
       }
    }
+
+  
 
    return (
    <div style={OVERLAY}>
@@ -97,7 +112,7 @@ const ChangePasswordPopUp = ({ open, onClose, onChange }: Props) => {
       </Grid>
 
       <Grid item>
-         <Button size="large" variant="contained" color="primary" onClick={testFunction}>Confirm</Button>
+         <Button size="large" variant="contained" color="primary" onClick={passwordChange}>Confirm</Button>
       </Grid>
 
        <Grid item>
