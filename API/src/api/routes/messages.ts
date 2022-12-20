@@ -8,6 +8,17 @@ import UpdateMessageRequest from '../../requests/messages/UpdateMessageRequest.j
 
 const messagesRouter = Router();
 
+messagesRouter.get(
+  '/:messageId',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const messagesService = new MessagesService(userId);
+    const message = await messagesService.getMessageById(parseInt(req.params.messageId));
+    res.json(message);
+  }),
+);
+
 messagesRouter.post(
   '',
   authenticateJwt,
@@ -26,7 +37,7 @@ messagesRouter.post(
 );
 
 messagesRouter.put(
-  '/:messageId',
+  '',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
