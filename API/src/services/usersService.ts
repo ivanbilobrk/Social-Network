@@ -51,4 +51,24 @@ export default class UsersService {
   async getFollowings(userId: number): Promise<UserProfile[]> {
     return await this.usersRepository.findAllFollowings(userId);
   }
+
+  async follow(userId: number) {
+    const user = await this.usersRepository.findById(userId);
+    if (!user) {
+      throw new APIError(`User with id ${userId} not found`, StatusCodes.NOT_FOUND, true);
+    }
+
+    if (this.currentUserId == userId) {
+      throw new APIError(`User can't follow himself`, StatusCodes.NOT_FOUND, true);
+    }
+
+    const followings = await this.usersRepository.findAllFollowings(this.currentUserId);
+
+    // if current user already follows user
+    if (followings.map((following) => following.id).includes(userId)) {
+      return await this.usersRepository.unfollow(userId);
+    } else {
+      return await this.usersRepository.follow(userId);
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { OK } from 'http-status';
 import UsersService from '../../services/usersService.js';
 import { forwardError } from '../forwardError.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
@@ -23,7 +24,7 @@ usersRouter.get(
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
     const usersService = new UsersService(userId);
-    const followers = usersService.getFollowers(userId);
+    const followers = await usersService.getFollowers(userId);
     res.json(followers);
   }),
 );
@@ -34,8 +35,8 @@ usersRouter.get(
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
     const usersService = new UsersService(userId);
-    const followings = usersService.getFollowings(userId);
-    return res.json(followings);
+    const followings = await usersService.getFollowings(userId);
+    res.json(followings);
   }),
 );
 
@@ -47,6 +48,18 @@ usersRouter.get(
     const usersService = new UsersService(userId);
     const user = await usersService.getUserById(parseInt(req.params.userId));
     res.json(user);
+  }),
+);
+
+usersRouter.post(
+  '/:userId/follow',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const followedUserId = parseInt(req.params.userId);
+    const usersService = new UsersService(userId);
+    await usersService.follow(followedUserId);
+    res.end();
   }),
 );
 
