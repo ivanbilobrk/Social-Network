@@ -9,6 +9,7 @@ const useAxiosPrivate = () => {
 
         const requestIntercept = axiosPrivate.interceptors.request.use(
             async (config:any) => {
+
                 let token = localStorage.getItem("accessToken");
                 if(token != null && token != undefined){
                     let decoded = getUser();
@@ -16,6 +17,7 @@ const useAxiosPrivate = () => {
                         localStorage.removeItem("accessToken")
                     }
                 }
+
                 config.headers['Authorization'] = `Bearer ${localStorage.getItem("accessToken")}`;
                 return config;
             }, async (error) => {
