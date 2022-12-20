@@ -177,7 +177,7 @@ export default function PrimarySearchAppBar(props:any) {
       open={isAccountOpen}
       onClose={()=>{handleMenuClose(setAnchorEl)}}
     >
-      <MenuItem >Edit Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/edit', {replace: true})}}>Edit Profile</MenuItem>
       <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
       <MenuItem >My Profile</MenuItem>
       <MenuItem onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>
@@ -212,7 +212,8 @@ export default function PrimarySearchAppBar(props:any) {
 
     if(!isLoading){
       return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1}}>
+
       <AppBar position="static">
         <Toolbar>
           <IconButton

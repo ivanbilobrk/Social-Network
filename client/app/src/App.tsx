@@ -10,7 +10,9 @@ import { Grid } from '@mui/material';
 import React from 'react';
 import Home from './pages/Home';
 import HomePage from './pages/HomePage';
+import InboxPage from './pages/InboxPage';
 import EditProfile from './pages/EditProfile';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
             <Route path="/test" element={<Test />} />
             <Route path="/home" element={<HomePage />}></Route>
             <Route path="/edit" element={<EditProfile/>}></Route>
+            <Route path="/inbox" element={<InboxPage/>}></Route>
           </Route>
           <Route path="unauthorized" element={<Unauthorized />} />
 
