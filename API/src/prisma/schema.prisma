@@ -28,6 +28,7 @@ model UserProfile {
   last_name         String
   date_of_birth     DateTime?
   joined_at         DateTime      @default(now())
+  avatar_url        String?
 
   posts             Post[]
   postLikes         PostLike[]

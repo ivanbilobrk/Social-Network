@@ -4,5 +4,5 @@ export default interface User {
     type: string|null,
     username: string|null,
     exp: number,
-    iat: string|Date|number,  
+    iat: string|Date|number,   
 }

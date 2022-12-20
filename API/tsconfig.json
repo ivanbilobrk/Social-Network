@@ -6,7 +6,7 @@
     "lib": ["esnext"],
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "module": "NodeNext"
+    "module": "NodeNext",
   },
   "include": [
     "src"
