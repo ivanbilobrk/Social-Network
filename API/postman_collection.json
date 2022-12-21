@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "d6e7a8ca-4dbb-499f-900d-a1e85c0d8314",
+		"_postman_id": "377f2a0a-a9dc-49b4-8b3f-280069370525",
 		"name": "Projekt R - Društvena mreža",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23483538"
+		"_exporter_id": "19481089"
 	},
 	"item": [
 		{
@@ -28,7 +28,7 @@
 									"var jsonData = pm.response.json();",
 									"var token = jsonData['token'];",
 									"if (token) {",
-									"    pm.environment.set(\"token\", token);",
+									"    pm.collectionVariables.set(\"token\", token);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -462,6 +462,48 @@
 							"path": [
 								"users",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update self",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "firstName",
+									"value": "AAAB",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "EEEB",
+									"type": "text"
+								},
+								{
+									"key": "dateOfBirth",
+									"value": "2002-01-29T00:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
 							]
 						}
 					},

@@ -12,6 +12,7 @@ const UserSelect = {
   last_name: true,
   date_of_birth: true,
   joined_at: true,
+  avatar_url: true,
 };
 
 const IncludedFollowers = {
