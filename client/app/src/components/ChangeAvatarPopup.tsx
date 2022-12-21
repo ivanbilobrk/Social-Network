@@ -2,6 +2,7 @@ import { Alert, Box, Button, Container, Fab, Grid, TextField } from '@mui/materi
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 type Props = {
   open: Boolean;
@@ -19,9 +20,10 @@ const OVERLAY: CSSProperties = {
   zIndex: '1000',
 };
 
-const AddPostPopup = ({ open, onClose }: Props) => {
+const AvatarPopup = ({ open, onClose }: Props) => {
   const [PostPhoto, setPostPhoto] = useState<Blob>();
   const [errors, setErrors] = useState<string[]>([]);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     setErrors([]);
@@ -35,6 +37,29 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   }
 
   if (!open) return null;
+
+
+  const changeAvatar = async () => {
+    //console.log(PostPhoto);
+
+    const response = await axiosPrivate.put(
+      '/users',
+      JSON.stringify({
+          photo: PostPhoto
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    ).then((response) => {
+      console.log("Okej")
+      console.log(response.data)
+    }).catch(err => {
+      console.log("Nije okej")
+      console.log(err.message)
+    })
+
+
+  }
 
   return (
     <div style={OVERLAY}>
@@ -90,7 +115,7 @@ const AddPostPopup = ({ open, onClose }: Props) => {
             </Grid>
 
             <Grid item>
-              <Button size="large" variant="outlined" color="primary">
+              <Button size="large" variant="outlined" color="primary" onClick={changeAvatar}>
                 Change profile picture
               </Button>
             </Grid>
@@ -106,4 +131,4 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   );
 };
 
-export default AddPostPopup;
+export default AvatarPopup;
