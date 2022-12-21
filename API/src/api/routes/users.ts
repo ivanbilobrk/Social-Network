@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { OK } from 'http-status';
 import UsersService from '../../services/usersService.js';
 import { forwardError } from '../forwardError.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
 import UpdateUserRequest from '../../requests/user/updateUserRequest.js';
+import multer from 'multer';
 
 const usersRouter = Router();
+const upload = multer();
 
 usersRouter.get(
   '/',
@@ -66,6 +67,7 @@ usersRouter.post(
 usersRouter.put(
   '',
   authenticateJwt,
+  upload.single('photo'),
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
     const fileReq = req as UserRequest & { file: Express.Multer.File };
@@ -80,8 +82,8 @@ usersRouter.put(
         : undefined,
     };
     const usersService = new UsersService(userId);
-    const user = await usersService.updateUser(updateRequest);
-    res.json(user);
+    await usersService.updateUser(updateRequest);
+    res.end();
   }),
 );
 
