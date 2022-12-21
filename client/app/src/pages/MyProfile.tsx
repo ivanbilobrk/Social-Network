@@ -9,15 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import useLogout from '../hooks/useLogout';
 import axios from '../api/axios';
 import Post from '../components/home/Post';
-
-
-
-
-const followers = 1234;
-const following = 10;
-
-
-
+import ProfileFeed from '../components/ProfileFeed';
 
 function MyProfile(props: any) {
 
@@ -35,7 +27,7 @@ function MyProfile(props: any) {
         const user = getUser();
 
         if (user != null) {
-          const response = await axios.get('/users/' + user.id + 'posts/');
+          const response = await axios.get('/users/:' + user.id + '/posts');
 
           if (isAllowed) {
             setPosts(response.data);
@@ -53,12 +45,12 @@ function MyProfile(props: any) {
     };
   }, []);
 
+  console.log(posts);
+
   let noOfPosts;
 
-  if(posts.length !== undefined) {
+  if(posts != null) {
     noOfPosts = posts.length;
-  } else {
-    noOfPosts = 0;
   }
 
   useEffect(() => {
@@ -90,6 +82,70 @@ function MyProfile(props: any) {
     };
   }, []);
 
+  const [followers, setFollowers] = useState([]);
+
+  useEffect(() => {
+    let isAllowed = true;
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user != null) {
+          const response = await axios.get('/users/:' + user.id + '/followers');
+
+          if (isAllowed) {
+            setPosts(response.data);
+          }
+        }
+      } catch (err: any) {
+        console.log(err.toJSON());
+      }
+    };
+
+    getData();
+
+    return () => {
+      isAllowed = false;
+    };
+  }, []);
+
+    let noOfFollowers;
+
+    if(followers !== null) {
+      noOfFollowers = followers.length;
+    }
+
+    const [followings, setFollowings] = useState([]);
+
+    useEffect(() => {
+      let isAllowed = true;
+      const getData = async () => {
+        try {
+          const user = getUser();
+  
+          if (user != null) {
+            const response = await axios.get('/users/:' + user.id + '/followings');
+  
+            if (isAllowed) {
+              setPosts(response.data);
+            }
+          }
+        } catch (err: any) {
+          console.log(err.toJSON());
+        }
+      };
+  
+      getData();
+  
+      return () => {
+        isAllowed = false;
+      };
+    }, []);
+
+    let noOfFollowings;
+    if(followings !== undefined) {
+      noOfFollowings = followings.length;
+    }
 
    return (
       <>
@@ -101,11 +157,11 @@ function MyProfile(props: any) {
               username={data['username']}
               firstname={data['first_name']}
               lastname={data['last_name']}
-              followers={followers}
-              following={following}
+              followers={noOfFollowers}
+              following={noOfFollowings}
               noOfPosts={noOfPosts}
             ></Profile> }
-            <Home></Home>
+            <ProfileFeed></ProfileFeed>
           </Grid>
         </Grid>
       </>

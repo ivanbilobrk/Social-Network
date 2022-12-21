@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Request, Router } from 'express';
 import { forwardError } from '../forwardError.js';
 import LoginRequest from '../../requests/auth/loginRequest.js';
 import AuthService from '../../services/authService.js';
