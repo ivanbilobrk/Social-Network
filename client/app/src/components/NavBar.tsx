@@ -179,7 +179,7 @@ export default function PrimarySearchAppBar(props:any) {
     >
       <MenuItem onClick={()=>{navigate('/edit', {replace: true})}}>Edit Profile</MenuItem>
       <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
-      <MenuItem >My Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/myprofile', {replace: true})}}>My Profile</MenuItem>
       <MenuItem onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>
           <ListItemIcon>
             <Logout fontSize="small" />
