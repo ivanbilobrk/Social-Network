@@ -21,7 +21,7 @@ const OVERLAY: CSSProperties = {
 };
 
 const AvatarPopup = ({ open, onClose }: Props) => {
-  const [PostPhoto, setPostPhoto] = useState<Blob>();
+  const [PostPhoto, setPostPhoto] = useState<File>();
   const [errors, setErrors] = useState<string[]>([]);
   const axiosPrivate = useAxiosPrivate();
 
@@ -41,24 +41,29 @@ const AvatarPopup = ({ open, onClose }: Props) => {
 
   const changeAvatar = async () => {
     //console.log(PostPhoto);
+  if(PostPhoto !== undefined){
+
+    let formData = new FormData()
+    formData.append('photo', PostPhoto)
+
+    console.log(formData)
 
     const response = await axiosPrivate.put(
       '/users',
-      JSON.stringify({
-          photo: PostPhoto
-      }),
+      formData,
       {
         headers: { 'Content-Type': 'application/json' },
       }
-    ).then((response) => {
-      console.log("Okej")
-      console.log(response.data)
-    }).catch(err => {
-      console.log("Nije okej")
-      console.log(err.message)
-    })
-
-
+      ).then((response) => {
+        console.log("Okej")
+        console.log(response.data)
+      }).catch(err => {
+        console.log("Nije okej")
+        console.log(err.message)
+      })
+  } else{
+    window.alert("Please choose image for profile picture!");
+  }
   }
 
   return (
