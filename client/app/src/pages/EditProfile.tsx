@@ -58,18 +58,6 @@ const EditProfile = () => {
   }
   
 
-  const changeAvatarFunction = async (profilePicture: any) => {
-    const response = await axiosPrivate.put(
-      '/users',
-      JSON.stringify({
-          photo: profilePicture
-      }),
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    )
-  }
-
   return (
     <>
       <NavBar />
