@@ -6,7 +6,6 @@ import NavBar from '../components/NavBar';
 import CreateIcon from '@mui/icons-material/Create';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
-import profilePic from '../static/zuko.jpg';
 import ChangePasswordPopUp from '../components/ChangePasswordPopUp';
 import getUser from '../util/getUser';
 
@@ -16,8 +15,10 @@ import { useNavigate } from 'react-router-dom';
 const EditProfile = () => {
   const [isOpen, setIsOpen] = useState<Boolean>(false);
   const [isChangeAvatarOpen, setIsChangeAvatarOpen] = useState<Boolean>(false);
-  const axiosPrivate = useAxiosPrivate()
   const [user, setUser] = useState<any>(getUser())
+  const [profilePic, setProfilePic] = useState<string>()
+  const axiosPrivate = useAxiosPrivate()
+  
 
   //dohvaća sve informacije o useru s backenda
   const getUserInfo = async (userId: number) => {
@@ -29,6 +30,7 @@ const EditProfile = () => {
       //console.log("Uspjeh")
       //console.log(response.data)
       setUser(response.data)
+      setProfilePic(response.data.avatar_url)
 
 
     } catch (err:any){

@@ -4,6 +4,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
+
 type Props = {
   open: Boolean;
   onClose: any;
@@ -21,8 +22,9 @@ const OVERLAY: CSSProperties = {
 };
 
 const AvatarPopup = ({ open, onClose }: Props) => {
-  const [PostPhoto, setPostPhoto] = useState<File>();
+  const [PostPhoto, setPostPhoto] = useState<Blob>();
   const [errors, setErrors] = useState<string[]>([]);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -43,23 +45,26 @@ const AvatarPopup = ({ open, onClose }: Props) => {
     //console.log(PostPhoto);
   if(PostPhoto !== undefined){
 
+    setDisabled(true)
     let formData = new FormData()
-    formData.append('photo', PostPhoto)
+    formData.append('photo', PostPhoto, 'profilePic');
+    formData.append('_method', 'put');
 
-    console.log(formData)
 
     const response = await axiosPrivate.put(
       '/users',
       formData,
       {
-        headers: { 'Content-Type': 'application/json' },
+         headers: {'Content-Type': 'multipart/form-data'}
       }
       ).then((response) => {
         console.log("Okej")
-        console.log(response.data)
+        //console.log(response.data)
+        onClose()
+        window.location.reload()
       }).catch(err => {
         console.log("Nije okej")
-        console.log(err.message)
+        //console.log(err.message)
       })
   } else{
     window.alert("Please choose image for profile picture!");
@@ -111,7 +116,7 @@ const AvatarPopup = ({ open, onClose }: Props) => {
                       alt="profile pic"
                       src={URL.createObjectURL(PostPhoto)}
                       // the image has a round border
-                      sx={{ width: 0.5, aspectRatio: 0.5, border: 3, borderRadius: '2%' }}
+                      sx={{ height: '300px', width: '300px', border: 'solid black 2px' }}
                     />
                   )}
                   {/* //TODO add a placeholder */}
@@ -120,7 +125,7 @@ const AvatarPopup = ({ open, onClose }: Props) => {
             </Grid>
 
             <Grid item>
-              <Button size="large" variant="outlined" color="primary" onClick={changeAvatar}>
+              <Button size="large" variant="outlined" color="primary" onClick={changeAvatar} disabled={disabled}>
                 Change profile picture
               </Button>
             </Grid>
