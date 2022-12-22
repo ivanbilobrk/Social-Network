@@ -5,6 +5,7 @@ import PostsService from '../../services/postsService.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
 import PostCommentRequest from '../../requests/post/postCommentRequest.js';
 import multer from 'multer';
+import CommentsService from '../../services/commentsService.js';
 
 const postsRouter = Router();
 const upload = multer();
@@ -91,6 +92,18 @@ postsRouter.delete(
   }),
 );
 
+postsRouter.get(
+  '/:postId/likes',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const postId = parseInt(req.params.postId);
+    const postsService = new PostsService(userId);
+    const userLikes = await postsService.getUsersWhoLikedPost(postId);
+    res.json(userLikes);
+  }),
+);
+
 postsRouter.post(
   '/:postId/like',
   authenticateJwt,
@@ -103,6 +116,18 @@ postsRouter.post(
   }),
 );
 
+postsRouter.get(
+  '/:postId/comments',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const postId = parseInt(req.params.postId);
+    const commentsService = new CommentsService(userId);
+    const comments = await commentsService.getComments(postId);
+    res.json(comments);
+  }),
+);
+
 postsRouter.post(
   '/:postId/comment',
   authenticateJwt,
@@ -110,8 +135,8 @@ postsRouter.post(
     const userId = req.user?.id ?? 0;
     const postId = parseInt(req.params.postId);
     const commentRequest: PostCommentRequest = req.body;
-    const postsService = new PostsService(userId);
-    const comment = await postsService.commentPost(postId, commentRequest.content);
+    const commentsService = new CommentsService(userId);
+    const comment = await commentsService.commentPost(postId, commentRequest.content);
     res.json(comment);
   }),
 );

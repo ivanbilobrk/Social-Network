@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { getNewEntityAuditData, getUpdatedEntityAuditData } from '../util/auditData.js';
 import { ExpandedPost, Post } from '../models/Post.js';
+import { ExpandedComment } from '../models/Comment.js';
+import { SimpleUser } from '../models/UserProfile.js';
 
 const IncludedAuthor = {
   author: {
@@ -29,9 +31,7 @@ const IncludedLikesCount = {
 const IncludedLikes = {
   postLikes: {
     select: {
-      profile: {
-        select: IncludedAuthor.author.select,
-      },
+      profile: IncludedAuthor.author,
     },
   },
 };
@@ -41,7 +41,8 @@ const IncludedComments = {
     select: {
       id: true,
       content: true,
-      profile: { select: IncludedAuthor.author.select },
+      postId: true,
+      profile: IncludedAuthor.author,
       _count: { select: { commentLikes: true } },
     },
   },
@@ -64,23 +65,16 @@ export default class PostsRepository {
         ...PostSelect,
         ...IncludedAuthor,
         ...IncludedLikesCount,
-        ...IncludedComments,
       },
     });
-    return data.map(({ _count, comments, ...post }) => {
-      const mappedComments = comments.map((comment) => {
-        const { _count, ...rest } = comment;
-        return { ...rest, likes: _count.commentLikes };
-      });
-      return {
-        ...post,
-        likes: _count.postLikes,
-      };
-    });
+    return data.map(({ _count, ...rest }) => ({
+      ...rest,
+      likes: _count.postLikes,
+    }));
   }
 
   async getAllUserPosts(userId: number): Promise<Post[]> {
-    const data = await this.prisma.post.findMany({
+    return await this.prisma.post.findMany({
       where: {
         authorId: userId,
       },
@@ -88,13 +82,11 @@ export default class PostsRepository {
         ...PostSelect,
         ...IncludedAuthor,
         ...IncludedLikesCount,
-        ...IncludedComments,
       },
     });
-    return data.map(({ _count, ...post }) => ({ ...post, likes: _count.postLikes }));
   }
 
-  async getPostById(postId: number): Promise<ExpandedPost | null> {
+  async getPostById(postId: number): Promise<ExpandedPost> {
     const data = await this.prisma.post.findFirstOrThrow({
       where: {
         id: postId,
@@ -106,15 +98,17 @@ export default class PostsRepository {
         ...IncludedComments,
       },
     });
+
     const { postLikes, comments, ...post } = data;
     const mappedComments = comments.map((comment) => {
       const { _count, ...rest } = comment;
       return { ...rest, likes: _count.commentLikes };
     });
+
     return {
       ...post,
       comments: mappedComments,
-      liked_by: data.postLikes.map((like) => like.profile),
+      liked_by: postLikes.map((like) => like.profile),
     };
   }
 
@@ -154,17 +148,6 @@ export default class PostsRepository {
     });
   }
 
-  async createPostComment(postId: number, content: string) {
-    return await this.prisma.comment.create({
-      data: {
-        content,
-        postId,
-        profileId: this.currentUserId,
-        ...getNewEntityAuditData(this.currentUserId),
-      },
-    });
-  }
-
   async likedByCurrentUser(postId: number) {
     return !!(await this.prisma.postLike.findFirst({
       where: {
@@ -182,5 +165,27 @@ export default class PostsRepository {
         ...getNewEntityAuditData(this.currentUserId),
       },
     });
+  }
+
+  async deletePostLike(postId: number) {
+    return await this.prisma.postLike.deleteMany({
+      where: {
+        postId: postId,
+        profileId: this.currentUserId,
+      },
+    });
+  }
+
+  async getUsersWhoLikedPost(postId: number): Promise<Array<SimpleUser>> {
+    const data = await this.prisma.postLike.findMany({
+      where: {
+        postId: postId,
+      },
+      select: {
+        profile: IncludedAuthor.author,
+      },
+    });
+
+    return data.map((post) => post.profile);
   }
 }

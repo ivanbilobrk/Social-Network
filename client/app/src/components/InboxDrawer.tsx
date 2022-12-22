@@ -110,7 +110,6 @@ export default function InboxDrawer({search}) {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <NavBar/>
       <CssBaseline />
       <Drawer
         variant="permanent"
