@@ -110,6 +110,7 @@ export default function InboxDrawer({search}) {
 
   return (
     <Box sx={{ display: 'flex' }}>
+      <NavBar/>
       <CssBaseline />
       <Drawer
         variant="permanent"
@@ -185,7 +186,7 @@ export default function InboxDrawer({search}) {
       <div ref={divRef}></div>
       {flagInboxOpen && 
       <>
-        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'70%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value); console.log(input)}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
+        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'60%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value); console.log(input)}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
         <StyledSendIcon onClick={()=>{addToList("icon")}} sx={{position:'fixed', bottom:'0.6em', right:'1.9em', fontSize:'2.5em'}}/>
       </>
       }
