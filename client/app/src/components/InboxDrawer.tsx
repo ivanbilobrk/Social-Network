@@ -21,6 +21,9 @@ import MessageOne from '../interface/MessageOne';
 import SendIcon from '@mui/icons-material/Send';
 import getUser from '../util/getUser';
 import User from '../interface/User';
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
 
 const messagesTemp:MessageOne[] = [{from:"user2", to:"user1", allMesagesWithUser:["poruka1aaaaaaaaaaaaaaa", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3", "nke"]}, 
 {from:"user3", to:"user1", allMesagesWithUser:["poruka4", "poruka5", "poruka6"]},
@@ -46,44 +49,75 @@ const StyledSendIcon = styled(SendIcon, {
 });
 
 
+
 const drawerWidth = 400;
 
 let inbox:MessageOne[] = [];
 //@ts-ignore
 export default function InboxDrawer({search}) {
+  const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();  
   let [flagInboxOpen, setFlagInboxOpen] = useState(false);
   let [messages, setMessages] = useState<MessageOne[]>([]);
   let [input, setInput] = useState("");
   let [selectedUser, setSelectedUser] = useState("");
+  const [inboxId, setInboxId] = useState<number>();
   let [currentMessages, setCurrentMessages] = useState<string[]>([]);
   let [user, setUser] = useState<User|null>();
+  const [lastMessages, setLastMessages] = useState([]);
+  const [inbox, setInbox] = useState([]);
   let inputRef = useRef();
 
-  const updateInbox = (to:string, from:string)=>{
+  const getMessagesForUser = async(currentUser:any)=>{
+    let response = await axiosPrivate.get('/messages',{});
+    console.log(response.data)
+    response.data.forEach((el:any)=>{
+      //@ts-ignore
+      setLastMessages(old=>{
+        let tempObject = {};
+        if(el.sender.username == currentUser){
+          return [...old, {firstLastName:el.receiver.first_name+" "+el.receiver.last_name,
+        message: el.lastMessage.content, id:el.receiver.id, username:el.receiver.username}]
+        } else{
+          return [...old, {firstLastName:el.sender.first_name+" "+el.sender.last_name,
+          message: el.lastMessage.content, id:el.sender.id, username:el.sender.username}]
+        }
+      })
+
+    })
+  }
+
+  const getInbox = async(from:number)=>{
+    let response = await axiosPrivate.get(`/users/messages/${from}`,{});
+    setInbox(response.data)
+  }
+
+  const updateInbox = async (from:any, id:any)=>{
 
     setFlagInboxOpen(true);
     setSelectedUser(from);
-
+    setInboxId(id)
+    await getInbox(id);
     //@ts-ignore
     inputRef.current.focus()
-    setCurrentMessages((messages.filter(el=>el.from == from))[0]?.allMesagesWithUser);
-    console.log(currentMessages.length)
-    
-    if(((messages.filter(el=>el.from == from))[0]?.allMesagesWithUser) == undefined){
-      setMessages((old)=>[{from: from, to: to, allMesagesWithUser: []}, ...old])
-      setCurrentMessages((messages.filter(el=>el.from == from))[0]?.allMesagesWithUser);
-      console.log(messages)
-    }
+
   }
 
-  const addToList = (event:any) => {
+  const addToList = async (event:any) => {
     if(event != null && event != undefined && (event.keyCode == 13 || event =="icon")){
+      await axiosPrivate.post('/messages', 
+              JSON.stringify({
+              content: input,  
+              receiverId: inboxId}), 
+            {
+            headers: {'Content-Type':'application/json'},
+            withCredentials: true
+            });
 
-      let tempArr =  currentMessages;
-      tempArr.push(input);
-  
-      setCurrentMessages(tempArr);
-  
+      await updateInbox(selectedUser, inboxId);
+      setLastMessages([]);
+      await getMessagesForUser(user?.username)
       setInput("");
     }
 
@@ -99,13 +133,7 @@ export default function InboxDrawer({search}) {
 
   useEffect(()=>{
       setUser(getUser());
-      let getMessagesForUser = async ()=>{
-        setUser(getUser());
-        console.log(getUser()?.id)
-        messagesTemp.forEach((el, index)=>{setMessages(old=>[...old, el])});
-      };
-
-      getMessagesForUser();
+      getMessagesForUser(getUser()?.username);
   }, [])
 
   return (
@@ -124,22 +152,24 @@ export default function InboxDrawer({search}) {
         <List>
             <ListItem>
                 {
-                search(user?.username, updateInbox, inputRef)}
+                search(user?.username, updateInbox, inputRef, setSelectedUser, setFlagInboxOpen, flagInboxOpen)}
             </ListItem>
         </List>
         
           <List sx={{width:'100%'}}>
-            {messages.filter(el=>el.allMesagesWithUser.length > 0).map((el:MessageOne, index) => (
+            {
+            //@ts-ignore
+            lastMessages.map((el:any, index) => (
               
-              <ListItem alignItems="flex-start" sx={{width:'100%'}} onClick={()=>{updateInbox(el.to, el.from)}}>
+              <ListItem alignItems="flex-start" sx={{width:'100%'}} onClick={async ()=>{await updateInbox(el.firstLastName, el.id)}}>
                 <ListItemButton>
               <ListItemAvatar>
                 <Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" />
               </ListItemAvatar>
-              <ListItemText primary={el.from} secondary={
+              <ListItemText primary={el.firstLastName} secondary={
               
                   <React.Fragment>
-                    {el.allMesagesWithUser[el.allMesagesWithUser.length-1]}
+                    {el.message}
                     <Divider/>
                   </React.Fragment>
               }/>
@@ -160,12 +190,13 @@ export default function InboxDrawer({search}) {
       <Box component="main" sx={{ flexGrow: 1, p: 5, mr:2, ml:5, mb:5, mt:3, display:'flex', justifyContent:'flex-end', flexDirection:'column'}}>
       <List  sx={{mt:5, display:'flex',flexDirection:'column'}} >
         
-        {currentMessages?.length > 0 && currentMessages.map((item, index) => 
-          index % 2 == 0 ? 
+        {inbox?.length > 0 && inbox.map((item:any, index) => 
+          //@ts-ignore
+          item.senderId == user.id ? 
           <ListItem style={{display:'flex',justifyContent:'flex-end'}}>
             <div style={{marginRight:'2.5%'}}>
               <Typography flexWrap={'wrap-reverse'}>
-                {item}
+                {item.content}
               </Typography>
               
             </div>
@@ -176,7 +207,7 @@ export default function InboxDrawer({search}) {
             {listMessage()}
 
             <ListItemText>
-                {item}
+                {item.content}
               </ListItemText>
           </ListItem>
 
@@ -185,8 +216,8 @@ export default function InboxDrawer({search}) {
       <div ref={divRef}></div>
       {flagInboxOpen && 
       <>
-        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'60%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value); console.log(input)}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
-        <StyledSendIcon onClick={()=>{addToList("icon")}} sx={{position:'fixed', bottom:'0.6em', right:'1.9em', fontSize:'2.5em'}}/>
+        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'60%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value);}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
+        <StyledSendIcon onClick={async()=>{await addToList("icon")}} sx={{position:'fixed', bottom:'0.6em', right:'1.9em', fontSize:'2.5em'}}/>
       </>
       }
       </Box>

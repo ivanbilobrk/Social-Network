@@ -28,7 +28,6 @@ const useAxiosPrivate = () => {
         const responseIntercept = axiosPrivate.interceptors.response.use(
             (response) => response,
             async (error) => {
-                localStorage.removeItem("accessToken")
                 return Promise.reject(error);
             }
         );
