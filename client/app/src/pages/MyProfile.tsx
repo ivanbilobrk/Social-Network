@@ -10,6 +10,7 @@ import useLogout from '../hooks/useLogout';
 import axios from '../api/axios';
 import Post from '../components/home/Post';
 import ProfileFeed from '../components/ProfileFeed';
+import userEvent from '@testing-library/user-event';
 
 function MyProfile(props: any) {
 
@@ -28,11 +29,10 @@ function MyProfile(props: any) {
         const user = getUser();
 
         if (user != null) {
-          const response = await axiosPrivate.get('/posts?authorId=' + user.id);
+          const response = await axiosPrivate.get('/posts');
 
           if (isAllowed) {
             setPosts(response.data);
-            setProfilePic(response.data.avatar_url);
           }
         }
       } catch (err: any) {
@@ -69,6 +69,7 @@ function MyProfile(props: any) {
           const response = await axios.get(
             '/users/' + user.id
           );
+          setProfilePic(response.data.avatar_url);
           console.log(response.data);
           isMounted && setData(response.data);
         }
@@ -166,7 +167,8 @@ function MyProfile(props: any) {
               noOfPosts={noOfPosts}
               profilePic = {profilePic}
             ></Profile> }
-            <ProfileFeed></ProfileFeed>
+            <ProfileFeed 
+            userId = {getUser()?.id}></ProfileFeed>
           </Grid>
         </Grid>
       </>

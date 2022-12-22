@@ -8,7 +8,7 @@ import User from '../interface/User';
 import userEvent from '@testing-library/user-event';
 
 
-function ScrollableProfileFeed(props: any) {
+function ScrollableProfileFeed({userId}: any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
 
@@ -16,15 +16,12 @@ function ScrollableProfileFeed(props: any) {
     let isAllowed = true;
     const getData = async () => {
       try {
-        const user = getUser();
-
-        if (user != null) {
           const response = await axios.get('/posts');
 
           if (isAllowed) {
             setPosts(response.data);
           }
-        }
+        
       } catch (err: any) {
         console.log(err.toJSON());
       }
@@ -38,7 +35,7 @@ function ScrollableProfileFeed(props: any) {
   }, []);
 
   const filtered = posts.filter(post => {
-    return post['authorId'] === getUser()?.id;
+    return post['authorId'] === userId;
   });
 
 

@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ScrollableProfileFeed from './ScrollableProfileFeed'
 
 
-function ProfileFeed() {
+function ProfileFeed({userId} : any) {
     const [isAddPostOpen, setisAddPostOpen] = useState<Boolean>(false);
   
     return (
@@ -24,7 +24,8 @@ function ProfileFeed() {
             </Button>
           </Grid>
           <Grid item xs={12}>
-            <ScrollableProfileFeed />
+            <ScrollableProfileFeed 
+            userId = {userId} />
           </Grid>
         </Grid>
   

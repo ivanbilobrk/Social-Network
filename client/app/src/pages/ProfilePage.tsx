@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useNavigate, useLocation } from 'react-router-dom';
 import useLogout from '../hooks/useLogout';
@@ -10,28 +10,31 @@ import NavBar from '../components/NavBar';
 import { Grid } from '@mui/material';
 import Profile from '../components/Profile';
 import ProfileFeed from '../components/ProfileFeed';
+import React from 'react';
 
-export default function ProfilePage(props: any) {
-  const [data, setData] = useState();
+export default function ProfilePage() {
+  const { userId } = useParams();
+  const [data, setData] = React.useState(null);
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const logout = useLogout();
   const location = useLocation();
   const [id, setId] = useState(getUser()?.id);
+  const [posts, setPosts] = useState([]);
+
+  const newUserId = userId?.substring(1);
+
+  console.log(newUserId);
 
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
     const getData = async () => {
       try {
-        const user = getUser();
-
-        //samo primjer nekog requesta
-        if (user !== null) {
-          const response = await axios.get('/users/' + id);
+          const response = await axiosPrivate.get('/users/' + newUserId);
           console.log(response.data);
           isMounted && setData(response.data);
-        }
+        
       } catch (err) {
         console.error(err);
         navigate('/login', { state: { from: location }, replace: true });
@@ -44,24 +47,20 @@ export default function ProfilePage(props: any) {
       isMounted = false;
       controller.abort();
     };
-  }, [id]);
+  }, [newUserId]);
 
-  const [posts, setPosts] = useState([]);
+  
 
   
   useEffect(() => {
     let isAllowed = true;
     const getData = async () => {
       try {
-        const user = getUser();
-
-        if (user != null) {
-          const response = await axiosPrivate.get('/users/:' + user.id + '/posts');
+          const response = await axiosPrivate.get('/posts');
 
           if (isAllowed) {
             setPosts(response.data);
           }
-        }
       } catch (err: any) {
         console.log(err.toJSON());
       }
@@ -74,13 +73,12 @@ export default function ProfilePage(props: any) {
     };
   }, []);
 
-  console.log(posts);
+  const filtered = posts.filter(post => {
+    return post['authorId'] === newUserId;
+  });
 
-  let noOfPosts;
+  const noOfPosts = filtered.length;
 
-  if(posts != null) {
-    noOfPosts = posts.length;
-  }
 
   const [followers, setFollowers] = useState([]);
 
@@ -88,18 +86,14 @@ export default function ProfilePage(props: any) {
     let isAllowed = true;
     const getData = async () => {
       try {
-        const user = getUser();
-
-        if (user != null) {
-          const response = await axios.get('/users/:' + user.id + '/followers');
+          const response = await axios.get('/users/:' + newUserId + '/followers');
 
           if (isAllowed) {
             setFollowers(response.data);
           }
+        } catch (err: any) {
+            console.log(err.toJSON());
         }
-      } catch (err: any) {
-        console.log(err.toJSON());
-      }
     };
 
     getData();
@@ -107,7 +101,7 @@ export default function ProfilePage(props: any) {
     return () => {
       isAllowed = false;
     };
-  }, []);
+  }, [newUserId]);
 
     let noOfFollowers;
 
@@ -115,21 +109,20 @@ export default function ProfilePage(props: any) {
       noOfFollowers = followers.length;
     }
 
+    console.log(noOfFollowers);
+
     const [followings, setFollowings] = useState([]);
 
     useEffect(() => {
       let isAllowed = true;
       const getData = async () => {
         try {
-          const user = getUser();
-  
-          if (user != null) {
-            const response = await axios.get('/users/:' + user.id + '/followings');
+            const response = await axios.get('/users/:' + newUserId + '/followings');
   
             if (isAllowed) {
               setFollowings(response.data);
             }
-          }
+          
         } catch (err: any) {
           console.log(err.toJSON());
         }
@@ -140,10 +133,10 @@ export default function ProfilePage(props: any) {
       return () => {
         isAllowed = false;
       };
-    }, []);
+    }, [newUserId]);
 
     let noOfFollowings;
-    if(followings !== undefined) {
+    if(followings !== null) {
       noOfFollowings = followings.length;
     }
 
@@ -162,8 +155,8 @@ export default function ProfilePage(props: any) {
               username={data['username']}
               firstname={data['first_name']}
               lastname={data['last_name']}
-              followers={noOfFollowers}
-              following={noOfFollowings}
+              noOfFollowers={noOfFollowers}
+              noOfFollowing={noOfFollowings}
               noOfPosts={noOfPosts}
             ></Profile> }
             <ProfileFeed></ProfileFeed>
