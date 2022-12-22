@@ -19,6 +19,7 @@ function MyProfile(props: any) {
   const logout = useLogout();
   const location = useLocation();
   const [posts, setPosts] = useState([]);
+  const [profilePic, setProfilePic] = useState<string>()
 
   useEffect(() => {
     let isAllowed = true;
@@ -31,6 +32,7 @@ function MyProfile(props: any) {
 
           if (isAllowed) {
             setPosts(response.data);
+            setProfilePic(response.data.avatar_url);
           }
         }
       } catch (err: any) {
@@ -49,9 +51,11 @@ function MyProfile(props: any) {
 
   let noOfPosts;
 
-  if(posts != null) {
-    noOfPosts = posts.length;
-  }
+  const filtered = posts.filter(post => {
+    return post['authorId'] === getUser()?.id;
+  });
+
+  noOfPosts = filtered.length;
 
   useEffect(() => {
     let isMounted = true;
@@ -142,9 +146,9 @@ function MyProfile(props: any) {
       };
     }, []);
 
-    let noOfFollowings;
+    let noOfFollowing;
     if(followings !== undefined) {
-      noOfFollowings = followings.length;
+      noOfFollowing = followings.length;
     }
 
    return (
@@ -157,9 +161,10 @@ function MyProfile(props: any) {
               username={data['username']}
               firstname={data['first_name']}
               lastname={data['last_name']}
-              followers={noOfFollowers}
-              following={noOfFollowings}
+              noOfFollowers={noOfFollowers}
+              noOfFollowing={noOfFollowing}
               noOfPosts={noOfPosts}
+              profilePic = {profilePic}
             ></Profile> }
             <ProfileFeed></ProfileFeed>
           </Grid>

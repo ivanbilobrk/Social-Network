@@ -7,6 +7,7 @@ import axios from '../api/axios';
 import User from '../interface/User';
 import userEvent from '@testing-library/user-event';
 
+
 function ScrollableProfileFeed(props: any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
@@ -18,7 +19,7 @@ function ScrollableProfileFeed(props: any) {
         const user = getUser();
 
         if (user != null) {
-          const response = await axios.get('/posts?authorId=' + user.id);
+          const response = await axios.get('/posts');
 
           if (isAllowed) {
             setPosts(response.data);
@@ -36,10 +37,14 @@ function ScrollableProfileFeed(props: any) {
     };
   }, []);
 
+  const filtered = posts.filter(post => {
+    return post['authorId'] === getUser()?.id;
+  });
+
 
   return (
     <List sx={{ width: '100%' }}>
-      {posts.map((post: any, key: any) => (
+      {filtered.map((post: any, key: any) => (
         <Post
           key={key}
           postId={post.id}
