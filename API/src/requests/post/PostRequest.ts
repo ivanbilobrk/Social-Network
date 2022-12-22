@@ -1,4 +1,3 @@
-import { Readable } from 'stream';
 import FileData from '../fileData.js';
 
 export default interface PostRequest {
