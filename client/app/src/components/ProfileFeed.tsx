@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import AddPostPopup from "./AddPostPopup";
 import AddIcon from '@mui/icons-material/Add';
 import ScrollableProfileFeed from './ScrollableProfileFeed'
+import getUser from "../util/getUser";
 
 
 function ProfileFeed({userId} : any) {
@@ -12,7 +13,7 @@ function ProfileFeed({userId} : any) {
       <>
         <Grid container direction="column">
           <Grid item>
-            <Button
+            {userId == getUser()?.id && <Button
               variant="outlined"
               startIcon={<AddIcon />}
               sx={{ m: 3, alignSelf: 'start', borderColor: 'lightblue' }}
@@ -21,7 +22,7 @@ function ProfileFeed({userId} : any) {
               }}
             >
               Add Post
-            </Button>
+            </Button>}
           </Grid>
           <Grid item xs={12}>
             <ScrollableProfileFeed 

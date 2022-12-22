@@ -11,6 +11,7 @@ import { Grid } from '@mui/material';
 import Profile from '../components/Profile';
 import ProfileFeed from '../components/ProfileFeed';
 import React from 'react';
+import ProfileOther from '../components/ProfileOther';
 
 export default function ProfilePage() {
   const { userId } = useParams();
@@ -150,7 +151,7 @@ export default function ProfilePage() {
       <NavBar />
         <Grid container direction="column" alignItems="center" justifyContent="center">
           <Grid item width="40%">
-            {data && <Profile
+            {data && <ProfileOther
               userId={data['id']}
               username={data['username']}
               firstname={data['first_name']}
@@ -158,7 +159,7 @@ export default function ProfilePage() {
               noOfFollowers={noOfFollowers}
               noOfFollowing={noOfFollowings}
               noOfPosts={noOfPosts}
-            ></Profile> }
+            ></ProfileOther> }
             <ProfileFeed></ProfileFeed>
           </Grid>
         </Grid>
