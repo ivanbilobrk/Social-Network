@@ -1,5 +1,5 @@
 import { List } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import Post from './Post';
 
@@ -12,6 +12,7 @@ function ScrollableFeed() {
     const getData = async () => {
       try {
         const response = await axiosPrivate.get('/posts', {});
+        console.log(response.data);
 
         if (isAllowed) {
           setPosts(response.data);
@@ -28,6 +29,7 @@ function ScrollableFeed() {
     };
   }, []);
 
+  console.log('posts have rendered');
   return (
     <List sx={{ width: '100%' }}>
       {posts.map((post: any, key: any) => (
