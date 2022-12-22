@@ -11,7 +11,7 @@ import { Grid } from '@mui/material';
 import Profile from '../components/Profile';
 import ProfileFeed from '../components/ProfileFeed';
 
-export default function ProfilePage() {
+export default function ProfilePage(props: any) {
   const [data, setData] = useState();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();

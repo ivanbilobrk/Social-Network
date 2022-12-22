@@ -26,7 +26,7 @@ function App() {
             <Route path="/edit" element={<EditProfile />}></Route>
             <Route path="/myprofile" element={<MyProfile />}></Route>
             <Route path="/inbox" element={<InboxPage/>}></Route>
-            <Route path ="/profilepage" element = {<ProfilePage/>}></Route>
+            <Route path ="/users/:userId" element = {<ProfilePage/>}></Route>
           </Route>
           <Route path="unauthorized" element={<Unauthorized />} />
           <Route element={<BlockAuth />}>
