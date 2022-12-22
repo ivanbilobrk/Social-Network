@@ -1,10 +1,9 @@
 import { List } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import getUser from '../../util/getUser';
 import Post from './Post';
 
-function ScrollableFeed(props: any) {
+function ScrollableFeed() {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
 
@@ -12,14 +11,10 @@ function ScrollableFeed(props: any) {
     let isAllowed = true;
     const getData = async () => {
       try {
-        const user = getUser();
+        const response = await axiosPrivate.get('/posts', {});
 
-        if (user != null) {
-          const response = await axiosPrivate.get('/posts', {});
-
-          if (isAllowed) {
-            setPosts(response.data);
-          }
+        if (isAllowed) {
+          setPosts(response.data);
         }
       } catch (err: any) {
         console.log(err.toJSON());
