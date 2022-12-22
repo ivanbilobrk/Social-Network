@@ -2,6 +2,8 @@ import { Alert, Box, Button, Container, Fab, Grid, TextField } from '@mui/materi
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+
 
 type Props = {
   open: Boolean;
@@ -19,9 +21,11 @@ const OVERLAY: CSSProperties = {
   zIndex: '1000',
 };
 
-const AddPostPopup = ({ open, onClose }: Props) => {
+const AvatarPopup = ({ open, onClose }: Props) => {
   const [PostPhoto, setPostPhoto] = useState<Blob>();
   const [errors, setErrors] = useState<string[]>([]);
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     setErrors([]);
@@ -35,6 +39,37 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   }
 
   if (!open) return null;
+
+
+  const changeAvatar = async () => {
+    //console.log(PostPhoto);
+  if(PostPhoto !== undefined){
+
+    setDisabled(true)
+    let formData = new FormData()
+    formData.append('photo', PostPhoto, 'profilePic');
+    formData.append('_method', 'put');
+
+
+    const response = await axiosPrivate.put(
+      '/users',
+      formData,
+      {
+         headers: {'Content-Type': 'multipart/form-data'}
+      }
+      ).then((response) => {
+        console.log("Okej")
+        //console.log(response.data)
+        onClose()
+        window.location.reload()
+      }).catch(err => {
+        console.log("Nije okej")
+        //console.log(err.message)
+      })
+  } else{
+    window.alert("Please choose image for profile picture!");
+  }
+  }
 
   return (
     <div style={OVERLAY}>
@@ -81,7 +116,7 @@ const AddPostPopup = ({ open, onClose }: Props) => {
                       alt="profile pic"
                       src={URL.createObjectURL(PostPhoto)}
                       // the image has a round border
-                      sx={{ width: 0.5, aspectRatio: 0.5, border: 3, borderRadius: '2%' }}
+                      sx={{ height: '300px', width: '300px', border: 'solid black 2px' }}
                     />
                   )}
                   {/* //TODO add a placeholder */}
@@ -90,7 +125,7 @@ const AddPostPopup = ({ open, onClose }: Props) => {
             </Grid>
 
             <Grid item>
-              <Button size="large" variant="outlined" color="primary">
+              <Button size="large" variant="outlined" color="primary" onClick={changeAvatar} disabled={disabled}>
                 Change profile picture
               </Button>
             </Grid>
@@ -106,4 +141,4 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   );
 };
 
-export default AddPostPopup;
+export default AvatarPopup;

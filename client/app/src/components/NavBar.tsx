@@ -22,10 +22,32 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate, Link as ReactLink, useLocation} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
-import { Divider, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { createTheme, Divider, inputLabelClasses, List, ListItem, ListItemAvatar, ListItemText, ThemeProvider } from '@mui/material';
 import axios from '../api/axios';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+
+const theme = createTheme({
+  components: {
+    // Inputs
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#eee",
+          "& .MuiOutlinedInput-notchedOutline": {
+            border: "none"
+          },
+          "&.Mui-focused": {
+            "& .MuiOutlinedInput-notchedOutline": {
+              border: "none"
+            }
+          }
+        }
+      }
+    }
+  }
+});
+
 
 type UserT = {
   firstName: string;
@@ -155,9 +177,9 @@ export default function PrimarySearchAppBar(props:any) {
       open={isAccountOpen}
       onClose={()=>{handleMenuClose(setAnchorEl)}}
     >
-      <MenuItem >Edit Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/edit', {replace: true})}}>Edit Profile</MenuItem>
       <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
-      <MenuItem >My Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/myprofile', {replace: true})}}>My Profile</MenuItem>
       <MenuItem onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>
           <ListItemIcon>
             <Logout fontSize="small" />
@@ -190,7 +212,8 @@ export default function PrimarySearchAppBar(props:any) {
 
     if(!isLoading){
       return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1}}>
+
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -212,7 +235,7 @@ export default function PrimarySearchAppBar(props:any) {
           >Projekt</Typography>
           </Link>
           
-                 <Autocomplete sx={{ width: 400 }}
+                 <Autocomplete sx={{ width: '18%', mt:1, mb: 1, padding:0 }}
                     id="free-solo-demo"
                     freeSolo
                     options={users.map((option) => {return option.userName+" "+option.firstName+" "+option.lastName})}
@@ -234,9 +257,12 @@ export default function PrimarySearchAppBar(props:any) {
                     renderInput={(params) => 
                     <>
                       <SearchIconWrapper sx={{mr:5}}>
-                        <SearchIcon />
+                        <SearchIcon sx={{mb:'50%'}}/>
                       </SearchIconWrapper>
-                      <TextField  {...params} label="Search users" sx={{ ml: 6, color:'red' }}/>
+                      <ThemeProvider theme={theme}>
+                        <TextField   {...params} label="Search users" sx={{ ml: 6 }} InputLabelProps={{
+                                                                                    sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:25}}}}/>
+                      </ThemeProvider>
                     </>}/>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

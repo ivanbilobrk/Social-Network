@@ -1,53 +1,64 @@
 import { Avatar, Button, Container, Grid, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import EditForm from '../components/EditForm';
 import ChangeAvatarPopUp from '../components/ChangeAvatarPopup';
 import NavBar from '../components/NavBar';
 import CreateIcon from '@mui/icons-material/Create';
-import axios from '../api/axios';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
-import profilePic from '../static/zuko.jpg';
 import ChangePasswordPopUp from '../components/ChangePasswordPopUp';
 import getUser from '../util/getUser';
+
+import { useNavigate } from 'react-router-dom';
 
 
 const EditProfile = () => {
   const [isOpen, setIsOpen] = useState<Boolean>(false);
   const [isChangeAvatarOpen, setIsChangeAvatarOpen] = useState<Boolean>(false);
-
   const [user, setUser] = useState<any>(getUser())
+  const [profilePic, setProfilePic] = useState<string>()
+  const axiosPrivate = useAxiosPrivate()
+  
 
   //dohvaća sve informacije o useru s backenda
   const getUserInfo = async (userId: number) => {
     try{
-      const response = await axios.get(
+      const response = await axiosPrivate.get(
         '/users/' + userId
       )
       
-      console.log("Uspjeh")
+      //console.log("Uspjeh")
       //console.log(response.data)
       setUser(response.data)
+      setProfilePic(response.data.avatar_url)
 
 
     } catch (err:any){
       console.log("Greška!")
     }
   }
+
+  useEffect(() => { 
+    getUserInfo(user.id)
+  }, [])
   
-  //treba poslati zahtjev za promjenom passworda na backend za starom i novom lozinkom
-  const passwordChangeFunction = async (oldPass: string, newPass: string) =>{
-    const response = await axios.post( //promjeni u axios private dodaj then, catch
-      '/auth/change-password',
+  
+  const changeNameFunction = async (first: string, last: string) => {
+    //console.log("Šaljem!")
+    const response = await axiosPrivate.put(
+      '/users',
       JSON.stringify({
-        user: getUserInfo(user.id),
-        oldPassword: oldPass,
-        newPassword: newPass
-      }),
+        firstName: first,
+        lastName: last
+      }), 
       {
-          headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
       }
     )
+
+    window.location.reload()
   }
+  
 
   return (
     <>
@@ -68,13 +79,7 @@ const EditProfile = () => {
             </Button>
           </Grid>
         </Grid>
-        <EditForm submitFunction= {() => {
-          ///////
-          ///////
-          ////////
-          //dodaj funkciju za zahtjev prema backendu
-          // promjena imena i prezimena
-        }}/>
+        <EditForm userInfo={user} requestFunction={changeNameFunction}/>
 
         <Grid container justifyContent="center" padding="40px 40px">
           <Grid item>
@@ -91,7 +96,7 @@ const EditProfile = () => {
           </Grid>
         </Grid>
       </Container>
-      <ChangePasswordPopUp open={isOpen} onClose={() => setIsOpen(false)}  onChange={passwordChangeFunction} />
+      <ChangePasswordPopUp open={isOpen} onClose={() => setIsOpen(false)}  />
     
       <ChangeAvatarPopUp open={isChangeAvatarOpen} onClose={() => setIsChangeAvatarOpen(false)} />
     </>

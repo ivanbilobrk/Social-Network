@@ -4,10 +4,12 @@ import UserRepository from '../repositories/userRepository.js';
 import config from '../config/index.js';
 import { APIError } from '../errors/APIError.js';
 import { StatusCodes } from 'http-status-codes';
-import LoginRequest from '../requests/loginRequest.js';
-import RegistrationRequest from '../requests/registrationRequest.js';
+import LoginRequest from '../requests/auth/loginRequest.js';
+import RegistrationRequest from '../requests/auth/registrationRequest.js';
 import logger from '../config/logger.js';
 import ChangePasswordRequest from '../requests/auth/changePasswordRequest.js';
+import intoStream from 'into-stream';
+import FilesRepository from '../repositories/filesRepository.js';
 
 export type UserClaims = {
   id: number;
@@ -19,7 +21,8 @@ export type UserClaims = {
 export default class AuthService {
   constructor(
     private readonly currentUser?: UserClaims,
-    private readonly userRepository: UserRepository = new UserRepository(currentUser?.id),
+    private readonly userRepository: UserRepository = new UserRepository(currentUser?.id ?? 0),
+    private readonly filesRepository: FilesRepository = new FilesRepository(),
   ) {}
 
   async login(request: LoginRequest): Promise<{ token: string }> {
@@ -68,6 +71,16 @@ export default class AuthService {
         user_type: 'user',
         joined_at: new Date(),
       });
+
+      let photoUrl: string | null = null;
+      if (request.photo) {
+        photoUrl = await this.filesRepository.upload(
+          `user-${createdUser.id}/${request.photo.name}`,
+          request.photo.type,
+          intoStream(request.photo.data),
+        );
+        await this.userRepository.addAvatar(createdUser.id, photoUrl);
+      }
 
       const token = jwt.sign(
         { id: createdUser.id, username: createdUser.username, email: createdUser.email, type: createdUser.user_type },

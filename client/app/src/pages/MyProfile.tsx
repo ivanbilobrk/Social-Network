@@ -1,54 +1,172 @@
 import { Grid } from '@mui/material';
 import Profile from '../components/Profile';
-import Header from '../components/Header';
+import NavBar from '../components/NavBar';
 import Home from './Home';
+import { useEffect, useState } from 'react';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import getUser from '../util/getUser';
+import { useNavigate, useLocation } from 'react-router-dom';
+import useLogout from '../hooks/useLogout';
+import axios from '../api/axios';
+import Post from '../components/home/Post';
+import ProfileFeed from '../components/ProfileFeed';
 
-const username = 'sammy1';
-const fullname = 'Samantha Jones';
-const followers = 12345;
-const following = 10;
+function MyProfile(props: any) {
 
-let posts = [
-  {
-    username: 'sammy1',
-    date: '2021-10-10',
-    description: ' ',
-    noOfLikes: 20,
-  },
-  {
-    username: 'sammy1',
-    date: '2021-10-10',
-    description: ' ',
-    noOfLikes: 20,
-  },
-  {
-    username: 'sammy1',
-    date: '2021-10-10',
-    description: ' ',
-    noOfLikes: 20,
-  },
-];
+  const [data, setData] = useState();
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const logout = useLogout();
+  const location = useLocation();
+  const [posts, setPosts] = useState([]);
 
-let noOfPosts = posts.length;
+  useEffect(() => {
+    let isAllowed = true;
+    const getData = async () => {
+      try {
+        const user = getUser();
 
-const MyProfile = () => {
-  return (
-    <>
-      <Header></Header>
-      <Grid container direction="column" alignItems="center" justifyContent="center">
-        <Grid item width="40%">
-          <Profile
-            username={username}
-            fullname={fullname}
-            followers={followers}
-            following={following}
-            noOfPosts={noOfPosts}
-          />
-          <Home></Home>
+        if (user != null) {
+          const response = await axiosPrivate.get('/posts?authorId=' + user.id);
+
+          if (isAllowed) {
+            setPosts(response.data);
+          }
+        }
+      } catch (err: any) {
+        console.log(err.toJSON());
+      }
+    };
+
+    getData();
+
+    return () => {
+      isAllowed = false;
+    };
+  }, []);
+
+  console.log(posts);
+
+  let noOfPosts;
+
+  if(posts != null) {
+    noOfPosts = posts.length;
+  }
+
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user != null) {
+          
+          const response = await axios.get(
+            '/users/' + user.id
+          );
+          console.log(response.data);
+          isMounted && setData(response.data);
+        }
+      } catch (err) {
+        console.error(err);
+        
+      }
+    };
+
+    getData();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, []);
+
+  const [followers, setFollowers] = useState([]);
+
+  useEffect(() => {
+    let isAllowed = true;
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user != null) {
+          const response = await axios.get('/users/:' + user.id + '/followers');
+
+          if (isAllowed) {
+            setFollowers(response.data);
+          }
+        }
+      } catch (err: any) {
+        console.log(err.toJSON());
+      }
+    };
+
+    getData();
+
+    return () => {
+      isAllowed = false;
+    };
+  }, []);
+
+    let noOfFollowers;
+
+    if(followers !== null) {
+      noOfFollowers = followers.length;
+    }
+
+    const [followings, setFollowings] = useState([]);
+
+    useEffect(() => {
+      let isAllowed = true;
+      const getData = async () => {
+        try {
+          const user = getUser();
+  
+          if (user != null) {
+            const response = await axios.get('/users/:' + user.id + '/followings');
+  
+            if (isAllowed) {
+              setFollowings(response.data);
+            }
+          }
+        } catch (err: any) {
+          console.log(err.toJSON());
+        }
+      };
+  
+      getData();
+  
+      return () => {
+        isAllowed = false;
+      };
+    }, []);
+
+    let noOfFollowings;
+    if(followings !== undefined) {
+      noOfFollowings = followings.length;
+    }
+
+   return (
+      <>
+        <NavBar />
+        <Grid container direction="column" alignItems="center" justifyContent="center">
+          <Grid item width="40%">
+            {data && <Profile
+              userId={data['id']}
+              username={data['username']}
+              firstname={data['first_name']}
+              lastname={data['last_name']}
+              followers={noOfFollowers}
+              following={noOfFollowings}
+              noOfPosts={noOfPosts}
+            ></Profile> }
+            <ProfileFeed></ProfileFeed>
+          </Grid>
         </Grid>
-      </Grid>
-    </>
-  );
-};
+      </>
+      );
+    
+}
 
 export default MyProfile;

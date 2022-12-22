@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "10c91ab8-d88c-46ae-93cd-d2ca304331ef",
+		"_postman_id": "377f2a0a-a9dc-49b4-8b3f-280069370525",
 		"name": "Projekt R - Društvena mreža",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19481089"
@@ -13,26 +13,23 @@
 					"name": "Login",
 					"event": [
 						{
-							"listen": "test",
+							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var jsonData = pm.response.json();",
-									"var token = jsonData.token;",
-									"if (token) {",
-									"    pm.collectionVariables.set('token', token);",
-									"}",
-									"else {",
-									"    console.log(jsonData)",
-									"}"
+									""
 								],
 								"type": "text/javascript"
 							}
 						},
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									""
+									"var jsonData = pm.response.json();",
+									"var token = jsonData['token'];",
+									"if (token) {",
+									"    pm.collectionVariables.set(\"token\", token);",
+									"}"
 								],
 								"type": "text/javascript"
 							}
@@ -89,33 +86,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Change password",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"oldPassword\": \"Pa$$w0rd\",\n    \"newPassword\": \"Pa$$w0rd!!!\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/change-password",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"change-password"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -123,18 +93,169 @@
 			"name": "Posts",
 			"item": [
 				{
+					"name": "Comments",
+					"item": [
+						{
+							"name": "Get post comments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/posts/7/comments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"posts",
+										"7",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get comment",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/comments/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"comments",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Comment post",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\": \"Demo comment\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/posts/7/comment",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"posts",
+										"7",
+										"comment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update comment",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\": \"Demo comment 1 update\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/comments/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"comments",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete comment",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/comments/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"comments",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Like comment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/comments/1/like",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"comments",
+										"1",
+										"like"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "GetAll",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/posts/",
+							"raw": "{{base_url}}/posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get post",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/7",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"posts",
-								""
+								"7"
 							]
 						}
 					},
@@ -147,7 +268,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"demo\",\n    \"content\": \"demo content\",\n    \"photo\": \"demo photo\"\n}",
+							"raw": "{\n    \"title\": \"demo 11\",\n    \"content\": \"demo content\",\n    \"photo\": \"demo photo\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -168,38 +289,13 @@
 					"response": []
 				},
 				{
-					"name": "Like Post",
+					"name": "Update",
 					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/posts/:postId/like",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"posts",
-								":postId",
-								"like"
-							],
-							"variable": [
-								{
-									"key": "postId",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Comment on post",
-					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"content\": \"demo komentar\"\n}",
+							"raw": "{\n        \"title\": \"demo 10 update\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -207,20 +303,207 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/posts/:postId/comment",
+							"raw": "{{base_url}}/posts/10",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"posts",
-								":postId",
-								"comment"
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/11",
+							"host": [
+								"{{base_url}}"
 							],
-							"variable": [
+							"path": [
+								"posts",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/7/like",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								"7",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users who liked post",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/posts/7/likes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"posts",
+								"7",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get followers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/1/followers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"followers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get followings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/1/followings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1",
+								"followings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Follow user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update self",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
 								{
-									"key": "postId",
-									"value": "1"
+									"key": "firstName",
+									"value": "AAAB",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "EEEB",
+									"type": "text"
+								},
+								{
+									"key": "dateOfBirth",
+									"value": "2002-01-29T00:00:00.000Z",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": []
 								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
 							]
 						}
 					},
