@@ -25,7 +25,8 @@ const AddPostPopup = ({ open, onClose }: Props) => {
   const [PostPhoto, setPostPhoto] = useState<Blob>();
   const [PostText, setPostText] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
-  const title = 'this is hardcoded, i do not know what to do with it';
+  // title is not used yet
+  const title = '';
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -42,13 +43,15 @@ const AddPostPopup = ({ open, onClose }: Props) => {
 
   function handlePostUpdate() {
     if (!PostText) {
-      setErrors(['Post text is required']);
+      setErrors((prev) => [...prev, 'Post text is required']);
       return;
     }
-    let isMounted = true;
-    const controller = new AbortController();
+    if (!PostPhoto) {
+      setErrors((prev) => [...prev, 'Post photo is required']);
+      return;
+    }
 
-    const getData = async () => {
+    const postData = async () => {
       try {
         const user = getUser();
 
@@ -56,16 +59,18 @@ const AddPostPopup = ({ open, onClose }: Props) => {
           const formData = new FormData();
           formData.append('title', title);
           formData.append('content', PostText);
-          formData.append('image', PostPhoto as Blob);
+          formData.append('photo', PostPhoto, 'postPic');
 
-          const response = await axiosPrivate.post('/posts', formData);
+          const response = await axiosPrivate.post('/posts', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
         }
       } catch (err) {
         console.error(err);
       }
     };
 
-    getData();
+    postData();
     onClose();
   }
 
@@ -113,11 +118,9 @@ const AddPostPopup = ({ open, onClose }: Props) => {
                       component="img"
                       alt="profile pic"
                       src={URL.createObjectURL(PostPhoto)}
-                      // the image has a round border
                       sx={{ width: 0.5, aspectRatio: 0.5, border: 3, borderRadius: '2%' }}
                     />
                   )}
-                  {/* //TODO add a placeholder */}
                 </Grid>
               </Grid>
             </Grid>

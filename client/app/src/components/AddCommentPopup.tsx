@@ -9,6 +9,7 @@ type Props = {
   open: Boolean;
   onClose: any;
   postPhoto: string;
+  postId: number;
 };
 
 const OVERLAY: CSSProperties = {
@@ -22,30 +23,26 @@ const OVERLAY: CSSProperties = {
   zIndex: '1000',
 };
 
-const AddCommentPopup = ({ open, onClose, postPhoto }: Props) => {
+const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
   const [errors, setErrors] = useState<string[]>([]);
   const [commentText, setCommentText] = useState<string>('');
   const axiosPrivate = useAxiosPrivate();
   const [comments, setComments] = useState<any>([]);
 
   useEffect(() => {
-    setErrors([]);
-  }, []);
-
-  useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
-    // mapping posts to comments because there is no getComments endpoint
+
     const getData = async () => {
       try {
         const user = getUser();
 
         if (user !== null) {
-          const comments = await axiosPrivate.get('/posts', {});
+          const comments = await axiosPrivate.get(`/posts/${postId}/comments`, {});
           isMounted && setComments(comments.data);
         }
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        setErrors([err.response.data.message]);
         onClose();
       }
     };
@@ -56,8 +53,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto }: Props) => {
       isMounted = false;
       controller.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
+  }, []);
 
   if (!open) return null;
 

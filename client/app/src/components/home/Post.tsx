@@ -5,18 +5,16 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useState } from 'react';
 import AddCommentPopup from '../AddCommentPopup';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import { useLocation } from 'react-router-dom';
 
-function Post({ author, date, description, likes, postId }: any) {
+function Post({ props }: any) {
   let [liked, setLiked] = useState(false);
   let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
   const axiosPrivate = useAxiosPrivate();
-  const location = useLocation();
 
   async function changeLikeState() {
     try {
       setLiked((prevState) => !prevState);
-      await axiosPrivate.post(`/posts/${postId}/like`, {});
+      await axiosPrivate.post(`/posts/${props.postId}/like`, {});
     } catch (err) {
       console.error(err);
     }
@@ -33,16 +31,12 @@ function Post({ author, date, description, likes, postId }: any) {
         style={{ backgroundColor: 'silver', width: '100%', aspectRatio: 1.2, maxHeight: '30rem' }}
         sx={{ my: '1rem' }}
       >
-        <CardHeader
-          avatar={<Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" />}
-          title={author}
-          subheader={date}
-        />
+        <CardHeader avatar={<Avatar alt="Remy Sharp" />} title={'mock title'} />
         <Box
           component="img"
           sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
           alt="The house from the offer."
-          src="https://source.unsplash.com/random"
+          src={'https://picsum.photos/200/300'}
         />
         <Box />
 
@@ -53,7 +47,7 @@ function Post({ author, date, description, likes, postId }: any) {
             </Grid>
             <Grid item xs={1}>
               <Typography variant="overline" fontSize={15}>
-                {liked ? likes + 1 : likes}
+                {2}
               </Typography>
             </Grid>
             <Grid item xs={3}>
@@ -65,7 +59,7 @@ function Post({ author, date, description, likes, postId }: any) {
         </CardActions>
         <CardContent sx={{ pt: '0rem' }}>
           <Typography variant="body1" component="div">
-            {description}
+            {props.description}
           </Typography>
         </CardContent>
       </Card>
@@ -73,7 +67,8 @@ function Post({ author, date, description, likes, postId }: any) {
       <AddCommentPopup
         open={isAddCommentOpen}
         onClose={() => setisAddCommentOpen(false)}
-        postPhoto={'https://source.unsplash.com/random'}
+        postPhoto={props.photo}
+        postId={props.postId}
       />
     </>
   );
