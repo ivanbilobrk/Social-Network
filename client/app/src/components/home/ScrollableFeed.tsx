@@ -27,15 +27,15 @@ function ScrollableFeed() {
 
   return (
     <List sx={{ width: '100%' }}>
-      {posts.map((post: any, key: any) => (
+      {posts.map((post: any) => (
         <Post
-          key={key}
+          key={post.id}
           postId={post.id}
-          author={post.author}
+          title={post.title}
           description={post.content}
-          likes={post.likes}
-          comments={post.comments}
           photo={post.photo}
+          author={post.author}
+          likes={post.likes}
         ></Post>
       ))}
     </List>

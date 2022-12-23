@@ -2,19 +2,49 @@ import { Avatar, Box, Card, CardActions, CardContent, CardHeader, Grid, IconButt
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddCommentPopup from '../AddCommentPopup';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import getUser from '../../util/getUser';
 
-function Post({ props }: any) {
+function Post(props: any) {
   let [liked, setLiked] = useState(false);
   let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
   const axiosPrivate = useAxiosPrivate();
 
+  // useEffect(() => {
+  //   //fetching users who liked the post
+  //   const getData = async () => {
+  //     try {
+  //       let response = await axiosPrivate.get(`posts/${props.postId}/like`);
+  //       console.log(response.data);
+  //       let user = getUser();
+
+  //       if (user != null) {
+  //         response.data.forEach((element: any) => {
+  //           if (element.id === user!.id) {
+  //             setLiked(true);
+  //           }
+  //         });
+  //       } else {
+  //         setLiked(false);
+  //       }
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   getData();
+  // }, []);
+
   async function changeLikeState() {
     try {
-      setLiked((prevState) => !prevState);
-      await axiosPrivate.post(`/posts/${props.postId}/like`, {});
+      let response = await axiosPrivate.post(`/posts/${props.postId}/like`, {});
+      console.log(response.data);
+      if (response.data.count) {
+        setLiked(false);
+      } else {
+        setLiked(true);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -28,15 +58,15 @@ function Post({ props }: any) {
     <>
       <Card
         variant="elevation"
-        style={{ backgroundColor: 'silver', width: '100%', aspectRatio: 1.2, maxHeight: '30rem' }}
+        style={{ backgroundColor: 'silver', width: '100%', aspectRatio: 1.2, maxHeight: '28rem', minHeight: '28rem' }}
         sx={{ my: '1rem' }}
       >
-        <CardHeader avatar={<Avatar alt="Remy Sharp" />} title={'mock title'} />
+        <CardHeader avatar={<Avatar alt="Remy Sharp" src={props.author.avatar} />} title={props.author.username} />
         <Box
           component="img"
           sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
-          alt="The house from the offer."
-          src={'https://picsum.photos/200/300'}
+          alt="Failed to load image"
+          src={props.photo}
         />
         <Box />
 
@@ -47,7 +77,7 @@ function Post({ props }: any) {
             </Grid>
             <Grid item xs={1}>
               <Typography variant="overline" fontSize={15}>
-                {2}
+                {liked ? props.likes + 1 : props.likes}
               </Typography>
             </Grid>
             <Grid item xs={3}>
