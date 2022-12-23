@@ -1,5 +1,5 @@
 import { Alert, Box, Button, Container, Grid, List, Paper, TextField } from '@mui/material';
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, MouseEvent, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import Comment from './Comment';
 import getUser from '../util/getUser';
@@ -30,6 +30,10 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
   const [comments, setComments] = useState<any>([]);
 
   useEffect(() => {
+    setErrors([]);
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
 
@@ -53,9 +57,40 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
       isMounted = false;
       controller.abort();
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!open) return null;
+
+  function handleComment(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void {
+    if (!commentText) {
+      // remove the error message if it already exists
+      setErrors((prev) => prev.filter((error) => error !== 'Comment text is required'));
+      setErrors((prev) => [...prev, 'Comment text is required']);
+      return;
+    }
+    setErrors((prev) => prev.filter((error) => error !== 'Comment text is required'));
+
+    const postData = async () => {
+      try {
+        const user = getUser();
+
+        if (user !== null) {
+          console.log('commentText: ', commentText);
+          console.log('url: ', `/posts/${postId}/comments`);
+          const comment = await axiosPrivate.post(`/posts/${postId}/comment`, {
+            content: commentText,
+          });
+          setComments((prev: any) => [...prev, comment.data]);
+          setCommentText('');
+        }
+      } catch (err: any) {
+        setErrors([err.response.data.message]);
+      }
+    };
+    postData();
+  }
 
   return (
     <div style={OVERLAY}>
@@ -97,11 +132,19 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
             <Grid xs={6} item>
               <Grid container justifyContent="center" alignContent="center" spacing={1} rowSpacing={2}>
                 <Grid xs={12} item>
-                  <Paper style={{ maxHeight: 400, overflow: 'auto' }} sx={{ border: 1 }}>
-                    <List>
-                      {comments.map((comment: { id: any; content: any }) => (
-                        <Comment key={comment.id} content={comment.content} />
+                  <Paper style={{ maxHeight: '24rem', overflow: 'auto' }} sx={{ border: 1 }}>
+                    <List style={{ minHeight: '23rem' }}>
+                      {comments.map((comment: any) => (
+                        <Comment
+                          key={comment.id}
+                          content={comment.content}
+                          id={comment.id}
+                          profileId={comment.profileId}
+                          profile={comment.profile}
+                          likedBy={comment.liked_by}
+                        />
                       ))}
+                      {comments.length === 0 && <h3>No comments yet</h3>}
                     </List>
                   </Paper>
                 </Grid>
@@ -116,7 +159,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
               </Grid>
             </Grid>
             <Grid item>
-              <Button size="large" variant="outlined" color="primary">
+              <Button size="large" variant="outlined" color="primary" onClick={(e) => handleComment(e)}>
                 Comment
               </Button>
             </Grid>
