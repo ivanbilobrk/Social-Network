@@ -2,7 +2,6 @@ import { Router } from 'express';
 import UsersService from '../../services/usersService.js';
 import { forwardError } from '../forwardError.js';
 import authenticateJwt, { UserRequest } from '../middleware/authMiddleware.js';
-import UsersService from '../../services/usersService.js';
 import MessagesService from '../../services/messagesService.js';
 import UpdateUserRequest from '../../requests/user/updateUserRequest.js';
 import multer from 'multer';
