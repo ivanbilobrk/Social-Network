@@ -50,6 +50,7 @@ function ScrollableProfileFeed(props: any) {
           description={post.content}
           likes={post.likes}
           comments={post.comments}
+          photo={post.photo}
         ></Post>
       ))}
     </List>
