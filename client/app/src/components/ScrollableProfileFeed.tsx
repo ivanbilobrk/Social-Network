@@ -7,22 +7,18 @@ import axios from '../api/axios';
 import User from '../interface/User';
 import userEvent from '@testing-library/user-event';
 
-function ScrollableProfileFeed(props: any) {
+function ScrollableProfileFeed(userId: any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    let isAllowed = true;
     const getData = async () => {
       try {
         const user = getUser();
 
         if (user != null) {
           const response = await axiosPrivate.get('/posts');
-
-          if (isAllowed) {
-            setPosts(response.data);
-          }
+          setPosts(response.data);
         }
       } catch (err: any) {
         console.log(err.toJSON());
@@ -30,26 +26,25 @@ function ScrollableProfileFeed(props: any) {
     };
 
     getData();
-
-    return () => {
-      isAllowed = false;
-    };
   }, []);
 
-  const filtered = posts.filter((post) => {
-    return post['authorId'] === getUser()?.id;
+  const filtered = posts.filter(post => {
+    return post['authorId'] === userId;
   });
+
+  console.log(userId);
 
   return (
     <List sx={{ width: '100%' }}>
-      {filtered.map((post: any, key: any) => (
+      {filtered.map((post: any) => (
         <Post
-          key={key}
+          key={post.id}
           postId={post.id}
+          title={post.title}
           author={post.author.username}
           description={post.content}
           likes={post.likes}
-          comments={post.comments}
+          photo={post.photo}
         ></Post>
       ))}
     </List>

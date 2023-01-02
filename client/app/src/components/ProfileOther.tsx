@@ -8,6 +8,23 @@ import getUser from '../util/getUser';
 
 function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, noOfFollowing, noOfPosts, profilePic }: any) {
 
+  let [follow, setFollow] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
+
+  async function changeFollowState() {
+    try {
+      let response = await axiosPrivate.post('/users/:' + userId + '/follow');
+      if(response.data.count) {
+        setFollow(false);
+      } else {
+        setFollow(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
 
   return ( 
   <Grid container direction = "column" marginTop={5}>
@@ -73,7 +90,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
         marginBottom={2}
         marginTop={2}
       >
-        <Button variant = "outlined">FOLLOW</Button>
+        <Button onClick = {changeFollowState} variant = "outlined">{follow ? "UNFOLLOW" : "FOLLOW"}</Button>
         <Button variant = "outlined">MESSAGE</Button>
       </Grid>
   </Grid>

@@ -160,7 +160,7 @@ export default function ProfilePage() {
               noOfFollowing={noOfFollowings}
               noOfPosts={noOfPosts}
             ></ProfileOther> }
-            <ProfileFeed></ProfileFeed>
+            <ProfileFeed userId = {newUserId}></ProfileFeed>
           </Grid>
         </Grid>
     </>
