@@ -9,15 +9,49 @@ import getUser from '../util/getUser';
 function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, noOfFollowing, noOfPosts, profilePic }: any) {
 
   let [follow, setFollow] = useState(false);
+  let [data, setData] = useState();
   const axiosPrivate = useAxiosPrivate();
 
+  useEffect(() => {
+    let isAllowed = true;
+    const getData = async() => {
+      try {
+        let response = await axiosPrivate.get('/users/' + userId);
+        if(isAllowed) {
+          setData(response.data);
+        }
+      } catch(err) {
+        console.error(err);
+      }
+    }
+    getData();
+    return () => {
+      isAllowed = false;
+    }
+  }, [userId]);
+
+  let newId = 0;
+
+  if(data != null) {
+    newId = data['id'];
+  }
+
   async function changeFollowState() {
+    let data = JSON.stringify({
+      userId: newId
+    });
     try {
-      let response = await axiosPrivate.post('/users/:' + userId + '/follow');
-      if(response.data.count) {
-        setFollow(false);
-      } else {
-        setFollow(true);
+      const user = getUser();
+      if(user !== null) {
+        let response = await axiosPrivate.post('/users/:' + user.id + '/follow', data, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        console.log(response.data);
+        if(response.data.count) {
+          setFollow(false);
+        } else {
+          setFollow(true);
+        }
       }
     } catch (err) {
       console.error(err);
