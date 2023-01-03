@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const location = useLocation();
   const [id, setId] = useState(getUser()?.id);
   const [posts, setPosts] = useState([]);
+  const [profilePic, setProfilePic] = useState<string>();
 
   const newUserId = userId?.substring(1);
 
@@ -35,6 +36,7 @@ export default function ProfilePage() {
           const response = await axiosPrivate.get('/users/' + newUserId);
           console.log(response.data);
           isMounted && setData(response.data);
+          setProfilePic(response.data.avatar_url);
         
       } catch (err) {
         console.error(err);
@@ -74,9 +76,16 @@ export default function ProfilePage() {
     };
   }, []);
 
+  let newId = 0;
+
+  if(data !== null) {
+    newId = data['id'];
+  }
+
   const filtered = posts.filter(post => {
-    return post['authorId'] === newUserId;
+    return post['authorId'] === newId;
   });
+  console.log(filtered);
 
   const noOfPosts = filtered.length;
 
@@ -159,8 +168,9 @@ export default function ProfilePage() {
               noOfFollowers={noOfFollowers}
               noOfFollowing={noOfFollowings}
               noOfPosts={noOfPosts}
+              profilePic = {profilePic}
             ></ProfileOther> }
-            <ProfileFeed></ProfileFeed>
+            <ProfileFeed userId = {newUserId}></ProfileFeed>
           </Grid>
         </Grid>
     </>

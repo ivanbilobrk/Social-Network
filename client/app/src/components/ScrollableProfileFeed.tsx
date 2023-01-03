@@ -6,23 +6,21 @@ import Post from './home/Post';
 import axios from '../api/axios';
 import User from '../interface/User';
 import userEvent from '@testing-library/user-event';
+import { getDatePickerToolbarUtilityClass } from '@mui/x-date-pickers/DatePicker/datePickerToolbarClasses';
 
-function ScrollableProfileFeed(props: any) {
+
+function ScrollableProfileFeed({userId} : any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
+  const [newUser, setNewUser] = useState();
 
   useEffect(() => {
     let isAllowed = true;
     const getData = async () => {
       try {
-        const user = getUser();
-
-        if (user != null) {
-          const response = await axiosPrivate.get('/posts');
-
-          if (isAllowed) {
-            setPosts(response.data);
-          }
+        const response = await axiosPrivate.get('/posts');
+        if(isAllowed) {
+          setPosts(response.data);
         }
       } catch (err: any) {
         console.log(err.toJSON());
@@ -30,28 +28,59 @@ function ScrollableProfileFeed(props: any) {
     };
 
     getData();
-
     return () => {
       isAllowed = false;
-    };
+    }
   }, []);
 
-  const filtered = posts.filter((post) => {
-    return post['authorId'] === getUser()?.id;
-  });
+  useEffect(() => {
+    let isAllowed = true;
+    const getData = async () => {
+      try {
+        const response = await axiosPrivate.get('/users/' + userId);
+        if(isAllowed) {
+          setNewUser(response.data);
+        }
+      } catch(err : any) {
+        console.log(err.toJSON());
+      }
+    };
+    getData();
+    return() => {
+      isAllowed = false;
+    }
+  }, []);
+
+  let newId = 0;
+
+  if(newUser !== undefined) {
+    newId = newUser['id'];
+  }
+
+  
+    const filtered = posts.filter(post => {
+      return post['authorId'] === newId;
+    });
+  
+  
+
+  console.log(posts);
+  console.log(filtered);
+
 
   return (
     <List sx={{ width: '100%' }}>
-      {filtered.map((post: any, key: any) => (
+        {filtered.map((post: any) => (
         <Post
-          key={key}
+          key={post.id}
           postId={post.id}
-          author={post.author.username}
+          title={post.title}
+          author={post.author}
           description={post.content}
           likes={post.likes}
-          comments={post.comments}
           photo={post.photo}
         ></Post>
+      
       ))}
     </List>
   );

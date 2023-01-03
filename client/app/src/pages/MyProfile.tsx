@@ -11,6 +11,7 @@ import axios from '../api/axios';
 import Post from '../components/home/Post';
 import ProfileFeed from '../components/ProfileFeed';
 import userEvent from '@testing-library/user-event';
+import { getDatePickerToolbarUtilityClass } from '@mui/x-date-pickers/DatePicker/datePickerToolbarClasses';
 
 function MyProfile(props: any) {
 
@@ -20,7 +21,7 @@ function MyProfile(props: any) {
   const logout = useLogout();
   const location = useLocation();
   const [posts, setPosts] = useState([]);
-  const [profilePic, setProfilePic] = useState<string>()
+  const [profilePic, setProfilePic] = useState<string>();
 
   useEffect(() => {
     let isAllowed = true;
@@ -47,7 +48,6 @@ function MyProfile(props: any) {
     };
   }, []);
 
-  console.log(posts);
 
   let noOfPosts;
 
@@ -58,34 +58,23 @@ function MyProfile(props: any) {
   noOfPosts = filtered.length;
 
   useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
+    let isAllowed = true;
     const getData = async () => {
       try {
         const user = getUser();
-
-        if (user != null) {
-          
-          const response = await axios.get(
-            '/users/' + user.id
-          );
+        if(user != null) {
+          const response = await axiosPrivate.get('/users/' + user.id);
+          setData(response.data);
           setProfilePic(response.data.avatar_url);
-          console.log(response.data);
-          isMounted && setData(response.data);
         }
-      } catch (err) {
+      } catch(err:any) {
         console.error(err);
-        
       }
-    };
-
+    }
     getData();
-
-    return () => {
-      isMounted = false;
-      controller.abort();
-    };
   }, []);
+
+
 
   const [followers, setFollowers] = useState([]);
 
@@ -165,7 +154,7 @@ function MyProfile(props: any) {
               noOfFollowers={noOfFollowers}
               noOfFollowing={noOfFollowing}
               noOfPosts={noOfPosts}
-              profilePic = {profilePic}
+              profilePic={profilePic}
             ></Profile> }
             <ProfileFeed 
             userId = {getUser()?.id}></ProfileFeed>
