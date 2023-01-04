@@ -28,6 +28,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
   const [commentText, setCommentText] = useState<string>('');
   const axiosPrivate = useAxiosPrivate();
   const [comments, setComments] = useState<any>([]);
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   useEffect(() => {
     setErrors([]);
@@ -42,7 +43,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
         const user = getUser();
 
         if (user !== null) {
-          const comments = await axiosPrivate.get(`/posts/${postId}/comments`, {});
+          const comments = await axiosPrivate.get(`/posts/${postId}/comments`);
           isMounted && setComments(comments.data);
         }
       } catch (err: any) {
@@ -59,7 +60,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refresh]);
 
   if (!open) return null;
 
@@ -77,13 +78,11 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
         const user = getUser();
 
         if (user !== null) {
-          console.log('commentText: ', commentText);
-          console.log('url: ', `/posts/${postId}/comments`);
-          const comment = await axiosPrivate.post(`/posts/${postId}/comment`, {
+          await axiosPrivate.post(`/posts/${postId}/comment`, {
             content: commentText,
           });
-          setComments((prev: any) => [...prev, comment.data]);
           setCommentText('');
+          setRefresh((prev) => !prev);
         }
       } catch (err: any) {
         setErrors([err.response.data.message]);

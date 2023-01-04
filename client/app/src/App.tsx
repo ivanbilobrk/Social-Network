@@ -9,9 +9,6 @@ import Test from './pages/Test';
 import RequireAuth from './components/auth/RequireAuth';
 import Unauthorized from './pages/Unauthorized';
 import BlockAuth from './components/auth/BlockAuth';
-import { Grid } from '@mui/material';
-import React from 'react';
-import Home from './pages/Home';
 import InboxPage from './pages/InboxPage';
 import ProfilePage from './pages/ProfilePage';
 

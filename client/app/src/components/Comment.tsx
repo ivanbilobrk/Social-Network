@@ -2,13 +2,27 @@ import { Avatar, Card, CardContent, IconButton, Typography } from '@mui/material
 import { deepOrange } from '@mui/material/colors';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import getUser from '../util/getUser';
 
 function Comment(props: any) {
   let [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(props.likedBy ? props.likedBy.length + 1 : 0);
   const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    let user = getUser();
+    if (props.likedBy) {
+      props.likedBy.forEach((element: any) => {
+        if (user !== null && element.id === user.id) {
+          setLiked(true);
+        }
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function changeLikeState() {
     try {
