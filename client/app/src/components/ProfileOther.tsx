@@ -43,9 +43,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
     try {
       const user = getUser();
       if(user !== null) {
-        let response = await axiosPrivate.post('/users/:' + user.id + '/follow', data, {
-          headers: { 'Content-Type': 'application/json' },
-        });
+        let response = await axiosPrivate.post('/users/' + newId + '/follow');
         console.log(response.data);
         if(response.data.count) {
           setFollow(false);
