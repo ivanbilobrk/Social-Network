@@ -94,7 +94,7 @@ const Search = (user, updateInbox, inputRef, setFlagInboxOpen, flagInboxOpen)=>{
                     </SearchIconWrapper>
                 <ThemeProvider theme={theme}>
                     <TextField   {...params} label={label} sx={{ ml: 6 }} InputLabelProps={{
-                                                                          sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:25}}}}/>
+                                                                          sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:0}}}}/>
                 </ThemeProvider>
             </>
         }/>
