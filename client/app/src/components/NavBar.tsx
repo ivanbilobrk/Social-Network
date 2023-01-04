@@ -60,6 +60,7 @@ type UserT = {
   firstName: string;
   lastName: string;
   userName: string;
+  avatar_url: string;
   key: number;
 };
 
@@ -137,6 +138,7 @@ export default function PrimarySearchAppBar(props: any) {
               key: parseInt(el.id),
               firstName: el.first_name,
               lastName: el.last_name,
+              avatar_url: el.avatar_url
             };
           });
           setLoading(false);
@@ -276,7 +278,7 @@ export default function PrimarySearchAppBar(props: any) {
                       >
                         <ListItem key={`${option.key}`}>
                           <ListItemAvatar>
-                            <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random" />
+                            <Avatar alt={`${option.key}`} src={getIdByUsername(extractUserNameFromOption(option.key)).avatar_url} />
                           </ListItemAvatar>
                           <ListItemText primary={extractUserNameFromOption(option.key)} />{' '}
                         </ListItem>
