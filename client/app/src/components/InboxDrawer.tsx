@@ -33,12 +33,7 @@ const messagesTemp:MessageOne[] = [{from:"user2", to:"user1", allMesagesWithUser
  {from:"user7", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]}]
 
 
- const listMessage = ()=>{
-  return (
-      <ListItemAvatar>
-        <Avatar src="https://source.unsplash.com/random"/>
-      </ListItemAvatar>
-)}
+ 
 
 const StyledSendIcon = styled(SendIcon, {
   name: "StyledSendIcon",
@@ -68,6 +63,7 @@ export default function InboxDrawer({search}) {
   const [lastMessages, setLastMessages] = useState([]);
   const [inbox, setInbox] = useState([]);
   let inputRef = useRef();
+  const [users, setUsers] = useState<any []>([])
 
   const getMessagesForUser = async(currentUser:any)=>{
     let response = await axiosPrivate.get('/messages',{});
@@ -78,10 +74,10 @@ export default function InboxDrawer({search}) {
         let tempObject = {};
         if(el.sender.username == currentUser){
           return [...old, {firstLastName:el.receiver.first_name+" "+el.receiver.last_name,
-        message: el.lastMessage.content, id:el.receiver.id, username:el.receiver.username}]
+        message: el.lastMessage.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
         } else{
           return [...old, {firstLastName:el.sender.first_name+" "+el.sender.last_name,
-          message: el.lastMessage.content, id:el.sender.id, username:el.sender.username}]
+          message: el.lastMessage.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
         }
       })
 
@@ -123,6 +119,43 @@ export default function InboxDrawer({search}) {
 
   };
 
+  const getPicForUsername = (username:string) =>{
+    //console.log(users)
+    //console.log("USERNAME: " + username)
+    let url : string = ""
+    users.forEach(user => {
+      if (user.username == username){
+        url = user.avatar_url
+      }
+    })
+    //console.log("Bla bla: " + tempUser.username)
+    //console.log("URL: "+ url)
+    return url;
+}
+
+const getPicForFistLastName = (firstlastName: string) => {
+  let url: string = " "
+  users.forEach(user => {
+    if(user.first_name+" "+user.last_name == firstlastName){
+      url = user.avatar_url
+    }
+  })
+  return url;
+}
+
+
+const listMessage = (id: number)=>{
+  //console.log(users)
+  //console.log("PRIMLJENI ID: " + id)
+  let username = users.filter(user => user.id == id)[0].username
+  //console.log("USERNAME: "+ username)
+
+  return (
+      <ListItemAvatar>
+        <Avatar src={getPicForUsername(username)}/>
+      </ListItemAvatar>
+)}
+
   const divRef = useRef(null);
 
   useEffect(() => {
@@ -135,6 +168,24 @@ export default function InboxDrawer({search}) {
       setUser(getUser());
       getMessagesForUser(getUser()?.username);
   }, [])
+
+  useEffect(() => {
+     const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user != null) {
+          const response = await axiosPrivate.get('/users')
+          setUsers(response.data);
+        }
+      } catch (err: any) {
+        console.log(err.toJSON());
+      }
+    };
+
+    getData();
+  }, [])
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -164,7 +215,7 @@ export default function InboxDrawer({search}) {
               <ListItem alignItems="flex-start" sx={{width:'100%'}} onClick={async ()=>{await updateInbox(el.firstLastName, el.id)}}>
                 <ListItemButton>
               <ListItemAvatar>
-                <Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" />
+                <Avatar alt={el.firstLastName} src={el.avatar_url}></Avatar>
               </ListItemAvatar>
               <ListItemText primary={el.firstLastName} secondary={
               
@@ -181,7 +232,7 @@ export default function InboxDrawer({search}) {
       </Drawer>
       {selectedUser.length >  0 && 
           <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'80%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
-            <Avatar src="https://source.unsplash.com/random" sx={{ width: '6%', height: '90%' }} />
+            <Avatar src={getPicForFistLastName(selectedUser)} sx={{ width: '6%', height: '90%' }} />
             <div style={{marginLeft:50, display:'flex', alignItems:'center'}}>
               <Typography variant ='h5'>{selectedUser}</Typography>
             </div>  
@@ -201,10 +252,10 @@ export default function InboxDrawer({search}) {
               
             </div>
     
-            {listMessage()}
+            {listMessage(item.senderId)}
           </ListItem>:
           <ListItem style={{display:'flex', width:'50%', transform: 'translateX(24em)',justifyContent:'flex-start'}}>
-            {listMessage()}
+            {listMessage(item.senderId)}
 
             <ListItemText>
                 {item.content}

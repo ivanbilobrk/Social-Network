@@ -44,6 +44,7 @@ const theme = createTheme({
     firstName: string;
     lastName: string;
     userName: string;
+    avatar_url: string;
     key: number
   };
 
@@ -54,6 +55,13 @@ const getFirstLastnameForId = (option:string) =>{
     const tempUser =  users.filter(user=>user.key == id)[0];
     return tempUser.firstName+" "+tempUser.lastName;
 }
+
+const getUserForId = (option:string) =>{
+    const id = parseInt(option);
+    const tempUser =  users.filter(user=>user.key == id)[0];
+    return tempUser;
+}
+
 
 //@ts-ignore
 const Search = (user, updateInbox, inputRef, setFlagInboxOpen, flagInboxOpen)=>{
@@ -70,7 +78,7 @@ const Search = (user, updateInbox, inputRef, setFlagInboxOpen, flagInboxOpen)=>{
                 <ListItemButton onClick={()=>{setOpen(false); setLabel("Message users");updateInbox(getFirstLastnameForId(option.key), parseInt(option.key)); inputRef.current.focus();}}>            
                     <ListItem key={`${option.key}`}>
                         <ListItemAvatar>
-                            <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random"/>
+                            <Avatar alt={`${option.key}`} src={getUserForId(option.key).avatar_url}/>
                         </ListItemAvatar>
                         <ListItemText primary={getFirstLastnameForId(option.key)}/> 
                         </ListItem> 
@@ -111,7 +119,7 @@ const InboxPage = ()=>{
                 if(user !== null){
                     const response = await axiosPrivate.get(`/users`, {
                     });
-                    response.data.forEach((el:any, index:any)=>{users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name}})
+                    response.data.forEach((el:any, index:any)=>{users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name, avatar_url: el.avatar_url}})
                     setLoading(false);
                 }
             } catch (err) {                                         
