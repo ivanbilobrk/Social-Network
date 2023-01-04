@@ -7,7 +7,7 @@ const dummyPostsRouter = Router();
 dummyPostsRouter.get(
   '/:postId',
   forwardError(async (req, res) => {
-    let post = await getDummyPostById(parseInt(req.params.postId));
+    const post = await getDummyPostById(parseInt(req.params.postId));
     res.json(post);
   }),
 );
@@ -15,7 +15,7 @@ dummyPostsRouter.get(
 dummyPostsRouter.post(
   '/',
   forwardError(async (req, res) => {
-    let post = await createNewPost(req.body.title, req.body.content);
+    const post = await createNewPost(req.body.title, req.body.content);
     res.json(post);
   }),
 );

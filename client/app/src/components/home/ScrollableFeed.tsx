@@ -1,16 +1,41 @@
-import { Grid, List, Paper } from '@mui/material';
+import { List } from '@mui/material';
+import { useEffect, useState } from 'react';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import getUser from '../../util/getUser';
 import Post from './Post';
 
-function ScrollableFeed(props: any) {
+function ScrollableFeed() {
+  const axiosPrivate = useAxiosPrivate();
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const user = getUser();
+
+        if (user != null) {
+          const response = await axiosPrivate.get('/posts');
+          setPosts(response.data);
+        }
+      } catch (err: any) {
+        console.log(err.toJSON());
+      }
+    };
+
+    getData();
+  }, []);
+
   return (
     <List sx={{ width: '100%' }}>
-      {props.posts.map((post: any, index: any) => (
+      {posts.map((post: any) => (
         <Post
-          key={index}
-          username={post.username}
-          date={post.date}
-          description={post.description}
-          noOfLikes={post.noOfLikes}
+          key={post.id}
+          postId={post.id}
+          title={post.title}
+          description={post.content}
+          photo={post.photo}
+          author={post.author}
+          likes={post.likes}
         ></Post>
       ))}
     </List>
