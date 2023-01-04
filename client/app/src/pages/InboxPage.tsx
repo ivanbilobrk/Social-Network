@@ -9,7 +9,7 @@ import InboxDrawer from '../components/InboxDrawer';
 import zIndex from '@mui/material/styles/zIndex';
 import SelectInput from '@mui/material/Select/SelectInput';
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled('div')(({ theme }: any) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
