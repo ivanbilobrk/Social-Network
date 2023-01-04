@@ -22,8 +22,9 @@ import SendIcon from '@mui/icons-material/Send';
 import getUser from '../util/getUser';
 import User from '../interface/User';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
+import HomeIcon from '@mui/icons-material/Home';
 
 const messagesTemp:MessageOne[] = [{from:"user2", to:"user1", allMesagesWithUser:["poruka1aaaaaaaaaaaaaaa", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3", "nke"]}, 
 {from:"user3", to:"user1", allMesagesWithUser:["poruka4", "poruka5", "poruka6"]},
@@ -71,7 +72,6 @@ export default function InboxDrawer({search}) {
 
   const getMessagesForUser = async(currentUser:any)=>{
     let response = await axiosPrivate.get('/messages',{});
-    console.log(response.data)
     response.data.forEach((el:any)=>{
       //@ts-ignore
       setLastMessages(old=>{
@@ -149,6 +149,9 @@ export default function InboxDrawer({search}) {
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
+        <Link to="/home" style={{ textDecoration: 'none', color: 'black', marginLeft:'45%' }}>
+            <HomeIcon sx={{fontSize:40}}/>
+          </Link>
         <List>
             <ListItem>
                 {

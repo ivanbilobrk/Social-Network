@@ -26,7 +26,9 @@ import { createTheme, Divider, inputLabelClasses, List, ListItem, ListItemAvatar
 import axios from '../api/axios';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-
+import HomeIcon from '@mui/icons-material/Home';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EditIcon from '@mui/icons-material/Edit';
 const theme = createTheme({
   components: {
     // Inputs
@@ -177,11 +179,12 @@ export default function PrimarySearchAppBar(props:any) {
       open={isAccountOpen}
       onClose={()=>{handleMenuClose(setAnchorEl)}}
     >
-      <MenuItem onClick={()=>{navigate('/edit', {replace: true})}}>Edit Profile</MenuItem>
-      <MenuItem >Inbox <MessageIcon sx={{ml:2}}/></MenuItem>
-      <MenuItem >My Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/home')}}> <HomeIcon sx={{mr:2}}/> Home</MenuItem>
+      <MenuItem onClick={()=>{navigate('/myprofile')}}> <AccountCircleIcon sx={{mr:2}}/> My Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/edit')}}> <EditIcon sx={{mr:2}}/>  Edit Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/inbox')}}><MessageIcon sx={{mr:2}}/>Inbox</MenuItem>
       <MenuItem onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>
-          <ListItemIcon>
+          <ListItemIcon sx={{mr:0.6}}>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
@@ -216,24 +219,17 @@ export default function PrimarySearchAppBar(props:any) {
 
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Link to="/home" style={{ textDecoration: 'none', color: 'white' }}>
+            <HomeIcon/>
+          </Link>
         
-           <Link to="/home" style={{ textDecoration: 'none', color: 'white', width:70}}>  
+          
            <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' }}}
-          >Projekt</Typography>
-          </Link>
+            sx={{ display: { xs: 'none', sm: 'block' }, ml:2}} >Projekt</Typography>
+          
           
                  <Autocomplete sx={{ width: '18%', mt:1, mb: 1, padding:0 }}
                     id="free-solo-demo"
@@ -243,14 +239,14 @@ export default function PrimarySearchAppBar(props:any) {
                     renderOption ={(option:any)=>{ return (
                                       <>
                                         <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',}}>
-                                          <Link to = {`/users/:${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}}>
+                                          <Link to = {`/users/:${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}} key={`${option.key}5`}>
                                             <ListItem key={`${option.key}`}>
-                                              <ListItemAvatar>
-                                                <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random"/>
+                                              <ListItemAvatar key={`${option.key}1`}>
+                                                <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random" key={`${option.key}2`}/>
                                               </ListItemAvatar>
-                                            <ListItemText primary={extractUserNameFromOption(option.key)}/> </ListItem>
+                                            <ListItemText primary={extractUserNameFromOption(option.key)} key={`${option.key}3`}/> </ListItem>
                                           </Link>
-                                          <Divider variant="inset" component="li" />
+                                          <Divider variant="inset" component="li" key={`${option.key}4`}/>
                                         </List>
                                       </>
                       )}}
@@ -261,7 +257,7 @@ export default function PrimarySearchAppBar(props:any) {
                       </SearchIconWrapper>
                       <ThemeProvider theme={theme}>
                         <TextField   {...params} label="Search users" sx={{ ml: 6 }} InputLabelProps={{
-                                                                                    sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:25}}}}/>
+                                                                                    sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:0}}}}/>
                       </ThemeProvider>
                     </>}/>
           <Box sx={{ flexGrow: 1 }} />

@@ -111,7 +111,7 @@ const InboxPage = ()=>{
                 if(user !== null){
                     const response = await axiosPrivate.get(`/users`, {
                     });
-                    response.data.forEach((el:any, index:any)=>{users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name}})
+                    response.data.forEach((el:any, index:any)=>{ if(el.id !== user.id) users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name}})
                     setLoading(false);
                 }
             } catch (err) {                                         
