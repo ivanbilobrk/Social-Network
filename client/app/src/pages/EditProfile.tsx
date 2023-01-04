@@ -31,6 +31,7 @@ const EditProfile = () => {
       //console.log(response.data)
       setUser(response.data)
       setProfilePic(response.data.avatar_url)
+      console.log(response.data.avatar_url)
 
 
     } catch (err:any){

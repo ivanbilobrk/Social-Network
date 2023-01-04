@@ -47,7 +47,8 @@ const AvatarPopup = ({ open, onClose }: Props) => {
 
     setDisabled(true)
     let formData = new FormData()
-    formData.append('photo', PostPhoto, 'profilePic');
+    let number = Math.random() * (1000)
+    formData.append('photo', PostPhoto, 'profilePic'+number);
     formData.append('_method', 'put');
 
 
