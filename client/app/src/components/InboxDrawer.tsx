@@ -68,16 +68,17 @@ export default function InboxDrawer({search}) {
 
   const getMessagesForUser = async(currentUser:any)=>{
     let response = await axiosPrivate.get('/messages',{});
+    console.log(response.data)
     response.data.forEach((el:any)=>{
       //@ts-ignore
       setLastMessages(old=>{
         let tempObject = {};
         if(el.sender.username == currentUser){
           return [...old, {firstLastName:el.receiver.first_name+" "+el.receiver.last_name,
-        message: el.lastMessage.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
+        message: el.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
         } else{
           return [...old, {firstLastName:el.sender.first_name+" "+el.sender.last_name,
-          message: el.lastMessage.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
+          message: el.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
         }
       })
 
