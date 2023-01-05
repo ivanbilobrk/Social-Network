@@ -36,8 +36,8 @@ export default class PostsService {
     return await this.messagesRepository.getMessageById(messageId);
   }
 
-  async getAllMessages(): Promise<MessageOverview[]> {
-    return await this.messagesRepository.getAllMessages();
+  async getAllChats(): Promise<Message[]> {
+    return await this.messagesRepository.getAllChats();
   }
 
   async getAllMessagesWithUser(userId: number): Promise<Message[]> {
