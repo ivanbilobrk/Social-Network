@@ -136,10 +136,13 @@ function MyProfile(props: any) {
       };
     }, []);
 
+
     let noOfFollowing;
     if(followings !== undefined) {
       noOfFollowing = followings.length;
     }
+
+    console.log(followings);
 
    return (
       <>
