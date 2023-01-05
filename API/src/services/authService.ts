@@ -30,7 +30,7 @@ export default class AuthService {
 
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new APIError('User not found', StatusCodes.BAD_REQUEST, true);
+      throw new APIError('User not found', StatusCodes.NOT_FOUND, true);
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
@@ -106,7 +106,7 @@ export default class AuthService {
 
     const user = await this.userRepository.findByEmail(this.currentUser?.email ?? '');
     if (!user) {
-      throw new APIError('User not found', StatusCodes.BAD_REQUEST, true);
+      throw new APIError('User not found', StatusCodes.NOT_FOUND, true);
     }
 
     const isPasswordValid = await bcrypt.compare(oldPassword, user.password_hash);

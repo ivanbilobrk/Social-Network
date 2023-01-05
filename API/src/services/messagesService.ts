@@ -13,7 +13,7 @@ export default class PostsService {
 
   async checkIfmessageExists(messageId: number) {
     if (!(await this.messagesRepository.messageExists(messageId))) {
-      throw new APIError(`Message with id ${messageId} not found`, StatusCodes.BAD_REQUEST, true);
+      throw new APIError(`Message with id ${messageId} not found`, StatusCodes.NOT_FOUND, true);
     }
   }
 

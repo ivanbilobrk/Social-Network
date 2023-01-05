@@ -13,7 +13,7 @@ export default class CommentsService {
 
   async checkIfPostExists(postId: number) {
     if (!(await this.postsRepository.getPostById(postId))) {
-      throw new APIError(`Post with id ${postId} not found`, StatusCodes.BAD_REQUEST, true);
+      throw new APIError(`Post with id ${postId} not found`, StatusCodes.NOT_FOUND, true);
     }
   }
 
