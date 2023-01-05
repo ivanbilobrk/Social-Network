@@ -29,6 +29,10 @@ export default class MessagesRepository {
     this.prisma = new PrismaClient();
   }
 
+  async messageExists(id: number): Promise<boolean> {
+    return (await this.prisma.message.count({ where: { id } })) > 0;
+  }
+
   async getMessageById(messageId: number): Promise<Message> {
     const data = await this.prisma.message.findUniqueOrThrow({
       where: {

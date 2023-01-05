@@ -14,9 +14,8 @@ export default class PostsService {
   ) {}
 
   async checkIfPostExists(postId: number) {
-    const post = await this.postsRepository.getPostById(postId);
-    if (!post) {
-      throw new APIError(`Post with id ${postId} not found`, StatusCodes.NOT_FOUND, true);
+    if (!(await this.postsRepository.postExists(postId))) {
+      throw new APIError(`Post with id ${postId} not found`, StatusCodes.BAD_REQUEST, true);
     }
   }
 
