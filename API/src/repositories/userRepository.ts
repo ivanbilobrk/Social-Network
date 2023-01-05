@@ -165,11 +165,11 @@ export default class UserRepository {
   }
 
   async alreadyFollows(userId: number) {
-    return await this.prisma.follower.findFirst({
+    return !!(await this.prisma.follower.findFirst({
       where: {
         followerId: this.currentUserId,
         followedId: userId,
       },
-    });
+    }));
   }
 }

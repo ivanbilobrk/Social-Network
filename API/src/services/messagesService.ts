@@ -12,9 +12,8 @@ export default class PostsService {
   ) {}
 
   async checkIfmessageExists(messageId: number) {
-    const message = await this.messagesRepository.getMessageById(messageId);
-    if (!message) {
-      throw new APIError(`Message with id ${messageId} not found`, StatusCodes.NOT_FOUND, true);
+    if (!(await this.messagesRepository.messageExists(messageId))) {
+      throw new APIError(`Message with id ${messageId} not found`, StatusCodes.BAD_REQUEST, true);
     }
   }
 
@@ -37,8 +36,8 @@ export default class PostsService {
     return await this.messagesRepository.getMessageById(messageId);
   }
 
-  async getAllMessages(): Promise<MessageOverview[]> {
-    return await this.messagesRepository.getAllMessages();
+  async getAllChats(): Promise<Message[]> {
+    return await this.messagesRepository.getAllChats();
   }
 
   async getAllMessagesWithUser(userId: number): Promise<Message[]> {

@@ -38,6 +38,10 @@ export default class PostsRepository {
     this.prisma = new PrismaClient();
   }
 
+  async commentExists(id: number): Promise<boolean> {
+    return (await this.prisma.comment.count({ where: { id } })) > 0;
+  }
+
   async createPostComment(postId: number, content: string) {
     return await this.prisma.comment.create({
       data: {
