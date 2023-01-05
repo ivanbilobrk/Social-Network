@@ -33,8 +33,10 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import HomeIcon from '@mui/icons-material/Home';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EditIcon from '@mui/icons-material/Edit';
 const theme = createTheme({
   components: {
     // Inputs
@@ -60,6 +62,7 @@ type UserT = {
   firstName: string;
   lastName: string;
   userName: string;
+  avatar_url: string;
   key: number;
 };
 
@@ -137,6 +140,7 @@ export default function PrimarySearchAppBar(props: any) {
               key: parseInt(el.id),
               firstName: el.first_name,
               lastName: el.last_name,
+              avatar_url: el.avatar_url
             };
           });
           setLoading(false);
@@ -192,34 +196,16 @@ export default function PrimarySearchAppBar(props: any) {
         handleMenuClose(setAnchorEl);
       }}
     >
-      <MenuItem
-        onClick={() => {
-          navigate('/edit', { replace: true });
-        }}
-      >
-        Edit Profile
-      </MenuItem>
-      <MenuItem>
-        Inbox <MessageIcon sx={{ ml: 2 }} />
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          navigate('/myprofile', { replace: true });
-        }}
-      >
-        My Profile
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          handleLogout();
-          navigate('/login', { replace: true });
-        }}
-      >
-        <ListItemIcon>
-          <Logout fontSize="small" />
-        </ListItemIcon>
-        Logout
-      </MenuItem>
+      <MenuItem onClick={()=>{navigate('/home')}}> <HomeIcon sx={{mr:2}}/> Home</MenuItem>
+      <MenuItem onClick={()=>{navigate('/myprofile')}}> <AccountCircleIcon sx={{mr:2}}/> My Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/edit')}}> <EditIcon sx={{mr:2}}/>  Edit Profile</MenuItem>
+      <MenuItem onClick={()=>{navigate('/inbox')}}><MessageIcon sx={{mr:2}}/>Inbox</MenuItem>
+      <MenuItem onClick={()=>{handleLogout(); navigate('/login', {replace: true});}}>
+          <ListItemIcon sx={{mr:0.6}}>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
     </Menu>
   );
 
@@ -244,83 +230,75 @@ export default function PrimarySearchAppBar(props: any) {
     ></Menu>
   );
 
-  if (!isLoading) {
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
-              <MenuIcon />
+    if(!isLoading){
+      return (
+        <Box sx={{ flexGrow: 1}}>
+
+      <AppBar position="static">
+        <Toolbar>
+          <Link to="/home" style={{ textDecoration: 'none', color: 'white' }}>
+            <HomeIcon/>
+          </Link>
+        
+          
+           <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: 'none', sm: 'block' }, ml:2}} >Projekt</Typography>
+          
+          
+                 <Autocomplete sx={{ width: '18%', mt:1, mb: 1, padding:0 }}
+                    id="free-solo-demo"
+                    freeSolo
+                    options={users.map((option) => {return option.userName+" "+option.firstName+" "+option.lastName})}
+                    
+                    renderOption ={(option:any)=>{ return (
+                                      <>
+                                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',}}>
+                                          <Link to = {`/users/:${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}} key={`${option.key}5`}>
+                                            <ListItem key={`${option.key}`}>
+                                              <ListItemAvatar key={`${option.key}1`}>
+                                                <Avatar alt={`${option.key}`} src={getIdByUsername(extractUserNameFromOption(option.key)).avatar_url} key={`${option.key}2`}/>
+                                              </ListItemAvatar>
+                                            <ListItemText primary={extractUserNameFromOption(option.key)} key={`${option.key}3`}/> </ListItem>
+                                          </Link>
+                                          <Divider variant="inset" component="li" key={`${option.key}4`}/>
+                                        </List>
+                                      </>
+                      )}}
+                    renderInput={(params) => 
+                    <>
+                      <SearchIconWrapper sx={{mr:5}}>
+                        <SearchIcon sx={{mb:'50%'}}/>
+                      </SearchIconWrapper>
+                      <ThemeProvider theme={theme}>
+                        <TextField   {...params} label="Search users" sx={{ ml: 6 }} InputLabelProps={{
+                                                                                    sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:0}}}}/>
+                      </ThemeProvider>
+                    </>}/>
+          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+    
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={accountMenuId}
+              aria-haspopup="true"
+              onClick={(e)=>{handleMenuOpen(e, setAnchorEl)}}
+              color="inherit"
+            >
+              <AccountCircle />
             </IconButton>
 
-            <Link to="/home" style={{ textDecoration: 'none', color: 'white', width: 70 }}>
-              <Typography variant="h6" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' } }}>
-                Projekt
-              </Typography>
-            </Link>
 
-            <Autocomplete
-              sx={{ width: '18%', mt: 1, mb: 1, padding: 0 }}
-              id="free-solo-demo"
-              freeSolo
-              options={users.map((option) => {
-                return option.userName + ' ' + option.firstName + ' ' + option.lastName;
-              })}
-              renderOption={(option: any) => {
-                return (
-                  <>
-                    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                      <Link
-                        to={`/users/:${getIdByUsername(extractUserNameFromOption(option.key)).key}`}
-                        style={{ color: 'inherit', textDecoration: 'inherit' }}
-                      >
-                        <ListItem key={`${option.key}`}>
-                          <ListItemAvatar>
-                            <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random" />
-                          </ListItemAvatar>
-                          <ListItemText primary={extractUserNameFromOption(option.key)} />{' '}
-                        </ListItem>
-                      </Link>
-                      <Divider variant="inset" component="li" />
-                    </List>
-                  </>
-                );
-              }}
-              renderInput={(params) => (
-                <>
-                  <SearchIconWrapper sx={{ mr: 5 }}>
-                    <SearchIcon sx={{ mb: '50%' }} />
-                  </SearchIconWrapper>
-                  <ThemeProvider theme={theme}>
-                    <TextField
-                      {...params}
-                      label="Search users"
-                      sx={{ ml: 6 }}
-                      InputLabelProps={{
-                        sx: { color: 'grey', [`&.${inputLabelClasses.shrink}`]: { color: 'grey', fontSize: 25 } },
-                      }}
-                    />
-                  </ThemeProvider>
-                </>
-              )}
-            />
+
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={accountMenuId}
-                aria-haspopup="true"
-                onClick={(e) => {
-                  handleMenuOpen(e, setAnchorEl);
-                }}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
+
             </Box>
           </Toolbar>
+          
         </AppBar>
         {renderAccountMenu}
       </Box>

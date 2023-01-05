@@ -9,7 +9,7 @@ import InboxDrawer from '../components/InboxDrawer';
 import zIndex from '@mui/material/styles/zIndex';
 import SelectInput from '@mui/material/Select/SelectInput';
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled('div')(({ theme }: any) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
@@ -44,37 +44,43 @@ const theme = createTheme({
     firstName: string;
     lastName: string;
     userName: string;
+    avatar_url: string;
     key: number
   };
 
   const users: UserT[] = [];
 
-const getIdByUsername = (userName:string) =>{
-    return (users.filter(user=>user.userName == userName))[0];
+const getFirstLastnameForId = (option:string) =>{
+    const id = parseInt(option);
+    const tempUser =  users.filter(user=>user.key == id)[0];
+    return tempUser.firstName+" "+tempUser.lastName;
 }
 
-const extractUserNameFromOption = (option:string) =>{
-    return option.split(" ")[0];
+const getUserForId = (option:string) =>{
+    const id = parseInt(option);
+    const tempUser =  users.filter(user=>user.key == id)[0];
+    return tempUser;
 }
+
 
 //@ts-ignore
-const Search = (user, updateInbox, inputRef)=>{
+const Search = (user, updateInbox, inputRef, setFlagInboxOpen, flagInboxOpen)=>{
     let [label, setLabel] = useState("Message users");
     let [open, setOpen] = useState(false);
     return (
         <Autocomplete sx={{ width: '80%', mt:1, mb: 1, padding:0 }} 
         id="free-solo-demo" freeSolo clearOnBlur clearOnEscape open = {open} onFocus={()=>{setOpen(true)}} 
-        options={users.map((option) => {return option.userName+" "+option.firstName+" "+option.lastName})}
+        options={users.map((option) => {return option.key+""})}
         renderOption ={(option:any)=>{ return (
             <>
                 <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',}}> 
                 
-                <ListItemButton onClick={()=>{inputRef.current.focus(); setOpen(false); setLabel("Message users"); updateInbox(user, extractUserNameFromOption(option.key))}}>            
+                <ListItemButton onClick={()=>{setOpen(false); setLabel("Message users");updateInbox(getFirstLastnameForId(option.key), parseInt(option.key)); inputRef.current.focus();}}>            
                     <ListItem key={`${option.key}`}>
                         <ListItemAvatar>
-                            <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random"/>
+                            <Avatar alt={`${option.key}`} src={getUserForId(option.key).avatar_url}/>
                         </ListItemAvatar>
-                        <ListItemText primary={extractUserNameFromOption(option.key)}/> 
+                        <ListItemText primary={getFirstLastnameForId(option.key)}/> 
                         </ListItem> 
                         </ListItemButton>    
                         <Divider variant="inset" component="li" />
@@ -88,7 +94,7 @@ const Search = (user, updateInbox, inputRef)=>{
                     </SearchIconWrapper>
                 <ThemeProvider theme={theme}>
                     <TextField   {...params} label={label} sx={{ ml: 6 }} InputLabelProps={{
-                                                                          sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:25}}}}/>
+                                                                          sx: {color: "grey", [`&.${inputLabelClasses.shrink}`]: {color: "grey", fontSize:0}}}}/>
                 </ThemeProvider>
             </>
         }/>
@@ -113,7 +119,7 @@ const InboxPage = ()=>{
                 if(user !== null){
                     const response = await axiosPrivate.get(`/users`, {
                     });
-                    response.data.forEach((el:any, index:any)=>{users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name}})
+                    response.data.forEach((el:any, index:any)=>{ if(el.id !== user.id) users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name, avatar_url: el.avatar_url}})
                     setLoading(false);
                 }
             } catch (err) {                                         
