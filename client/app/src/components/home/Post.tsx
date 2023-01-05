@@ -39,7 +39,6 @@ function Post(props: any) {
     getData();
   }, []);
 
-
   async function changeLikeState() {
     try {
       let response = await axiosPrivate.post(`/posts/${props.postId}/like`, {});
@@ -65,9 +64,20 @@ function Post(props: any) {
       <Card
         variant="elevation"
         style={{ backgroundColor: 'silver', width: '100%', aspectRatio: 1.2, maxHeight: '28rem', minHeight: '28rem' }}
-        sx={{ my: '1rem'}}
+        sx={{ my: '1rem' }}
       >
-        <CardHeader avatar={<Avatar sx={{bgcolor: '#c173f5'}} alt={props.author.first_name + " " +props.author.last_name} src={props.author.avatar_url} >{props.author.first_name[0]+props.author.last_name[0]}</Avatar>} title={props.author.username} />
+        <CardHeader
+          avatar={
+            <Avatar
+              sx={{ bgcolor: '#c173f5' }}
+              alt={props.author.first_name + ' ' + props.author.last_name}
+              src={props.author.avatar_url}
+            >
+              {props.author.first_name[0] + props.author.last_name[0]}
+            </Avatar>
+          }
+          title={props.author.username}
+        />
         <Box
           component="img"
           sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
