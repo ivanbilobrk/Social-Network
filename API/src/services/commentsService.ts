@@ -12,9 +12,8 @@ export default class CommentsService {
   ) {}
 
   async checkIfPostExists(postId: number) {
-    const post = await this.postsRepository.getPostById(postId);
-    if (!post) {
-      throw new APIError(`Post with id ${postId} not found`, StatusCodes.NOT_FOUND, true);
+    if (!(await this.postsRepository.getPostById(postId))) {
+      throw new APIError(`Post with id ${postId} not found`, StatusCodes.BAD_REQUEST, true);
     }
   }
 
@@ -26,9 +25,8 @@ export default class CommentsService {
   }
 
   async checkIfCommentExists(commentId: number) {
-    const comment = await this.commentRepository.getComment(commentId);
-    if (!comment) {
-      throw new APIError(`Comment with id ${commentId} not found`, StatusCodes.NOT_FOUND, true);
+    if (!(await this.commentRepository.commentExists(commentId))) {
+      throw new APIError(`Comment with id ${commentId} not found`, StatusCodes.BAD_REQUEST, true);
     }
   }
 
