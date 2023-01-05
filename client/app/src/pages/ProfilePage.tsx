@@ -96,7 +96,7 @@ export default function ProfilePage() {
     let isAllowed = true;
     const getData = async () => {
       try {
-          const response = await axios.get('/users/:' + newUserId + '/followers');
+          const response = await axiosPrivate.get('/users/' + newUserId + '/followers');
 
           if (isAllowed) {
             setFollowers(response.data);
@@ -127,7 +127,7 @@ export default function ProfilePage() {
       let isAllowed = true;
       const getData = async () => {
         try {
-            const response = await axios.get('/users/:' + newUserId + '/followings');
+            const response = await axiosPrivate.get('/users/' + newUserId + '/followings');
   
             if (isAllowed) {
               setFollowings(response.data);
