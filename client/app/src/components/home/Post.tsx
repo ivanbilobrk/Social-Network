@@ -9,32 +9,35 @@ import getUser from '../../util/getUser';
 
 function Post(props: any) {
   let [liked, setLiked] = useState(false);
+  let [localLike, setLocalLike] = useState(0);
   let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
   const axiosPrivate = useAxiosPrivate();
 
-  // useEffect(() => {
-  //   //fetching users who liked the post
-  //   const getData = async () => {
-  //     try {
-  //       let response = await axiosPrivate.get(`posts/${props.postId}/like`);
-  //       console.log(response.data);
-  //       let user = getUser();
+  useEffect(() => {
+    //fetching users who liked the post
+    const getData = async () => {
+      try {
+        let response = await axiosPrivate.get(`posts/${props.postId}/likes`);
+        console.log(response.data);
+        let user = getUser();
 
-  //       if (user != null) {
-  //         response.data.forEach((element: any) => {
-  //           if (element.id === user!.id) {
-  //             setLiked(true);
-  //           }
-  //         });
-  //       } else {
-  //         setLiked(false);
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-  //   getData();
-  // }, []);
+        if (user != null) {
+          response.data.forEach((element: any) => {
+            if (element.id === user!.id) {
+              setLiked(true);
+              setLocalLike(0);
+            } else {
+              setLiked(false);
+              setLocalLike(0);
+            }
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getData();
+  }, []);
 
 
   async function changeLikeState() {
@@ -43,8 +46,10 @@ function Post(props: any) {
       console.log(response.data);
       if (response.data.count) {
         setLiked(false);
+        setLocalLike((prev) => prev - 1);
       } else {
         setLiked(true);
+        setLocalLike((prev) => prev + 1);
       }
     } catch (err) {
       console.error(err);
@@ -78,7 +83,7 @@ function Post(props: any) {
             </Grid>
             <Grid item xs={1}>
               <Typography variant="overline" fontSize={15}>
-                {liked ? props.likes + 1 : props.likes}
+                {props.likes + localLike}
               </Typography>
             </Grid>
             <Grid item xs={3}>
