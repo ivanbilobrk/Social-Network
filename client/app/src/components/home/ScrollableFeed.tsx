@@ -4,7 +4,7 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import getUser from '../../util/getUser';
 import Post from './Post';
 
-function ScrollableFeed() {
+function ScrollableFeed(props: any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
 
@@ -23,7 +23,8 @@ function ScrollableFeed() {
     };
 
     getData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.refresh]);
 
   return (
     <List sx={{ width: '100%' }}>

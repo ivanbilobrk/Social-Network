@@ -8,6 +8,7 @@ import getUser from '../util/getUser';
 type Props = {
   open: Boolean;
   onClose: any;
+  refresh: any;
 };
 
 const OVERLAY: CSSProperties = {
@@ -21,7 +22,7 @@ const OVERLAY: CSSProperties = {
   zIndex: '1000',
 };
 
-const AddPostPopup = ({ open, onClose }: Props) => {
+const AddPostPopup = ({ open, onClose, refresh }: Props) => {
   const [PostPhoto, setPostPhoto] = useState<Blob>();
   const [PostText, setPostText] = useState<string>('');
   const [errors, setErrors] = useState<string[]>([]);
@@ -71,6 +72,7 @@ const AddPostPopup = ({ open, onClose }: Props) => {
     };
 
     postData();
+    refresh();
     onClose();
   }
 
