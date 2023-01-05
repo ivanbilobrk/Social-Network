@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
 import { APIError } from '../errors/APIError.js';
-import Message, { MessageOverview } from '../models/Message.js';
 import MessagesRepository from '../repositories/messagesRepository.js';
 import CreateMessageRequest from '../requests/messages/CreateMessageRequest.js';
 import UpdateMessageRequest from '../requests/messages/UpdateMessageRequest.js';
+import Message from '../models/Message.js';
 
 export default class PostsService {
   constructor(
@@ -13,7 +13,7 @@ export default class PostsService {
 
   async checkIfmessageExists(messageId: number) {
     if (!(await this.messagesRepository.messageExists(messageId))) {
-      throw new APIError(`Message with id ${messageId} not found`, StatusCodes.BAD_REQUEST, true);
+      throw new APIError(`Message with id ${messageId} not found`, StatusCodes.NOT_FOUND, true);
     }
   }
 
