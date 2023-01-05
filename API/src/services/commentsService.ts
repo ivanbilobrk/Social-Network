@@ -59,7 +59,6 @@ export default class CommentsService {
 
   async likeComment(commentId: number) {
     this.checkIfCommentExists(commentId);
-    this.checkIfAuthorMatchesCurrentUser(commentId);
 
     const existingLike = await this.commentRepository.likedByCurrentUser(commentId);
 
