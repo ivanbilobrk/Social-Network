@@ -8,19 +8,17 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MessageIcon from '@mui/icons-material/Message';
 import getUser from '../util/getUser';
-import User from '../interface/User';
-import { Link } from 'react-router-dom';
 import handleLogout from '../util/Logout';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
 import TextField from '@mui/material/TextField';
+import { createFilterOptions } from '@mui/material/Autocomplete';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useNavigate, Link as ReactLink, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import {
   createTheme,
@@ -62,6 +60,7 @@ type UserT = {
   firstName: string;
   lastName: string;
   userName: string;
+  avatar_url: string;
   key: number;
 };
 
@@ -72,23 +71,12 @@ const getIdByUsername = (userName: string) => {
 };
 
 const extractUserNameFromOption = (option: string) => {
-  return option.split(' ')[0];
+  return option.split(' ')[1];
 };
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
+const getAvatar = (option:string) =>{
+  return option.split(' ')[0];
+}
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -100,28 +88,13 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center',
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
-
 export default function PrimarySearchAppBar(props: any) {
   const [isLoading, setLoading] = useState(true);
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
+  const [inputValue, setInputValue] = React.useState('');
+  let [open, setOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -134,12 +107,15 @@ export default function PrimarySearchAppBar(props: any) {
         if (user !== null) {
           const response = await axiosPrivate.get(`/users`, {});
           response.data.forEach((el: any, index: any) => {
-            users[index] = {
-              userName: el.username,
-              key: parseInt(el.id),
-              firstName: el.first_name,
-              lastName: el.last_name,
-            };
+            if(el.id !== user.id){
+              users[index] = {
+                userName: el.username,
+                key: parseInt(el.id),
+                avatar_url: el.avatar_url,
+                firstName: el.first_name,
+                lastName: el.last_name,
+              };
+            }
           });
           setLoading(false);
         }
@@ -155,6 +131,14 @@ export default function PrimarySearchAppBar(props: any) {
       controller.abort();
     };
   }, []);
+
+  const changeSearchOpen = (input:string) =>{
+    if(input.length < 2){
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
+  }
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -207,35 +191,21 @@ export default function PrimarySearchAppBar(props: any) {
     </Menu>
   );
 
-  const NotificationsId = 'primary-notifications-menu';
-  const renderNotifications = (
-    <Menu
-      anchorEl={anchorNotifications}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={NotificationsId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isNotificationsOpen}
-      onClose={() => {
-        handleMenuClose(setAnchorNotifications);
-      }}
-    ></Menu>
-  );
+  const OPTIONS_LIMIT = 10;
+  const defaultFilterOptions = createFilterOptions();
+
+  const filterOptions = (options:any, state:any) => {
+      return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
+    };
 
     if(!isLoading){
       return (
-        <Box sx={{ flexGrow: 1}}>
+        <Box sx={{ flexGrow: 1, zIndex:10}}>
 
-      <AppBar position="static">
-        <Toolbar>
-          <Link to="/home" style={{ textDecoration: 'none', color: 'white' }}>
-            <HomeIcon/>
+      <AppBar position="relative" sx={{zIndex:5}}>
+        <Toolbar sx={{zIndex:10}}>
+          <Link to="/home" style={{ textDecoration: 'none', color: 'white', zIndex:5 }}>
+            <HomeIcon sx={{zIndex:5}}/>
           </Link>
         
           
@@ -243,13 +213,20 @@ export default function PrimarySearchAppBar(props: any) {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' }, ml:2}} >Projekt</Typography>
+            sx={{ display: { xs: 'none', sm: 'block' }, ml:2, zIndex:5}} >Projekt</Typography>
           
           
-                 <Autocomplete sx={{ width: '18%', mt:1, mb: 1, padding:0 }}
+                 <Autocomplete sx={{ width: '18%', mt:1, mb: 1, padding:0, zIndex:5 }}
+                 open = {open} onBlur={()=>setOpen(false)} 
+                 filterOptions={filterOptions}
+                         onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                          changeSearchOpen(inputValue);
+                        }}
                     id="free-solo-demo"
                     freeSolo
-                    options={users.map((option) => {return option.userName+" "+option.firstName+" "+option.lastName})}
+                    clearOnBlur
+                    options={users.map((option) => {return option.avatar_url+" "+ option.userName+" "+option.firstName+" "+option.lastName})}
                     
                     renderOption ={(option:any)=>{ return (
                                       <>
@@ -257,7 +234,7 @@ export default function PrimarySearchAppBar(props: any) {
                                           <Link to = {`/users/:${getIdByUsername(extractUserNameFromOption(option.key)).key}`} style={{color: 'inherit', textDecoration: 'inherit'}} key={`${option.key}5`}>
                                             <ListItem key={`${option.key}`}>
                                               <ListItemAvatar key={`${option.key}1`}>
-                                                <Avatar alt={`${option.key}`} src="https://source.unsplash.com/random" key={`${option.key}2`}/>
+                                                <Avatar alt={getAvatar(option.key)} src={getAvatar(option.key)} key={`${option.key}2`}/>
                                               </ListItemAvatar>
                                             <ListItemText primary={extractUserNameFromOption(option.key)} key={`${option.key}3`}/> </ListItem>
                                           </Link>
@@ -267,8 +244,8 @@ export default function PrimarySearchAppBar(props: any) {
                       )}}
                     renderInput={(params) => 
                     <>
-                      <SearchIconWrapper sx={{mr:5}}>
-                        <SearchIcon sx={{mb:'50%'}}/>
+                      <SearchIconWrapper sx={{mr:5, zIndex:5}}>
+                        <SearchIcon sx={{mb:'50%', zIndex:5}}/>
                       </SearchIconWrapper>
                       <ThemeProvider theme={theme}>
                         <TextField   {...params} label="Search users" sx={{ ml: 6 }} InputLabelProps={{
