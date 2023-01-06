@@ -102,6 +102,7 @@ function MyProfile(props: any) {
       isAllowed = false;
     };
   }, []);
+  console.log(followers);
 
     let noOfFollowers;
 

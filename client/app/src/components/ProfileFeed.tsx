@@ -6,6 +6,7 @@ import ScrollableProfileFeed from './ScrollableProfileFeed';
 import getUser from '../util/getUser';
 
 function ProfileFeed({ userId }: any) {
+  console.log(userId);
   const [isAddPostOpen, setisAddPostOpen] = useState<Boolean>(false);
   const [refresh, setRefresh] = useState<Boolean>(false);
 

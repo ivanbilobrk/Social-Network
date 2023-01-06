@@ -92,7 +92,6 @@ function Profile({ userId, username, firstname, lastname, noOfFollowers, noOfFol
       };
     }, []);
 
-    
 
 
   return ( 

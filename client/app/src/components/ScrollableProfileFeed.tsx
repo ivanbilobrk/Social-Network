@@ -10,9 +10,11 @@ import { getDatePickerToolbarUtilityClass } from '@mui/x-date-pickers/DatePicker
 
 
 function ScrollableProfileFeed({userId} : any) {
+  console.log(userId);
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
   const [newUser, setNewUser] = useState();
+
 
   useEffect(() => {
     let isAllowed = true;
@@ -31,7 +33,7 @@ function ScrollableProfileFeed({userId} : any) {
     return () => {
       isAllowed = false;
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     let isAllowed = true;
@@ -49,7 +51,7 @@ function ScrollableProfileFeed({userId} : any) {
     return() => {
       isAllowed = false;
     }
-  }, []);
+  }, [userId]);
 
   let newId = 0;
 
@@ -57,14 +59,25 @@ function ScrollableProfileFeed({userId} : any) {
     newId = newUser['id'];
   }
 
-  
-    const filtered = posts.filter(post => {
-      return post['authorId'] === newId;
-    });
-  
-  
+  const filtered = posts.filter((post: any) => {
+    return post['authorId'] === newId;
+  })
 
-  console.log(posts);
+  function removeElementAtIndex<T>(input: T[], index: number) {
+    return input.slice(0, index).concat(input.slice(index + 1));
+  }
+
+  filtered.forEach((post:any, index: any) => {
+    if(post.authorId !== newId) {
+      filtered.splice(index, 1);
+    }
+  })
+  //filtered.forEach((post: any, index: any) => {
+    //if(post['authorId'] !== newId) {
+      //removeElementAtIndex(filtered, index);
+    //}
+  //})
+    
   console.log(filtered);
 
 

@@ -52,9 +52,13 @@ export default function ProfilePage() {
     };
   }, [newUserId]);
 
-  
+  let newId = 0;
 
-  
+  if(data !== null) {
+    newId = data['id'];
+  }
+
+
   useEffect(() => {
     let isAllowed = true;
     const getData = async () => {
@@ -74,19 +78,12 @@ export default function ProfilePage() {
     return () => {
       isAllowed = false;
     };
-  }, []);
-
-  let newId = 0;
-
-  if(data !== null) {
-    newId = data['id'];
-  }
+  }, [newUserId]);
 
   const filtered = posts.filter(post => {
     return post['authorId'] === newId;
   });
   console.log(filtered);
-
   const noOfPosts = filtered.length;
 
 

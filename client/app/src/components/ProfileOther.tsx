@@ -85,7 +85,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
     return () => {
       isAllowed = false;
     };
-  }, []);
+  }, [userId]);
 
   
 
@@ -114,7 +114,42 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
       return () => {
         isAllowed = false;
       };
+    }, [userId]);
+
+    console.log(followings);
+
+    const [followings1, setFollowings1] = useState([]);
+    useEffect(() => {
+      let isAllowed = true;
+      const getData = async () => {
+        try {
+          const user = getUser();
+  
+          if (user != null) {
+            const response = await axiosPrivate.get('/users/' + user.id + '/followings');
+  
+            if (isAllowed) {
+              setFollowings1(response.data);
+            }
+          }
+        } catch (err: any) {
+          console.log(err.toJSON());
+        }
+      };
+  
+      getData();
+  
+      return () => {
+        isAllowed = false;
+      };
     }, []);
+
+    let alreadyFollowing = false;
+
+    followings1.forEach((el: any, index: any) => {
+      if(el.id === newId) {
+        alreadyFollowing = true;
+      }} )
 
   async function changeFollowState() {
     try {
@@ -207,7 +242,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           <Typography>Followers</Typography>
         </Grid>
         <Grid item xs={4}>
-        <Typography variant="h6" onClick = {handleClick3}>{noOfFollowing}</Typography>
+        <Typography variant="h6" onClick = {handleClick3} >{noOfFollowing}</Typography>
           <Popover
             id={id3}
             open={open3}
@@ -220,7 +255,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           >
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
               {followings.map((following : any) => (
-
+                
                   <ListItem key = {`${following.id}`} component = 'a' href = {`/users/:${following.id}`} sx = {{color: 'black'}}>
                     <ListItemAvatar>
                       <Avatar alt = {`${following.id}`} src = {following.avatar_url}>
@@ -246,7 +281,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
         marginBottom={2}
         marginTop={2}
       >
-        <Button onClick = {changeFollowState} variant = "outlined">{follow ? "UNFOLLOW" : "FOLLOW"}</Button>
+        <Button onClick = {changeFollowState} variant = "outlined">{(follow || alreadyFollowing) ? "UNFOLLOW" : "FOLLOW"}</Button>
         <Button variant = "outlined" href = '/inbox'>MESSAGE</Button>
       </Grid>
   </Grid>
