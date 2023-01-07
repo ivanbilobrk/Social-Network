@@ -1,4 +1,4 @@
-import { Avatar, Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent, Menu, MenuItem, Stack, Button, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { Avatar, Grid, Card, Paper, Box, CardHeader, CardMedia, Typography, CardContent, Menu, MenuItem, Stack, Button, List, ListItem, ListItemAvatar, ListItemText, Dialog, DialogContent, DialogTitle, DialogContentText, DialogProps } from '@mui/material';
 import axios from 'axios';
 import React from 'react';
 import { useState, useEffect } from 'react';
@@ -37,28 +37,49 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
     newId = parseInt(data['id']);
   }
 
-  const [anchorEl2, setAnchorEl2] = React.useState<HTMLButtonElement | null>(null);
-  const [anchorEl3, setAnchorEl3] = React.useState<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
-  const handleClick2 = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl2(event.currentTarget);
-  };
-  const handleClick3 = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl3(event.currentTarget);
+  const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
+    setOpen(true);
+    setScroll(scrollType);
   }
 
-  const handleClose2 = () => {
-    setAnchorEl2(null);
-  };
-  const handleClose3 = () => {
-    setAnchorEl3(null);
+  const handleClose = () => {
+    setOpen(false);
   }
 
-  const open2 = Boolean(anchorEl2);
-  const id2 = open2 ? 'simple-popover' : undefined;
+  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
 
-  const open3 = Boolean(anchorEl3);
-  const id3 = open3 ? 'simple-popover' : undefined;
+  const [open1, setOpen1] = useState(false);
+  const [scroll1, setScroll1] = React.useState<DialogProps['scroll']>('paper');
+
+  const handleClickOpen1 = (scrollType: DialogProps['scroll']) => () => {
+    setOpen1(true);
+    setScroll1(scrollType);
+  }
+
+  const handleClose1 = () => {
+    setOpen1(false);
+  }
+
+  const descriptionElementRef1 = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    if (open1) {
+      const { current: descriptionElement } = descriptionElementRef1;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open1]);
 
   const [followers, setFollowers] = useState([]);
 
@@ -69,7 +90,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
         const user = getUser();
 
         if (user != null) {
-          const response = await axiosPrivate.get('/users/' + newId + '/followers');
+          const response = await axiosPrivate.get('/users/' + userId + '/followers');
 
           if (isAllowed) {
             setFollowers(response.data);
@@ -98,7 +119,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           const user = getUser();
   
           if (user != null) {
-            const response = await axiosPrivate.get('/users/' + newId + '/followings');
+            const response = await axiosPrivate.get('/users/' + userId + '/followings');
   
             if (isAllowed) {
               setFollowings(response.data);
@@ -115,8 +136,6 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
         isAllowed = false;
       };
     }, [userId]);
-
-    console.log(followings);
 
     const [followings1, setFollowings1] = useState([]);
     useEffect(() => {
@@ -149,7 +168,12 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
     followings1.forEach((el: any, index: any) => {
       if(el.id === newId) {
         alreadyFollowing = true;
-      }} )
+      }
+    });
+
+    console.log(followings);
+
+    
 
   async function changeFollowState() {
     try {
@@ -214,48 +238,56 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           <Typography>Posts</Typography>
         </Grid>
         <Grid item xs={4} sx={{ borderRight: 1, borderColor: 'silver' }}>
-        <Typography variant="h6" onClick = {handleClick2}>{noOfFollowers}</Typography>
-          <Popover
-            id={id2}
-            open={open2}
-            anchorEl={anchorEl2}
-            onClose={handleClose2}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left'
-            }}
+        <Typography variant="h6" onClick = {handleClickOpen('body')}>{noOfFollowers}</Typography>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            scroll={scroll}
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
           >
-            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-              {followers.map((follower : any) => (
-                <ListItem key = {`${follower.id}`} component = 'a' href = {`/users/:${follower.id}`} sx = {{color: 'black'}}>
-                  <ListItemAvatar>
+            <DialogTitle id="scroll-dialog-title">Followers</DialogTitle>
+            <DialogContent dividers={scroll === 'paper'}>
+              <DialogContentText 
+                id="scroll-dialog-description"
+                ref={descriptionElementRef}
+              >
+                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                {followers.map((follower : any) => (
+                  <ListItem key = {`${follower.id}`} component = 'a' href = {`/users/:${follower.id}`} sx = {{color: 'black'}}>
+                    <ListItemAvatar>
                       <Avatar alt = {`${follower.id}`} src = {follower.avatar_url}>
                       </Avatar>
                     </ListItemAvatar>
-                  <ListItemText primary = {follower.username}>
-                  </ListItemText>
-                </ListItem>
+                    <ListItemText primary = {follower.username}>
+                    </ListItemText>
+                  </ListItem>
                 )
               )}
             </List>
-          </Popover>
+              </DialogContentText>
+            </DialogContent> 
+          </Dialog>
           <Typography>Followers</Typography>
         </Grid>
         <Grid item xs={4}>
-        <Typography variant="h6" onClick = {handleClick3} >{noOfFollowing}</Typography>
-          <Popover
-            id={id3}
-            open={open3}
-            anchorEl={anchorEl3}
-            onClose={handleClose3}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left'
-            }}
+        <Typography variant="h6" onClick = {handleClickOpen1('body')}>{noOfFollowing}</Typography>
+          <Dialog
+            open={open1}
+            onClose={handleClose1}
+            scroll={scroll1}
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
           >
-            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-              {followings.map((following : any) => (
-                
+            <DialogTitle id="scroll-dialog-title">Following</DialogTitle>
+            <DialogContent dividers={scroll1 === 'paper'}>
+              <DialogContentText
+                id="scroll-dialog-description"
+                ref={descriptionElementRef1}
+              >
+                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                  {followings.map((following : any) => (
+
                   <ListItem key = {`${following.id}`} component = 'a' href = {`/users/:${following.id}`} sx = {{color: 'black'}}>
                     <ListItemAvatar>
                       <Avatar alt = {`${following.id}`} src = {following.avatar_url}>
@@ -264,10 +296,11 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
                     <ListItemText primary = {following.username}>
                     </ListItemText>
                   </ListItem>
-                ))
-              }
-            </List>
-          </Popover>
+                ))}
+                </List>
+              </DialogContentText>
+            </DialogContent>
+          </Dialog>
           <Typography>Following</Typography>
         </Grid>
       </Grid>

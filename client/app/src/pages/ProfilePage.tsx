@@ -20,7 +20,6 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const logout = useLogout();
   const location = useLocation();
-  const [id, setId] = useState(getUser()?.id);
   const [posts, setPosts] = useState([]);
   const [profilePic, setProfilePic] = useState<string>();
 
@@ -110,13 +109,12 @@ export default function ProfilePage() {
     };
   }, [newUserId]);
 
+
     let noOfFollowers;
 
     if(followers !== null) {
       noOfFollowers = followers.length;
     }
-
-    console.log(noOfFollowers);
 
     const [followings, setFollowings] = useState([]);
 
@@ -142,10 +140,13 @@ export default function ProfilePage() {
       };
     }, [newUserId]);
 
+
     let noOfFollowings;
     if(followings !== null) {
       noOfFollowings = followings.length;
     }
+
+    console.log(noOfFollowings);
 
   const signout = async () => {
     await logout();
