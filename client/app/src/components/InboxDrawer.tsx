@@ -130,6 +130,7 @@ export default function InboxDrawer({search}) {
 
 const getPicForFistLastName = (firstlastName: string) => {
   let url: string = " "
+  console.log("IME: ",firstlastName)
   users.forEach(user => {
     if(user.first_name+" "+user.last_name == firstlastName){
       url = user.avatar_url
@@ -195,9 +196,7 @@ const listMessage = (id: number)=>{
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-        <Link to="/home" style={{ textDecoration: 'none', color: 'black', marginLeft:'45%' }}>
-            <HomeIcon sx={{fontSize:40}}/>
-          </Link>
+        
         <List>
             <ListItem>
                 {
@@ -229,7 +228,7 @@ const listMessage = (id: number)=>{
         </Box>
       </Drawer>
       {selectedUser.length >  0 && 
-          <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'80%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
+          <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'77%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
             <Avatar src={getPicForFistLastName(selectedUser)} sx={{ width: '6%', height: '90%' }} />
             <div style={{marginLeft:50, display:'flex', alignItems:'center'}}>
               <Typography variant ='h5'>{selectedUser}</Typography>

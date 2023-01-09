@@ -51,7 +51,7 @@ const theme = createTheme({
 
 const getFirstLastnameForId = (option:string) =>{
    
-    return option.split(' ')[3]+" "+option.split(' ')[4];
+    return option.split(' ')[3] + " " +option.split(' ')[4];
 }
 
 const getUserId= (option:string) =>{
