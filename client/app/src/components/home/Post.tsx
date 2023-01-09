@@ -11,6 +11,7 @@ function Post(props: any) {
   let [liked, setLiked] = useState(false);
   let [localLike, setLocalLike] = useState(0);
   let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
+  const [noComments, setNoComments] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -18,7 +19,7 @@ function Post(props: any) {
     const getData = async () => {
       try {
         let response = await axiosPrivate.get(`posts/${props.postId}/likes`);
-        console.log(response.data);
+        let postResponse = await axiosPrivate.get(`posts/${props.postId}`);
         let user = getUser();
 
         if (user != null) {
@@ -31,6 +32,7 @@ function Post(props: any) {
               setLocalLike(0);
             }
           });
+          setNoComments(postResponse.data.comments.length);
         }
       } catch (err) {
         console.error(err);
@@ -96,10 +98,15 @@ function Post(props: any) {
                 {props.likes + localLike}
               </Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={1}>
               <IconButton onClick={handleAddCommentOpen}>
                 <ChatBubbleOutlineOutlinedIcon />
               </IconButton>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography variant="overline" fontSize={15}>
+                {noComments}
+              </Typography>
             </Grid>
           </Grid>
         </CardActions>

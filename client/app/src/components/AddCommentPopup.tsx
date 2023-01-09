@@ -32,7 +32,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
 
   useEffect(() => {
     setErrors([]);
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     let isMounted = true;
@@ -60,15 +60,14 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refresh]);
+  }, [refresh, open]);
 
   if (!open) return null;
 
   function handleComment(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void {
     if (!commentText) {
-      // remove the error message if it already exists
-      setErrors((prev) => prev.filter((error) => error !== 'Comment text is required'));
-      setErrors((prev) => [...prev, 'Comment text is required']);
+      setErrors([]);
+      setErrors(['Comment text is required']);
       return;
     }
     setErrors((prev) => prev.filter((error) => error !== 'Comment text is required'));
@@ -153,6 +152,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
                   variant="outlined"
                   fullWidth
                   sx={{ ml: 1, mt: 1 }}
+                  value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                 />
               </Grid>

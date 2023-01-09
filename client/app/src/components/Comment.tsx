@@ -8,7 +8,8 @@ import getUser from '../util/getUser';
 
 function Comment(props: any) {
   let [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(props.likedBy ? props.likedBy.length + 1 : 0);
+  const [likes, setLikes] = useState(props.likedBy ? props.likedBy.length : 0);
+  let [localLike, setLocalLike] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
@@ -17,6 +18,10 @@ function Comment(props: any) {
       props.likedBy.forEach((element: any) => {
         if (user !== null && element.id === user.id) {
           setLiked(true);
+          setLocalLike(0);
+        } else {
+          setLiked(false);
+          setLocalLike(0);
         }
       });
     }
@@ -30,8 +35,10 @@ function Comment(props: any) {
       console.log(response.data);
       if (response.data.count) {
         setLiked(false);
+        setLocalLike((prev) => prev - 1);
       } else {
         setLiked(true);
+        setLocalLike((prev) => prev + 1);
       }
     } catch (err) {
       console.error(err);
@@ -56,7 +63,7 @@ function Comment(props: any) {
         <Typography component="div">{props.content}</Typography>
         <IconButton onClick={changeLikeState}>{liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}</IconButton>
         <Typography variant="overline" fontSize={15}>
-          {liked ? likes + 1 : likes}
+          {likes + localLike}
         </Typography>
       </CardContent>
     </Card>
