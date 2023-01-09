@@ -12,6 +12,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MessageIcon from '@mui/icons-material/Message';
 import getUser from '../util/getUser';
+
+import User from '../interface/User';
 import handleLogout from '../util/Logout';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
@@ -273,6 +275,7 @@ export default function PrimarySearchAppBar(props: any) {
 
             </Box>
           </Toolbar>
+          
           
         </AppBar>
         {renderAccountMenu}

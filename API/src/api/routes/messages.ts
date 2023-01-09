@@ -14,7 +14,7 @@ messagesRouter.get(
   forwardError(async (req: UserRequest, res) => {
     const userId = req.user?.id ?? 0;
     const messagesService = new MessagesService(userId);
-    const messages = await messagesService.getAllMessages();
+    const messages = await messagesService.getAllChats();
     res.json(messages);
   }),
 );

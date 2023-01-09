@@ -4,7 +4,7 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import getUser from '../../util/getUser';
 import Post from './Post';
 
-function ScrollableFeed() {
+function ScrollableFeed(props: any) {
   const axiosPrivate = useAxiosPrivate();
   const [posts, setPosts] = useState([]);
 
@@ -15,7 +15,7 @@ function ScrollableFeed() {
 
         if (user != null) {
           const response = await axiosPrivate.get('/posts');
-          setPosts(response.data);
+          setPosts(response.data.reverse());
         }
       } catch (err: any) {
         console.log(err.toJSON());
@@ -23,7 +23,8 @@ function ScrollableFeed() {
     };
 
     getData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.refresh]);
 
   return (
     <List sx={{ width: '100%' }}>

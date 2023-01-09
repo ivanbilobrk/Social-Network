@@ -9,32 +9,37 @@ import getUser from '../../util/getUser';
 
 function Post(props: any) {
   let [liked, setLiked] = useState(false);
-  let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
+  let [localLike, setLocalLike] = useState(0);
+  let [isAddCommentOpen, setisAddCommentOpen] = useState<boolean>(false);
+  const [noComments, setNoComments] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
-  // useEffect(() => {
-  //   //fetching users who liked the post
-  //   const getData = async () => {
-  //     try {
-  //       let response = await axiosPrivate.get(`posts/${props.postId}/like`);
-  //       console.log(response.data);
-  //       let user = getUser();
+  useEffect(() => {
+    //fetching users who liked the post
+    const getData = async () => {
+      try {
+        let response = await axiosPrivate.get(`posts/${props.postId}/likes`);
+        let postResponse = await axiosPrivate.get(`posts/${props.postId}`);
+        let user = getUser();
 
-  //       if (user != null) {
-  //         response.data.forEach((element: any) => {
-  //           if (element.id === user!.id) {
-  //             setLiked(true);
-  //           }
-  //         });
-  //       } else {
-  //         setLiked(false);
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-  //   getData();
-  // }, []);
+        if (user != null) {
+          response.data.forEach((element: any) => {
+            if (element.id === user!.id) {
+              setLiked(true);
+              setLocalLike(0);
+            } else {
+              setLiked(false);
+              setLocalLike(0);
+            }
+          });
+          setNoComments(postResponse.data.comments.length);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getData();
+  }, []);
 
   async function changeLikeState() {
     try {
@@ -42,8 +47,10 @@ function Post(props: any) {
       console.log(response.data);
       if (response.data.count) {
         setLiked(false);
+        setLocalLike((prev) => prev - 1);
       } else {
         setLiked(true);
+        setLocalLike((prev) => prev + 1);
       }
     } catch (err) {
       console.error(err);
@@ -61,7 +68,18 @@ function Post(props: any) {
         style={{ backgroundColor: 'silver', width: '100%', aspectRatio: 1.2, maxHeight: '28rem', minHeight: '28rem' }}
         sx={{ my: '1rem' }}
       >
-        <CardHeader avatar={<Avatar alt="Remy Sharp" src={props.author.avatar} />} title={props.author.username} />
+        <CardHeader
+          avatar={
+            <Avatar
+              sx={{ bgcolor: '#c173f5' }}
+              alt={props.author.first_name + ' ' + props.author.last_name}
+              src={props.author.avatar_url}
+            >
+              {props.author.first_name[0] + props.author.last_name[0]}
+            </Avatar>
+          }
+          title={props.author.username}
+        />
         <Box
           component="img"
           sx={{ width: '100%', height: '17rem', objectFit: 'cover' }}
@@ -77,13 +95,18 @@ function Post(props: any) {
             </Grid>
             <Grid item xs={1}>
               <Typography variant="overline" fontSize={15}>
-                {liked ? props.likes + 1 : props.likes}
+                {props.likes + localLike}
               </Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={1}>
               <IconButton onClick={handleAddCommentOpen}>
                 <ChatBubbleOutlineOutlinedIcon />
               </IconButton>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography variant="overline" fontSize={15}>
+                {noComments}
+              </Typography>
             </Grid>
           </Grid>
         </CardActions>

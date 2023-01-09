@@ -16,7 +16,19 @@ import SendIcon from '@mui/icons-material/Send';
 import getUser from '../util/getUser';
 import User from '../interface/User';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import HomeIcon from '@mui/icons-material/Home';
+
+const messagesTemp:MessageOne[] = [{from:"user2", to:"user1", allMesagesWithUser:["poruka1aaaaaaaaaaaaaaa", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3","poruka1", "poruka2", "poruka3", "nke"]}, 
+{from:"user3", to:"user1", allMesagesWithUser:["poruka4", "poruka5", "poruka6"]},
+ {from:"user4", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]},
+{from:"user5", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]}, 
+{from:"user6", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]},
+ {from:"user7", to:"user1", allMesagesWithUser:["poruka1", "poruka2", "poruka3"]}]
+
+
+ 
 
 const StyledSendIcon = styled(SendIcon, {
   name: "StyledSendIcon",
@@ -33,15 +45,15 @@ const drawerWidth = 400;
 let inbox:MessageOne[] = [];
 //@ts-ignore
 export default function InboxDrawer({search}) {
-
+  const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
-
+  const location = useLocation();  
   let [flagInboxOpen, setFlagInboxOpen] = useState(false);
 
   let [input, setInput] = useState("");
   let [selectedUser, setSelectedUser] = useState("");
   const [inboxId, setInboxId] = useState<number>();
-
+  let [currentMessages, setCurrentMessages] = useState<string[]>([]);
   let [user, setUser] = useState<User|null>();
   const [lastMessages, setLastMessages] = useState([]);
   const [inbox, setInbox] = useState([]);
@@ -50,15 +62,17 @@ export default function InboxDrawer({search}) {
 
   const getMessagesForUser = async(currentUser:any)=>{
     let response = await axiosPrivate.get('/messages',{});
+    console.log(response.data)
     response.data.forEach((el:any)=>{
       //@ts-ignore
       setLastMessages(old=>{
+        let tempObject = {};
         if(el.sender.username == currentUser){
           return [...old, {firstLastName:el.receiver.first_name+" "+el.receiver.last_name,
-        message: el.lastMessage.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
+        message: el.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
         } else{
           return [...old, {firstLastName:el.sender.first_name+" "+el.sender.last_name,
-          message: el.lastMessage.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
+          message: el.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
         }
       })
 
@@ -101,12 +115,16 @@ export default function InboxDrawer({search}) {
   };
 
   const getPicForUsername = (username:string) =>{
+    //console.log(users)
+    //console.log("USERNAME: " + username)
     let url : string = ""
     users.forEach(user => {
       if (user.username == username){
         url = user.avatar_url
       }
     })
+    //console.log("Bla bla: " + tempUser.username)
+    //console.log("URL: "+ url)
     return url;
 }
 
@@ -122,7 +140,11 @@ const getPicForFistLastName = (firstlastName: string) => {
 
 
 const listMessage = (id: number)=>{
+  //console.log(users)
+  //console.log("PRIMLJENI ID: " + id)
   let username = users.filter(user => user.id == id)[0].username
+  //console.log("USERNAME: "+ username)
+
   return (
       <ListItemAvatar>
         <Avatar src={getPicForUsername(username)}/>
@@ -173,8 +195,9 @@ const listMessage = (id: number)=>{
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-        
-          
+        <Link to="/home" style={{ textDecoration: 'none', color: 'black', marginLeft:'45%' }}>
+            <HomeIcon sx={{fontSize:40}}/>
+          </Link>
         <List>
             <ListItem>
                 {
@@ -206,7 +229,7 @@ const listMessage = (id: number)=>{
         </Box>
       </Drawer>
       {selectedUser.length >  0 && 
-          <Container  sx={{position:'fixed',right:'0em',height:'10%',width:'1000', bgcolor:'#F8F6F0', zIndex:0, display:'flex', justifyContent:'center', alignItems:'center', ml:'50%'}}>
+          <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'80%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
             <Avatar src={getPicForFistLastName(selectedUser)} sx={{ width: '6%', height: '90%' }} />
             <div style={{marginLeft:50, display:'flex', alignItems:'center'}}>
               <Typography variant ='h5'>{selectedUser}</Typography>
