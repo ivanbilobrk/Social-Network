@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Container, Fab, Grid, TextField } from '@mui/material';
+import { Alert, Box, Button, Container, Dialog, Fab, Grid, TextField } from '@mui/material';
 import { CSSProperties, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
@@ -6,20 +6,9 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import getUser from '../util/getUser';
 
 type Props = {
-  open: Boolean;
+  open: boolean;
   onClose: any;
   refresh: any;
-};
-
-const OVERLAY: CSSProperties = {
-  position: 'fixed',
-  top: '0',
-  left: '0',
-  right: '0',
-  bottom: '0',
-  paddingTop: '50px',
-  backgroundColor: 'rgba(0,0,0,0.7)',
-  zIndex: '1000',
 };
 
 const AddPostPopup = ({ open, onClose, refresh }: Props) => {
@@ -32,7 +21,7 @@ const AddPostPopup = ({ open, onClose, refresh }: Props) => {
 
   useEffect(() => {
     setErrors([]);
-  }, []);
+  }, [open]);
 
   function profilePictureChange(e: React.ChangeEvent<HTMLInputElement>): void {
     if (e.target.files) {
@@ -77,7 +66,7 @@ const AddPostPopup = ({ open, onClose, refresh }: Props) => {
   }
 
   return (
-    <div style={OVERLAY}>
+    <Dialog onClose={onClose} open={open}>
       <Container
         sx={{
           backgroundColor: 'white',
@@ -86,7 +75,7 @@ const AddPostPopup = ({ open, onClose, refresh }: Props) => {
           margin: '0 auto',
         }}
       >
-        <Button onClick={onClose} variant="contained" sx={{ marginBottom: '10px', justifySelf: 'flex-end' }}>
+        <Button onClick={onClose} variant="outlined" sx={{ marginBottom: '10px', justifySelf: 'flex-end' }}>
           <ClearIcon />
         </Button>
 
@@ -98,7 +87,7 @@ const AddPostPopup = ({ open, onClose, refresh }: Props) => {
               </Alert>
             ))}
           <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
                 <Grid item>
                   <input
@@ -127,7 +116,7 @@ const AddPostPopup = ({ open, onClose, refresh }: Props) => {
               </Grid>
             </Grid>
 
-            <Grid xs={6} item>
+            <Grid xs={12} item>
               <Grid container justifyContent="center" alignContent="center" spacing={1} rowSpacing={2}>
                 <Grid xs={12} item>
                   <TextField
@@ -155,7 +144,7 @@ const AddPostPopup = ({ open, onClose, refresh }: Props) => {
           </Grid>
         </form>
       </Container>
-    </div>
+    </Dialog>
   );
 };
 

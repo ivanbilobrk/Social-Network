@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Container, Grid, List, Paper, TextField } from '@mui/material';
+import { Alert, Box, Button, Container, Dialog, Grid, List, Paper, TextField, Typography } from '@mui/material';
 import { CSSProperties, MouseEvent, useEffect, useState } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import Comment from './Comment';
@@ -6,21 +6,10 @@ import getUser from '../util/getUser';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
 type Props = {
-  open: Boolean;
+  open: boolean;
   onClose: any;
   postPhoto: string;
   postId: number;
-};
-
-const OVERLAY: CSSProperties = {
-  position: 'fixed',
-  top: '0',
-  left: '0',
-  right: '0',
-  bottom: '0',
-  paddingTop: '50px',
-  backgroundColor: 'rgba(0,0,0,0.7)',
-  zIndex: '1000',
 };
 
 const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
@@ -91,7 +80,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
   }
 
   return (
-    <div style={OVERLAY}>
+    <Dialog onClose={onClose} open={open} fullScreen>
       <Container
         sx={{
           backgroundColor: 'white',
@@ -111,7 +100,7 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
                 {err}
               </Alert>
             ))}
-          <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
+          <Grid container justifyContent="center">
             <Grid item xs={6}>
               <Grid container justifyContent="center" spacing={1} rowSpacing={2}>
                 <Grid xs={12} item style={{ textAlign: 'center' }}>
@@ -128,10 +117,10 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
             </Grid>
 
             <Grid xs={6} item>
-              <Grid container justifyContent="center" alignContent="center" spacing={1} rowSpacing={2}>
+              <Grid container justifyContent="center" alignContent="center">
                 <Grid xs={12} item>
-                  <Paper style={{ maxHeight: '24rem', overflow: 'auto' }} sx={{ border: 1 }}>
-                    <List style={{ minHeight: '23rem' }}>
+                  <Paper style={{ maxHeight: '25.2rem', overflow: 'auto' }}>
+                    <List style={{ minHeight: '25.2rem' }}>
                       {comments.map((comment: any) => (
                         <Comment
                           key={comment.id}
@@ -142,7 +131,22 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
                           likedBy={comment.liked_by}
                         />
                       ))}
-                      {comments.length === 0 && <h3>No comments yet</h3>}
+                      {comments.length === 0 && (
+                        <Box justifyContent="center" display="flex">
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            sx={{ width: 0.4, minHeight: '50vh' }}
+                          >
+                            <Typography sx={{ textAlign: 'center', mb: 2, fontSize: 24, fontWeight: 800 }}>
+                              {' '}
+                              No comments... yet!{' '}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      )}
                     </List>
                   </Paper>
                 </Grid>
@@ -151,26 +155,25 @@ const AddCommentPopup = ({ open, onClose, postPhoto, postId }: Props) => {
                   label="Comment"
                   variant="outlined"
                   fullWidth
-                  sx={{ ml: 1, mt: 1 }}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                 />
               </Grid>
             </Grid>
             <Grid item>
-              <Button size="large" variant="outlined" color="primary" onClick={(e) => handleComment(e)}>
+              <Button size="large" variant="outlined" color="primary" onClick={(e) => handleComment(e)} sx={{ m: 2 }}>
                 Comment
               </Button>
             </Grid>
             <Grid item>
-              <Button size="large" variant="outlined" color="secondary" onClick={onClose}>
+              <Button size="large" variant="outlined" color="secondary" onClick={onClose} sx={{ m: 2 }}>
                 Cancel
               </Button>
             </Grid>
           </Grid>
         </form>
       </Container>
-    </div>
+    </Dialog>
   );
 };
 

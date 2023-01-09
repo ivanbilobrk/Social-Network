@@ -10,7 +10,7 @@ import getUser from '../../util/getUser';
 function Post(props: any) {
   let [liked, setLiked] = useState(false);
   let [localLike, setLocalLike] = useState(0);
-  let [isAddCommentOpen, setisAddCommentOpen] = useState<Boolean>(false);
+  let [isAddCommentOpen, setisAddCommentOpen] = useState<boolean>(false);
   const [noComments, setNoComments] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 

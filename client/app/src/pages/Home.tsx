@@ -5,8 +5,8 @@ import { useState } from 'react';
 import AddPostPopup from '../components/AddPostPopup';
 
 function Home() {
-  const [isAddPostOpen, setisAddPostOpen] = useState<Boolean>(false);
-  const [refresh, setRefresh] = useState<Boolean>(false);
+  const [isAddPostOpen, setisAddPostOpen] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   return (
     <>
