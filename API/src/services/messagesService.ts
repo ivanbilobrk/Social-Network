@@ -31,8 +31,8 @@ export default class PostsService {
   }
 
   async getMessageById(messageId: number): Promise<Message> {
-    this.checkIfmessageExists(messageId);
-    this.checkIfUserIsOwnerOfMessage(messageId);
+    await this.checkIfmessageExists(messageId);
+    await this.checkIfUserIsOwnerOfMessage(messageId);
     return await this.messagesRepository.getMessageById(messageId);
   }
 
@@ -51,13 +51,21 @@ export default class PostsService {
   }
 
   async updateMessage(updateMessageRequest: UpdateMessageRequest) {
-    this.checkIfmessageExists(updateMessageRequest.id);
-    this.checkIfUserIsOwnerOfMessage(updateMessageRequest.id);
+    await this.checkIfmessageExists(updateMessageRequest.id);
+    await this.checkIfUserIsOwnerOfMessage(updateMessageRequest.id);
     return await this.messagesRepository.updateMessage(updateMessageRequest);
   }
 
   async deleteMessage(messageId: number) {
-    this.checkIfmessageExists(messageId);
+    await this.checkIfmessageExists(messageId);
     return await this.messagesRepository.deleteMessage(messageId);
+  }
+
+  async markAsRead(otherUserId: number) {
+    await this.messagesRepository.markMessagesAsRead(this.currentUserId, otherUserId);
+  }
+
+  async getUnreadCount() {
+    return { count: await this.messagesRepository.getUnreadMessagesCount() };
   }
 }
