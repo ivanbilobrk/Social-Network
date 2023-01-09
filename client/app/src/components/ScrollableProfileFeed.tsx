@@ -22,7 +22,7 @@ function ScrollableProfileFeed({userId} : any) {
       try {
         const response = await axiosPrivate.get('/posts');
         if(isAllowed) {
-          setPosts(response.data);
+          setPosts(response.data.reverse());
         }
       } catch (err: any) {
         console.log(err.toJSON());

@@ -87,9 +87,9 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
     let isAllowed = true;
     const getData = async () => {
       try {
-        const user = getUser();
 
-        if (user != null) {
+        if (userId != null) {
+          console.log("USERID u zahtjevu u ProfileOther: ", userId)
           const response = await axiosPrivate.get('/users/' + userId + '/followers');
 
           if (isAllowed) {
@@ -119,6 +119,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           const user = getUser();
   
           if (user != null) {
+            console.log("UserId u drugom zahtjevu u ProfileOther: ", userId)
             const response = await axiosPrivate.get('/users/' + userId + '/followings');
   
             if (isAllowed) {
@@ -138,14 +139,17 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
     }, [userId]);
 
     const [followings1, setFollowings1] = useState([]);
+    
+    
     useEffect(() => {
       let isAllowed = true;
       const getData = async () => {
         try {
-          const user = getUser();
+          let user = getUser();
   
           if (user != null) {
-            const response = await axiosPrivate.get('/users/' + user.id + '/followings');
+            console.log("UserId u trećem zahtjevu u ProfileOther: ", userId)
+            const response = await axiosPrivate.get('/users/' + userId + '/followings');
   
             if (isAllowed) {
               setFollowings1(response.data);
@@ -161,7 +165,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
       return () => {
         isAllowed = false;
       };
-    }, []);
+    }, [userId]);
 
     let alreadyFollowing = false;
 
@@ -171,8 +175,12 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
       }
     });
 
-    console.log(followings);
-
+    useEffect(() => {
+      console.log("ISPIS followers, followings, followings1")
+      console.log(followers)
+      console.log(followings)
+      console.log(followings1)
+    })
     
 
   async function changeFollowState() {
@@ -180,7 +188,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
       const user = getUser();
       if(user !== null) {
         let response = await axiosPrivate.post('/users/' + newId + '/follow');
-        console.log(response.data);
+        //console.log(response.data);
         if(response.data.count) {
           setFollow(false);
         } else {
@@ -238,7 +246,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           <Typography>Posts</Typography>
         </Grid>
         <Grid item xs={4} sx={{ borderRight: 1, borderColor: 'silver' }}>
-        <Typography variant="h6" onClick = {handleClickOpen('body')}>{noOfFollowers}</Typography>
+        <Typography variant="h6" onClick = {handleClickOpen('body')}>{followers.length}</Typography>
           <Dialog
             open={open}
             onClose={handleClose}
@@ -271,7 +279,7 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           <Typography>Followers</Typography>
         </Grid>
         <Grid item xs={4}>
-        <Typography variant="h6" onClick = {handleClickOpen1('body')}>{noOfFollowing}</Typography>
+        <Typography variant="h6" onClick = {handleClickOpen1('body')}>{followings.length}</Typography>
           <Dialog
             open={open1}
             onClose={handleClose1}

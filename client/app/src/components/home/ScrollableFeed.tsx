@@ -15,7 +15,7 @@ function ScrollableFeed(props: any) {
 
         if (user != null) {
           const response = await axiosPrivate.get('/posts');
-          setPosts(response.data);
+          setPosts(response.data.reverse());
         }
       } catch (err: any) {
         console.log(err.toJSON());

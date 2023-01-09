@@ -159,7 +159,7 @@ export default function ProfilePage() {
         <Grid container direction="column" alignItems="center" justifyContent="center">
           <Grid item width="40%">
             {data && <ProfileOther
-              userId={data['id']}
+              userId={newUserId}
               username={data['username']}
               firstname={data['first_name']}
               lastname={data['last_name']}
