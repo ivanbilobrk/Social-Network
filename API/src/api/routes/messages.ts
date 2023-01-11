@@ -20,6 +20,29 @@ messagesRouter.get(
 );
 
 messagesRouter.get(
+  '/unreadCount',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const messagesService = new MessagesService(userId);
+    const count = await messagesService.getUnreadCount();
+    res.json(count);
+  }),
+);
+
+messagesRouter.post(
+  '/markAsRead/:otherUserId',
+  authenticateJwt,
+  forwardError(async (req: UserRequest, res) => {
+    const userId = req.user?.id ?? 0;
+    const messagesService = new MessagesService(userId);
+    const otherUserId = parseInt(req.params.otherUserId);
+    await messagesService.markAsRead(otherUserId);
+    res.end();
+  }),
+);
+
+messagesRouter.get(
   '/:messageId',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
