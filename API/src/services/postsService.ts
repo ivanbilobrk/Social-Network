@@ -62,8 +62,8 @@ export default class PostsService {
   }
 
   async updatePost(postRequest: PostRequest): Promise<Post> {
-    this.checkIfPostExists(postRequest.id ?? 0);
-    this.checkIfAuthorMatchesCurrentUser(postRequest.id ?? 0);
+    await this.checkIfPostExists(postRequest.id ?? 0);
+    await this.checkIfAuthorMatchesCurrentUser(postRequest.id ?? 0);
 
     let photoUrl: string | null = null;
     if (postRequest.photo) {
@@ -84,13 +84,13 @@ export default class PostsService {
   }
 
   async deletePost(postId: number) {
-    this.checkIfPostExists(postId);
-    this.checkIfAuthorMatchesCurrentUser(postId);
+    await this.checkIfPostExists(postId);
+    await this.checkIfAuthorMatchesCurrentUser(postId);
     return await this.postsRepository.deletePost(postId);
   }
 
   async likePost(postId: number) {
-    this.checkIfPostExists(postId);
+    await this.checkIfPostExists(postId);
 
     const existingLike = await this.postsRepository.likedByCurrentUser(postId);
     if (existingLike) {
@@ -101,7 +101,7 @@ export default class PostsService {
   }
 
   async getUsersWhoLikedPost(postId: number) {
-    this.checkIfPostExists(postId);
+    await this.checkIfPostExists(postId);
     return await this.postsRepository.getUsersWhoLikedPost(postId);
   }
 }

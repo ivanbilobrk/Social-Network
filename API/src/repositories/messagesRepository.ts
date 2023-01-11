@@ -143,4 +143,26 @@ export default class MessagesRepository {
       },
     });
   }
+
+  async markMessagesAsRead(to: number, from: number) {
+    return await this.prisma.message.updateMany({
+      where: {
+        senderId: from,
+        receiverId: to,
+        received: null,
+      },
+      data: {
+        received: new Date(),
+      },
+    });
+  }
+
+  async getUnreadMessagesCount() {
+    return await this.prisma.message.count({
+      where: {
+        receiverId: this.currentUserId,
+        received: null,
+      },
+    });
+  }
 }

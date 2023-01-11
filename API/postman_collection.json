@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "377f2a0a-a9dc-49b4-8b3f-280069370525",
+		"_postman_id": "687ca245-2399-4c77-b0d3-8b2f9c199509",
 		"name": "Projekt R - Društvena mreža",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19481089"
@@ -514,13 +514,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/messages/2",
+							"raw": "{{base_url}}/messages/:messageId",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"messages",
-								"2"
+								":messageId"
+							],
+							"variable": [
+								{
+									"key": "messageId",
+									"value": "2"
+								}
 							]
 						}
 					},
@@ -584,40 +590,62 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/messages/4",
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "firstName",
-									"value": "AAAB",
-									"type": "text"
-								},
-								{
-									"key": "lastName",
-									"value": "EEEB",
-									"type": "text"
-								},
-								{
-									"key": "dateOfBirth",
-									"value": "2002-01-29T00:00:00.000Z",
-									"type": "text"
-								},
-								{
-									"key": "photo",
-									"type": "file",
-									"src": []
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/users",
+							"raw": "{{base_url}}/messages/:messageId",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"messages",
-								"4"
-
+								":messageId"
+							],
+							"variable": [
+								{
+									"key": "messageId",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get unread count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/messages/unreadCount",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								"unreadCount"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark chat as read",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/messages/markAsRead/:otherUserId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"messages",
+								"markAsRead",
+								":otherUserId"
+							],
+							"variable": [
+								{
+									"key": "otherUserId",
+									"value": "8"
+								}
 							]
 						}
 					},
