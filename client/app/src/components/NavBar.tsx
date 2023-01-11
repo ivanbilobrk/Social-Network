@@ -37,6 +37,9 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import NotificationComponent from './NotificationComponent';
+
 const theme = createTheme({
   components: {
     // Inputs
@@ -279,7 +282,9 @@ export default function PrimarySearchAppBar(props: any) {
                     </>}/>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-    
+           <NotificationComponent />
+          </Box>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
               size="large"
               edge="end"

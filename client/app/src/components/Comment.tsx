@@ -57,8 +57,7 @@ function Comment(props: any) {
       }}
     >
       <CardContent sx={{ pt: 0, display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
-        <Avatar sx={{ height: '30px', width: '30px', aspectRatio: '1', bgcolor: deepOrange[500], mr: 1 }}>
-          {props.profile.username[0].toUpperCase()}
+        <Avatar src={props.profile.avatar_url} sx={{ height: '30px', width: '30px', aspectRatio: '1', bgcolor: deepOrange[500], mr: 1 }}>
         </Avatar>
         <Typography component="div">{props.content}</Typography>
         <IconButton onClick={changeLikeState}>{liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}</IconButton>
