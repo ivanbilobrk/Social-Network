@@ -35,7 +35,7 @@ usersRouter.get(
   '/:userId/followings',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
-    const userId = req.user?.id ?? 0;
+    const userId = parseInt(req.params.userId);
     const usersService = new UsersService(userId);
     const followings = await usersService.getFollowings(userId);
     res.json(followings);
@@ -46,7 +46,7 @@ usersRouter.get(
   '/:userId',
   authenticateJwt,
   forwardError(async (req: UserRequest, res) => {
-    const userId = req.user?.id ?? 0;
+    const userId = parseInt(req.params.userId);
     const usersService = new UsersService(userId);
     const user = await usersService.getUserById(parseInt(req.params.userId));
     res.json(user);
