@@ -148,8 +148,8 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
           let user = getUser();
   
           if (user != null) {
-            console.log("UserId u trećem zahtjevu u ProfileOther: ", userId)
-            const response = await axiosPrivate.get('/users/' + userId + '/followings');
+            console.log("UserId u trećem zahtjevu u ProfileOther: ", user.id)
+            const response = await axiosPrivate.get('/users/' + user.id + '/followings');
   
             if (isAllowed) {
               setFollowings1(response.data);
@@ -167,13 +167,19 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
       };
     }, [userId]);
 
+    console.log(followings1);
+
     let alreadyFollowing = false;
 
-    followings1.forEach((el: any, index: any) => {
-      if(el.id === newId) {
+    for(const following of followings1) {
+      
+      if(following['id'] == userId) {
+        console.log("uspjeh");
         alreadyFollowing = true;
       }
-    });
+    }
+
+    console.log(alreadyFollowing);
 
     useEffect(() => {
       console.log("ISPIS followers, followings, followings1")
@@ -181,28 +187,44 @@ function ProfileOther({ userId, username, firstname, lastname, noOfFollowers, no
       console.log(followings)
       console.log(followings1)
     })
+
+    useEffect(() => {
+      setFollow(false);
+    }, []);
+
+    const refreshPage = () => {
+        window.location.reload();
+    }
+    
     
 
   async function changeFollowState() {
-    try {
-      const user = getUser();
-      if(user !== null) {
-        let response = await axiosPrivate.post('/users/' + newId + '/follow');
-        //console.log(response.data);
-        if(response.data.count) {
-          setFollow(false);
-        } else {
-          setFollow(true);
+      try {
+        const user = getUser();
+        if(user !== null) {
+          let response = await axiosPrivate.post('/users/' + newId + '/follow');
+          //console.log(response.data);
+          if(response.data.count) {
+            setFollow(false);
+          } else {
+            setFollow(true);
+          }
         }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
-    }
+      refreshPage();
   }
+
+  console.log(follow);
+
+  
 
   return ( 
   <Grid container direction = "column" marginTop={5}>
-    <Card>
+    <Card variant="elevation"
+          style={{ width: '100%', aspectRatio: 1.2, maxHeight: '20rem', minHeight: '20rem' }}
+          sx={{ my: '1rem' }}>
       <CardHeader style={{ backgroundColor: 'silver', height: 75 }}></CardHeader>
 
       <Box

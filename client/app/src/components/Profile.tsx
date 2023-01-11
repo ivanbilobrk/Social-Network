@@ -118,7 +118,9 @@ function Profile({ userId, username, firstname, lastname, noOfFollowers, noOfFol
 
   return ( 
   <Grid container direction = "column" marginTop={5}>
-    <Card>
+    <Card variant="elevation"
+          style={{ width: '100%', aspectRatio: 1.2, maxHeight: '20rem', minHeight: '20rem' }}
+          sx={{ my: '1rem' }}>
       <CardHeader style={{ backgroundColor: 'silver', height: 75 }}></CardHeader>
 
       <Box
