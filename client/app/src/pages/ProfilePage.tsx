@@ -20,7 +20,6 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const logout = useLogout();
   const location = useLocation();
-  const [id, setId] = useState(getUser()?.id);
   const [posts, setPosts] = useState([]);
   const [profilePic, setProfilePic] = useState<string>();
 
@@ -52,9 +51,13 @@ export default function ProfilePage() {
     };
   }, [newUserId]);
 
-  
+  let newId = 0;
 
-  
+  if(data !== null) {
+    newId = data['id'];
+  }
+
+
   useEffect(() => {
     let isAllowed = true;
     const getData = async () => {
@@ -74,19 +77,12 @@ export default function ProfilePage() {
     return () => {
       isAllowed = false;
     };
-  }, []);
-
-  let newId = 0;
-
-  if(data !== null) {
-    newId = data['id'];
-  }
+  }, [newUserId]);
 
   const filtered = posts.filter(post => {
     return post['authorId'] === newId;
   });
   console.log(filtered);
-
   const noOfPosts = filtered.length;
 
 
@@ -96,7 +92,7 @@ export default function ProfilePage() {
     let isAllowed = true;
     const getData = async () => {
       try {
-          const response = await axios.get('/users/:' + newUserId + '/followers');
+          const response = await axiosPrivate.get('/users/' + newUserId + '/followers');
 
           if (isAllowed) {
             setFollowers(response.data);
@@ -113,13 +109,12 @@ export default function ProfilePage() {
     };
   }, [newUserId]);
 
+
     let noOfFollowers;
 
     if(followers !== null) {
       noOfFollowers = followers.length;
     }
-
-    console.log(noOfFollowers);
 
     const [followings, setFollowings] = useState([]);
 
@@ -127,7 +122,7 @@ export default function ProfilePage() {
       let isAllowed = true;
       const getData = async () => {
         try {
-            const response = await axios.get('/users/:' + newUserId + '/followings');
+            const response = await axiosPrivate.get('/users/' + newUserId + '/followings');
   
             if (isAllowed) {
               setFollowings(response.data);
@@ -145,10 +140,13 @@ export default function ProfilePage() {
       };
     }, [newUserId]);
 
+
     let noOfFollowings;
     if(followings !== null) {
       noOfFollowings = followings.length;
     }
+
+    console.log(noOfFollowings);
 
   const signout = async () => {
     await logout();
@@ -161,7 +159,7 @@ export default function ProfilePage() {
         <Grid container direction="column" alignItems="center" justifyContent="center">
           <Grid item width="40%">
             {data && <ProfileOther
-              userId={data['id']}
+              userId={newUserId}
               username={data['username']}
               firstname={data['first_name']}
               lastname={data['last_name']}

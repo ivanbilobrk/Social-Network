@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -9,14 +8,9 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import NavBar from './NavBar';
-import Messages from './Messages';
 import { Avatar, ListItemAvatar, styled, TextField, Container } from '@mui/material';
-import { useEffect, useState, useRef, createRef } from 'react';
+import { useEffect, useState, useRef} from 'react';
 import MessageOne from '../interface/MessageOne';
 import SendIcon from '@mui/icons-material/Send';
 import getUser from '../util/getUser';
@@ -55,7 +49,7 @@ export default function InboxDrawer({search}) {
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();  
   let [flagInboxOpen, setFlagInboxOpen] = useState(false);
-  let [messages, setMessages] = useState<MessageOne[]>([]);
+
   let [input, setInput] = useState("");
   let [selectedUser, setSelectedUser] = useState("");
   const [inboxId, setInboxId] = useState<number>();
@@ -68,16 +62,17 @@ export default function InboxDrawer({search}) {
 
   const getMessagesForUser = async(currentUser:any)=>{
     let response = await axiosPrivate.get('/messages',{});
+    console.log(response.data)
     response.data.forEach((el:any)=>{
       //@ts-ignore
       setLastMessages(old=>{
         let tempObject = {};
         if(el.sender.username == currentUser){
           return [...old, {firstLastName:el.receiver.first_name+" "+el.receiver.last_name,
-        message: el.lastMessage.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
+        message: el.content, id:el.receiver.id, username:el.receiver.username, avatar_url: el.receiver.avatar_url}]
         } else{
           return [...old, {firstLastName:el.sender.first_name+" "+el.sender.last_name,
-          message: el.lastMessage.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
+          message: el.content, id:el.sender.id, username:el.sender.username, avatar_url: el.sender.avatar_url}]
         }
       })
 
@@ -135,6 +130,7 @@ export default function InboxDrawer({search}) {
 
 const getPicForFistLastName = (firstlastName: string) => {
   let url: string = " "
+  console.log("IME: ",firstlastName)
   users.forEach(user => {
     if(user.first_name+" "+user.last_name == firstlastName){
       url = user.avatar_url
@@ -193,16 +189,14 @@ const listMessage = (id: number)=>{
       <Drawer
         variant="permanent"
         sx={{
-
+          zIndex:1,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-        <Link to="/home" style={{ textDecoration: 'none', color: 'black', marginLeft:'45%' }}>
-            <HomeIcon sx={{fontSize:40}}/>
-          </Link>
+        
         <List>
             <ListItem>
                 {
@@ -234,7 +228,7 @@ const listMessage = (id: number)=>{
         </Box>
       </Drawer>
       {selectedUser.length >  0 && 
-          <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'80%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
+          <Container maxWidth={false} sx={{position:'fixed',right:'0em',height:'10%',width:'77%', bgcolor:'lightBlue', zIndex:2, display:'flex', justifyContent:'center', alignItems:'center'}}>
             <Avatar src={getPicForFistLastName(selectedUser)} sx={{ width: '6%', height: '90%' }} />
             <div style={{marginLeft:50, display:'flex', alignItems:'center'}}>
               <Typography variant ='h5'>{selectedUser}</Typography>
@@ -242,13 +236,13 @@ const listMessage = (id: number)=>{
           </Container>
         }
       <Box component="main" sx={{ flexGrow: 1, p: 5, mr:2, ml:5, mb:5, mt:3, display:'flex', justifyContent:'flex-end', flexDirection:'column'}}>
-      <List  sx={{mt:5, display:'flex',flexDirection:'column'}} >
+      <List  sx={{zIndex:-1, mt:5, display:'flex',flexDirection:'column'}} >
         
         {inbox?.length > 0 && inbox.map((item:any, index) => 
           //@ts-ignore
           item.senderId == user.id ? 
-          <ListItem style={{display:'flex',justifyContent:'flex-end'}}>
-            <div style={{marginRight:'2.5%'}}>
+          <ListItem style={{ display:'flex',justifyContent:'flex-end'}}>
+            <div style={{ marginRight:'2.5%'}}>
               <Typography flexWrap={'wrap-reverse'}>
                 {item.content}
               </Typography>
@@ -270,7 +264,7 @@ const listMessage = (id: number)=>{
       <div ref={divRef}></div>
       {flagInboxOpen && 
       <>
-        <TextField inputRef={inputRef} sx={{position:'fixed', bottom:'1em', right:'8em', width:'60%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value);}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
+        <TextField inputRef={inputRef} sx={{zIndex:100, position:'fixed', bottom:'1em', right:'8em', width:'60%' }} onChange={(e: { target: { value: React.SetStateAction<string>; }; })=>{setInput(e.target.value);}} onKeyDown={addToList} value={input} placeholder='Write a message...'></TextField>
         <StyledSendIcon onClick={async()=>{await addToList("icon")}} sx={{position:'fixed', bottom:'0.6em', right:'1.9em', fontSize:'2.5em'}}/>
       </>
       }

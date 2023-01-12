@@ -2,13 +2,32 @@ import { Avatar, Card, CardContent, IconButton, Typography } from '@mui/material
 import { deepOrange } from '@mui/material/colors';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import getUser from '../util/getUser';
 
 function Comment(props: any) {
   let [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(props.likedBy ? props.likedBy.length + 1 : 0);
+  const [likes, setLikes] = useState(props.likedBy ? props.likedBy.length : 0);
+  let [localLike, setLocalLike] = useState(0);
   const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    let user = getUser();
+    if (props.likedBy) {
+      props.likedBy.forEach((element: any) => {
+        if (user !== null && element.id === user.id) {
+          setLiked(true);
+          setLocalLike(0);
+        } else {
+          setLiked(false);
+          setLocalLike(0);
+        }
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function changeLikeState() {
     try {
@@ -16,8 +35,10 @@ function Comment(props: any) {
       console.log(response.data);
       if (response.data.count) {
         setLiked(false);
+        setLocalLike((prev) => prev - 1);
       } else {
         setLiked(true);
+        setLocalLike((prev) => prev + 1);
       }
     } catch (err) {
       console.error(err);
@@ -36,13 +57,12 @@ function Comment(props: any) {
       }}
     >
       <CardContent sx={{ pt: 0, display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
-        <Avatar sx={{ height: '30px', width: '30px', aspectRatio: '1', bgcolor: deepOrange[500], mr: 1 }}>
-          {props.profile.username[0].toUpperCase()}
+        <Avatar src={props.profile.avatar_url} sx={{ height: '30px', width: '30px', aspectRatio: '1', bgcolor: deepOrange[500], mr: 1 }}>
         </Avatar>
         <Typography component="div">{props.content}</Typography>
         <IconButton onClick={changeLikeState}>{liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}</IconButton>
         <Typography variant="overline" fontSize={15}>
-          {liked ? likes + 1 : likes}
+          {likes + localLike}
         </Typography>
       </CardContent>
     </Card>

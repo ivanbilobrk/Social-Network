@@ -1,13 +1,12 @@
 import getUser from '../util/getUser';
 import NavBar from '../components/NavBar'
-import { Autocomplete, Avatar, createTheme, Divider, inputLabelClasses, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, styled, TextField, ThemeProvider } from '@mui/material';
+import { Autocomplete, Avatar, createTheme, Divider, inputLabelClasses, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, styled, TextField, ThemeProvider, createFilterOptions } from '@mui/material';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import InboxDrawer from '../components/InboxDrawer';
-import zIndex from '@mui/material/styles/zIndex';
-import SelectInput from '@mui/material/Select/SelectInput';
+import React from 'react';
 
 const SearchIconWrapper = styled('div')(({ theme }: any) => ({
     padding: theme.spacing(0, 2),
@@ -51,15 +50,18 @@ const theme = createTheme({
   const users: UserT[] = [];
 
 const getFirstLastnameForId = (option:string) =>{
-    const id = parseInt(option);
-    const tempUser =  users.filter(user=>user.key == id)[0];
-    return tempUser.firstName+" "+tempUser.lastName;
+   
+    return option.split(' ')[3] + " " +option.split(' ')[4];
 }
 
-const getUserForId = (option:string) =>{
-    const id = parseInt(option);
-    const tempUser =  users.filter(user=>user.key == id)[0];
-    return tempUser;
+const getUserId= (option:string) =>{
+
+    return option.split(' ')[1];
+}
+
+const getAvatar = (option:string) =>{
+    console.log(option)
+    return option.split(' ')[0];
 }
 
 
@@ -67,18 +69,38 @@ const getUserForId = (option:string) =>{
 const Search = (user, updateInbox, inputRef, setFlagInboxOpen, flagInboxOpen)=>{
     let [label, setLabel] = useState("Message users");
     let [open, setOpen] = useState(false);
+    const [inputValue, setInputValue] = React.useState('');
+    const changeSearchOpen = (input:string) =>{
+        if(input.length < 2){
+          setOpen(false);
+        } else {
+          setOpen(true);
+        }
+    }
+    const OPTIONS_LIMIT = 10;
+    const defaultFilterOptions = createFilterOptions();
+
+    const filterOptions = (options:any, state:any) => {
+        return defaultFilterOptions(options, state).slice(0, OPTIONS_LIMIT);
+      };
+
     return (
         <Autocomplete sx={{ width: '80%', mt:1, mb: 1, padding:0 }} 
-        id="free-solo-demo" freeSolo clearOnBlur clearOnEscape open = {open} onFocus={()=>{setOpen(true)}} 
-        options={users.map((option) => {return option.key+""})}
+        filterOptions={filterOptions}
+        onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+            changeSearchOpen(inputValue);
+          }}
+        id="free-solo-demo" freeSolo clearOnBlur clearOnEscape open = {open} onBlur={()=>setOpen(false)} 
+        options={users.map((option) => {return option.avatar_url+" "+ option.key+" "+ option.userName+" "+option.firstName+" "+option.lastName})}
         renderOption ={(option:any)=>{ return (
             <>
                 <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',}}> 
                 
-                <ListItemButton onClick={()=>{setOpen(false); setLabel("Message users");updateInbox(getFirstLastnameForId(option.key), parseInt(option.key)); inputRef.current.focus();}}>            
+                <ListItemButton onClick={()=>{setOpen(false); setLabel("Message users");updateInbox(getFirstLastnameForId(option.key), parseInt(getUserId(option.key))); inputRef.current.focus();}}>            
                     <ListItem key={`${option.key}`}>
                         <ListItemAvatar>
-                            <Avatar alt={`${option.key}`} src={getUserForId(option.key).avatar_url}/>
+                            <Avatar alt={getAvatar(option.key)} src={getAvatar(option.key)}/>
                         </ListItemAvatar>
                         <ListItemText primary={getFirstLastnameForId(option.key)}/> 
                         </ListItem> 
@@ -119,7 +141,7 @@ const InboxPage = ()=>{
                 if(user !== null){
                     const response = await axiosPrivate.get(`/users`, {
                     });
-                    response.data.forEach((el:any, index:any)=>{ if(el.id !== user.id) users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name, avatar_url: el.avatar_url}})
+                    response.data.forEach((el:any, index:any)=>{  if(el.id != user.id) { users[index] = {userName: el.username, key:parseInt(el.id), firstName: el.first_name, lastName: el.last_name, avatar_url: el.avatar_url}}})
                     setLoading(false);
                 }
             } catch (err) {                                         
@@ -139,7 +161,8 @@ const InboxPage = ()=>{
     if(!isLoading){
         return (
             <>
-                <div>
+                <NavBar/>
+                <div >
                     <InboxDrawer search={Search}/>
                 </div>
                 

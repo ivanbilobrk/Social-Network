@@ -85,7 +85,7 @@ function MyProfile(props: any) {
         const user = getUser();
 
         if (user != null) {
-          const response = await axios.get('/users/:' + user.id + '/followers');
+          const response = await axiosPrivate.get('/users/' + user.id + '/followers');
 
           if (isAllowed) {
             setFollowers(response.data);
@@ -102,6 +102,7 @@ function MyProfile(props: any) {
       isAllowed = false;
     };
   }, []);
+  console.log(followers);
 
     let noOfFollowers;
 
@@ -118,7 +119,7 @@ function MyProfile(props: any) {
           const user = getUser();
   
           if (user != null) {
-            const response = await axios.get('/users/:' + user.id + '/followings');
+            const response = await axiosPrivate.get('/users/' + user.id + '/followings');
   
             if (isAllowed) {
               setFollowings(response.data);
