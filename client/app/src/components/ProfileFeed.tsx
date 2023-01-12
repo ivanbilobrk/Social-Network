@@ -35,7 +35,7 @@ function ProfileFeed({ userId }: any) {
       <AddPostPopup
         open={isAddPostOpen}
         onClose={() => setisAddPostOpen(false)}
-        refresh={() => setRefresh((prev) => !prev)}
+        refresh={() => {window.location.reload()}}
       />
     </>
   );

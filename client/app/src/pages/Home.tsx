@@ -1,7 +1,7 @@
 import { Button, Grid } from '@mui/material';
 import ScrollableFeed from '../components/home/ScrollableFeed';
 import AddIcon from '@mui/icons-material/Add';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddPostPopup from '../components/AddPostPopup';
 
 function Home() {
@@ -31,7 +31,7 @@ function Home() {
       <AddPostPopup
         open={isAddPostOpen}
         onClose={() => setisAddPostOpen(false)}
-        refresh={() => setRefresh((prev) => !prev)}
+        refresh={() => {window.location.reload()}}
       />
     </>
   );
